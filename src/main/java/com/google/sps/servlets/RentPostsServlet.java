@@ -45,12 +45,7 @@ public class RentPostsServlet extends HttpServlet {
     } catch (Exception e) {
       throw new ServletException("Error fetching credentials", e);
     }
-    FirebaseOptions options = new FirebaseOptions.Builder()
-      .setCredentials(credentials)
-      .setProjectId(PROJECT_ID)
-      .build();
-    FirebaseApp.initializeApp(options);
-    db = FirestoreClient.getFirestore();
+    db = getFirestoreDatabase(credentials, PROJECT_ID);
   }
 
   @Override
@@ -65,5 +60,14 @@ public class RentPostsServlet extends HttpServlet {
     data.put("name", "San Francisco");
     data.put("country", "United States");
     ApiFuture<DocumentReference> addedDocRef = db.collection("cities").add(data);
+  }
+
+  private Firestore getFirestoreDatabase(GoogleCredentials credentials, String projectID) {
+    FirebaseOptions options = new FirebaseOptions.Builder()
+      .setCredentials(credentials)
+      .setProjectId(projectID)
+      .build();
+    FirebaseApp.initializeApp(options);
+    return FirestoreClient.getFirestore();
   }
 }
