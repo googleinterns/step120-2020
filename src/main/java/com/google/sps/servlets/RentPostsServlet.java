@@ -67,7 +67,7 @@ public class RentPostsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
-                      throws IOException {
+      throws IOException {
     Map<String, Object> rentDocument = createDocument(request, requestParams);
     db.collection(RENT_COLLECTION_NAME).add(rentDocument);
     response.sendRedirect(INDEX_URL);
