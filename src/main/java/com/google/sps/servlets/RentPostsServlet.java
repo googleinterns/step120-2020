@@ -33,7 +33,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
-import com.google.common.collect.ImmutableList;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -57,20 +56,24 @@ public class RentPostsServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    GoogleCredentials credentials;
+    GoogleCredentials credentials = getCredentials();
+    db = getFirestoreDatabase(credentials, PROJECT_ID);
+  }
+
+  private GoogleCredentials getCredentials() throws ServletException {
     try {
-      credentials = GoogleCredentials.getApplicationDefault();
+      return GoogleCredentials.getApplicationDefault();
     } catch (Exception e) {
       throw new ServletException("Error fetching credentials", e);
     }
-    db = getFirestoreDatabase(credentials, PROJECT_ID);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-    RentPostDocument document = 
-    new RentPostDocument(request.getParameter(REQUEST_DESCRIPTION), 
+    RentPost post = 
+    new RentPost(
+      request.getParameter(REQUEST_DESCRIPTION), 
       stringToDate(request.getParameter(REQUEST_END_DATE)),
       request.getParameter(REQUEST_LEASE_TYPE), 
       request.getParameter(REQUEST_NUM_ROOMS),
@@ -79,7 +82,8 @@ public class RentPostsServlet extends HttpServlet {
       stringToDate(request.getParameter(REQUEST_START_DATE)),
       request.getParameter(REQUEST_TITLE));
 
-    db.collection(RENT_COLLECTION_NAME).add(document.toMap());
+    Map<String, Object> postDocument = post.toMap();
+    db.collection(RENT_COLLECTION_NAME).add(postDocument);
 
     response.sendRedirect(INDEX_URL);
   }
