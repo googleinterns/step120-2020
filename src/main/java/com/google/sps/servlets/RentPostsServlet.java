@@ -16,7 +16,6 @@ package com.google.sps;
 
 import static com.google.sps.Constants.DATE_FORMAT;
 import static com.google.sps.Constants.INDEX_URL;
-import static com.google.sps.Constants.PROJECT_ID;
 import static com.google.sps.Constants.RENT_COLLECTION_NAME;
 import static com.google.sps.Constants.REQUEST_DESCRIPTION;
 import static com.google.sps.Constants.REQUEST_END_DATE;
@@ -38,9 +37,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
@@ -56,30 +52,20 @@ public class RentPostsServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    GoogleCredentials credentials = getCredentials();
-    db = getFirestoreDatabase(credentials, PROJECT_ID);
-  }
-
-  private GoogleCredentials getCredentials() throws ServletException {
-    try {
-      return GoogleCredentials.getApplicationDefault();
-    } catch (Exception e) {
-      throw new ServletException("Error fetching credentials", e);
-    }
+    db = FirestoreUtil.getDatabase();
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-    RentPost post = 
-    new RentPost(
+    RentPost post = new RentPost(
       request.getParameter(REQUEST_DESCRIPTION), 
-      stringToDate(request.getParameter(REQUEST_END_DATE)),
+      request.getParameter(REQUEST_END_DATE),
       request.getParameter(REQUEST_LEASE_TYPE), 
       request.getParameter(REQUEST_NUM_ROOMS),
       request.getParameter(REQUEST_PRICE),
       request.getParameter(REQUEST_ROOM_TYPE),
-      stringToDate(request.getParameter(REQUEST_START_DATE)),
+      request.getParameter(REQUEST_START_DATE),
       request.getParameter(REQUEST_TITLE));
 
     Map<String, Object> postDocument = post.toMap();
@@ -87,25 +73,12 @@ public class RentPostsServlet extends HttpServlet {
 
     response.sendRedirect(INDEX_URL);
   }
-  
-  private Firestore getFirestoreDatabase(GoogleCredentials credentials, String projectID) {
-    FirebaseOptions options = new FirebaseOptions.Builder()
-      .setCredentials(credentials)
-      .setProjectId(projectID)
-      .build();
-    FirebaseApp.initializeApp(options);
-    return FirestoreClient.getFirestore();
+
+  public void setDatabase(Firestore db) {
+    this.db = db;
   }
 
-  private Date stringToDate(String date) {
-    SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-    Date convertedDate;
-    try {
-      convertedDate = format.parse(date);
-    } catch(ParseException e) {
-      e.printStackTrace();
-      convertedDate = null;
-    }
-    return convertedDate;
+  public Firestore getDatabase() {
+    return db;
   }
 }
