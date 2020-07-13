@@ -10,6 +10,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import java.io.IOException;
 import javax.servlet.ServletException;
 
 /** Util methods for Firestore. */
@@ -18,28 +19,42 @@ public class FirestoreUtil {
   private static Firestore db;
   private FirestoreUtil() {}
 
-  public static Firestore getDatabase() throws ServletException {
+  /**
+  * Gets the database instance for this project. Initializes database if it
+  * has not been initialized.
+  * @return Firestore database instance
+  * @throws IOException if database initialization fails.
+  */
+  public static Firestore getDatabase() {
     if (db == null) {
-      db = initializeDatabase();
+      try {
+        db = initializeDatabase();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     return db;
   }
+
+  /**
+  * Sets the database instance for this project.
+  * Use for setting database to be a mock database for unit testing.
+  */
+  public static void setDatabase(Firestore database) {
+    db = database;
+  }
   
-  private static Firestore initializeDatabase() throws ServletException {
-    GoogleCredentials credentials = getCredentials();
+  /**
+  * Initializes database with the app's google credentials and project ID.
+  * @return Firestore database instance
+  */
+  private static Firestore initializeDatabase() throws IOException {
+    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
     FirebaseOptions options = new FirebaseOptions.Builder()
       .setCredentials(credentials)
       .setProjectId(PROJECT_ID)
       .build();
     FirebaseApp.initializeApp(options);
     return FirestoreClient.getFirestore();
-  }
-
-  private static GoogleCredentials getCredentials() throws ServletException {
-    try {
-      return GoogleCredentials.getApplicationDefault();
-    } catch (Exception e) {
-      throw new ServletException("Error fetching credentials", e);
-    }
   }
 }

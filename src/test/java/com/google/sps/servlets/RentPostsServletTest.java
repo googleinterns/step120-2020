@@ -65,13 +65,13 @@ public class RentPostsServletTest {
 
     rentPostsServlet = new RentPostsServlet();
     rentPostsServlet.init();
-    rentPostsServlet.setDatabase(dbMock);
+    FirestoreUtil.setDatabase(dbMock);
   }
 
   @Test
   public void testDatabaseMock_MockExistsAndIsUsedByServlet() throws Exception {
-    assertNotNull(rentPostsServlet.getDatabase());
-    assertEquals(dbMock, rentPostsServlet.getDatabase());
+    assertNotNull(FirestoreUtil.getDatabase());
+    assertEquals(dbMock, FirestoreUtil.getDatabase());
   }
 
   @Test
@@ -109,8 +109,9 @@ public class RentPostsServletTest {
     when(dbMock.collection(RENT_COLLECTION_NAME)).thenReturn(collectionMock);
     setRequestParameters(description, endDate, leaseType, numRooms,
       price, roomType, startDate, title);
-    Map<String, Object> expectedData = getExpectedRentData(description, endDate, 
-      leaseType, numRooms, price, roomType, startDate, title);
+    Map<String, Object> expectedData = 
+      getExpectedRentData(description, endDate, leaseType, numRooms, price, 
+        roomType, startDate, title);
     expectedData.put(REQUEST_START_DATE, null);
     
     rentPostsServlet.doPost(request, response);
@@ -133,8 +134,16 @@ public class RentPostsServletTest {
 
   private Map<String, Object> getExpectedRentData(String description, String endDate, String leaseType,
       String numRooms, String price, String roomType, String startDate, String title) {
-    RentPost post = new RentPost(description, endDate, leaseType, numRooms,
-      price, roomType, startDate, title);
+    RentPost post = RentPost.builder()
+      .setDescription(description)
+      .setEndDate(endDate)
+      .setLeaseType(leaseType)
+      .setNumRooms(numRooms)
+      .setPrice(price)
+      .setRoomType(roomType)
+      .setStartDate(startDate)
+      .setTitle(title)
+      .build();
     return post.toMap();
   }
 }
