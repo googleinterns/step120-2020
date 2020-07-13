@@ -2,6 +2,7 @@ package com.google.sps;
 
 public final class Constants {
   private Constants() {}
+  public static final String CURRENCY_CODE = "USD";
   public static final String DATE_FORMAT = "yyyy-MM-dd";
   public static final String INDEX_URL = "/index.html";
   public static final String PROJECT_ID = "step120-2020";
