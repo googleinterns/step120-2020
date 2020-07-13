@@ -16,7 +16,6 @@ package com.google.sps;
 
 import static com.google.sps.Constants.DATE_FORMAT;
 import static com.google.sps.Constants.INDEX_URL;
-import static com.google.sps.Constants.RENT_COLLECTION_NAME;
 import static com.google.sps.Constants.REQUEST_DESCRIPTION;
 import static com.google.sps.Constants.REQUEST_END_DATE;
 import static com.google.sps.Constants.REQUEST_LEASE_TYPE;
@@ -28,7 +27,6 @@ import static com.google.sps.Constants.REQUEST_TIMESTAMP;
 import static com.google.sps.Constants.REQUEST_TITLE;
 
 import com.google.api.core.ApiFuture;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
@@ -37,6 +35,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
@@ -48,37 +49,29 @@ import javax.servlet.ServletException;
 /** Servlet that posts and fetches rent posts. */
 @WebServlet("/rent-posts")
 public class RentPostsServlet extends HttpServlet {
-  private Firestore db;
+  private RentPostDatabase database;
 
   @Override
   public void init() throws ServletException {
-    db = FirestoreUtil.getDatabase();
+    database = new RentPostDatabase();
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-    RentPost post = new RentPost(
-      request.getParameter(REQUEST_DESCRIPTION), 
-      request.getParameter(REQUEST_END_DATE),
-      request.getParameter(REQUEST_LEASE_TYPE), 
-      request.getParameter(REQUEST_NUM_ROOMS),
-      request.getParameter(REQUEST_PRICE),
-      request.getParameter(REQUEST_ROOM_TYPE),
-      request.getParameter(REQUEST_START_DATE),
-      request.getParameter(REQUEST_TITLE));
+    RentPost post = RentPost.builder()
+      .setDescription(request.getParameter(REQUEST_DESCRIPTION))
+      .setEndDate(request.getParameter(REQUEST_END_DATE))
+      .setLeaseType(request.getParameter(REQUEST_LEASE_TYPE))
+      .setNumRooms(request.getParameter(REQUEST_NUM_ROOMS))
+      .setPrice(request.getParameter(REQUEST_PRICE))
+      .setRoomType(request.getParameter(REQUEST_ROOM_TYPE))
+      .setStartDate(request.getParameter(REQUEST_START_DATE))
+      .setTitle(request.getParameter(REQUEST_TITLE))
+      .build();
 
-    Map<String, Object> postDocument = post.toMap();
-    db.collection(RENT_COLLECTION_NAME).add(postDocument);
+    database.addPost(post);
 
     response.sendRedirect(INDEX_URL);
-  }
-
-  public void setDatabase(Firestore db) {
-    this.db = db;
-  }
-
-  public Firestore getDatabase() {
-    return db;
   }
 }
