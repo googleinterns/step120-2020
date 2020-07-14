@@ -51,18 +51,15 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class RentPostsServletTest {
- 
+  @Mock CollectionReference collectionMock;
+  @Mock Firestore dbMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
- 
   private RentPostsServlet rentPostsServlet;
-  @Mock Firestore dbMock;
-  @Mock CollectionReference collectionMock;
 
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
-
     rentPostsServlet = new RentPostsServlet();
     rentPostsServlet.init();
     FirestoreUtil.setDatabase(dbMock);
@@ -84,7 +81,7 @@ public class RentPostsServletTest {
     String roomType = "SINGLE";
     String startDate = "2020-07-10";
     String title = "Test title";
-    when(dbMock.collection(RENT_COLLECTION_NAME)).thenReturn(collectionMock);
+    setupDatabaseMocks();
     setRequestParameters(description, endDate, leaseType, numRooms,
       price, roomType, startDate, title);
     Map<String, Object> expectedData = getExpectedRentData(description, endDate,
@@ -97,29 +94,37 @@ public class RentPostsServletTest {
   }
 
   @Test
-  public void testPost_requestHasUnparsableStartDate_postsWithNullDate() throws Exception {
+  public void testPost_requestHasUnparsableDates_postsWithNullDates() throws Exception {
     String description = "Test description";
-    String endDate = "2020-07-10";
+    String endDate = "202020/20/10";
     String leaseType = "YEAR_LONG";
     String numRooms = "1";
     String price = "100";
     String roomType = "SINGLE";
     String startDate = "07/10/2020";
     String title = "Test title";
-    when(dbMock.collection(RENT_COLLECTION_NAME)).thenReturn(collectionMock);
+    setupDatabaseMocks();
     setRequestParameters(description, endDate, leaseType, numRooms,
       price, roomType, startDate, title);
     Map<String, Object> expectedData = 
       getExpectedRentData(description, endDate, leaseType, numRooms, price, 
         roomType, startDate, title);
     expectedData.put(REQUEST_START_DATE, null);
+    expectedData.put(REQUEST_END_DATE, null);
     
     rentPostsServlet.doPost(request, response);
 
     verify(dbMock, Mockito.times(1)).collection(RENT_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).add(expectedData);
   }
+  
+  private void setupDatabaseMocks() {
+    when(dbMock.collection(RENT_COLLECTION_NAME)).thenReturn(collectionMock);
+  }
 
+  /**
+  * Sets mock HTTP request's parameters to corresponding input values.
+  */
   private void setRequestParameters(String description, String endDate, String leaseType,
       String numRooms, String price, String roomType, String startDate, String title) {
     when(request.getParameter(REQUEST_DESCRIPTION)).thenReturn(description);
@@ -132,6 +137,12 @@ public class RentPostsServletTest {
     when(request.getParameter(REQUEST_TITLE)).thenReturn(title);
   }
 
+
+  /**
+  * Sets mock HTTP request's parameters to corresponding input values.
+  * @return map of <database key, value> of expected data sent to database on a
+  *          servlet call to post()
+  */
   private Map<String, Object> getExpectedRentData(String description, String endDate, String leaseType,
       String numRooms, String price, String roomType, String startDate, String title) {
     RentPost post = RentPost.builder()
