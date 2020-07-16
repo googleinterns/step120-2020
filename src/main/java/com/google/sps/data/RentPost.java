@@ -2,10 +2,13 @@ package com.google.sps;
 
 import static com.google.sps.Constants.CURRENCY_CODE;
 import static com.google.sps.Constants.DATE_FORMAT;
+import static com.google.sps.Constants.GEOPOINT;
 import static com.google.sps.Constants.RENT_COLLECTION_NAME;
 import static com.google.sps.Constants.REQUEST_DESCRIPTION;
 import static com.google.sps.Constants.REQUEST_END_DATE;
+import static com.google.sps.Constants.REQUEST_LAT;
 import static com.google.sps.Constants.REQUEST_LEASE_TYPE;
+import static com.google.sps.Constants.REQUEST_LNG;
 import static com.google.sps.Constants.REQUEST_NUM_ROOMS;
 import static com.google.sps.Constants.REQUEST_PRICE;
 import static com.google.sps.Constants.REQUEST_ROOM_TYPE;
@@ -17,6 +20,7 @@ import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.GeoPoint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,6 +47,7 @@ public abstract class RentPost {
   public abstract String description();
   @Nullable public abstract Date endDate();
   public abstract LeaseType leaseType();
+  public abstract GeoPoint location();
   public abstract int numRooms();
   public abstract Money price();
   public abstract RoomType roomType();
@@ -58,15 +63,12 @@ public abstract class RentPost {
     abstract Builder setDescription(String description);
     abstract Builder setEndDate(Date endDate);
     abstract Builder setLeaseType(LeaseType leaseType);
+    abstract Builder setLocation(GeoPoint location);
     abstract Builder setNumRooms(int numRooms);
     abstract Builder setPrice(Money price);
     abstract Builder setRoomType(RoomType roomType);
     abstract Builder setStartDate(Date startDate);
     abstract Builder setTitle(String title);
-
-    abstract LeaseType leaseType();
-    abstract RoomType roomType();
-    abstract int numRooms();
 
     abstract RentPost build();
     
@@ -100,6 +102,11 @@ public abstract class RentPost {
       return this;
     }
 
+    public Builder setLocation(String lat, String lng) {
+      setLocation(latLngToGeoPoint(lat, lng));
+      return this;
+    }
+
     /**
     * Converts a string to a Date in the format "yyyy-MM-dd."
     * Returns null if string is not parseable.
@@ -128,6 +135,10 @@ public abstract class RentPost {
       CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
       return Money.of(Integer.parseInt(price), usd);
     }
+
+    private GeoPoint latLngToGeoPoint(String lat, String lng) {
+      return new GeoPoint(Double.parseDouble(lat), Double.parseDouble(lng));
+    }
   }
 
   /**
@@ -140,6 +151,7 @@ public abstract class RentPost {
     rentData.put(REQUEST_DESCRIPTION, description());
     rentData.put(REQUEST_END_DATE, endDate());
     rentData.put(REQUEST_LEASE_TYPE, leaseType().toString());
+    rentData.put(GEOPOINT, location());
     rentData.put(REQUEST_NUM_ROOMS, numRooms());
     rentData.put(REQUEST_PRICE, price().toString());
     rentData.put(REQUEST_ROOM_TYPE, roomType().toString());
