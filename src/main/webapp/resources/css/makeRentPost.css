@@ -12,6 +12,10 @@
   width: 100%;
 }
 
+#autocomplete {
+  width: 99%
+}
+
 .navbarli {
   float: left;
 }

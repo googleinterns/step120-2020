@@ -4,7 +4,9 @@ import static com.google.sps.Constants.PROJECT_ID;
 import static com.google.sps.Constants.RENT_COLLECTION_NAME;
 import static com.google.sps.Constants.REQUEST_DESCRIPTION;
 import static com.google.sps.Constants.REQUEST_END_DATE;
+import static com.google.sps.Constants.REQUEST_LAT;
 import static com.google.sps.Constants.REQUEST_LEASE_TYPE;
+import static com.google.sps.Constants.REQUEST_LNG;
 import static com.google.sps.Constants.REQUEST_NUM_ROOMS;
 import static com.google.sps.Constants.REQUEST_PRICE;
 import static com.google.sps.Constants.REQUEST_ROOM_TYPE;
@@ -81,11 +83,13 @@ public class RentPostsServletTest {
     String roomType = "SINGLE";
     String startDate = "2020-07-10";
     String title = "Test title";
+    String lat = "37.3";
+    String lng = "-121.1";
     setupDatabaseMocks();
     setRequestParameters(description, endDate, leaseType, numRooms,
-      price, roomType, startDate, title);
+      price, roomType, startDate, title, lat, lng);
     Map<String, Object> expectedData = getExpectedRentData(description, endDate,
-      leaseType, numRooms, price, roomType, startDate, title);
+      leaseType, numRooms, price, roomType, startDate, title, lat, lng);
 
     rentPostsServlet.doPost(request, response);
 
@@ -103,12 +107,14 @@ public class RentPostsServletTest {
     String roomType = "SINGLE";
     String startDate = "07/10/2020";
     String title = "Test title";
+    String lat = "37.8";
+    String lng = "-120.1";
     setupDatabaseMocks();
     setRequestParameters(description, endDate, leaseType, numRooms,
-      price, roomType, startDate, title);
+      price, roomType, startDate, title, lat, lng);
     Map<String, Object> expectedData = 
       getExpectedRentData(description, endDate, leaseType, numRooms, price, 
-        roomType, startDate, title);
+        roomType, startDate, title, lat, lng);
     expectedData.put(REQUEST_START_DATE, null);
     expectedData.put(REQUEST_END_DATE, null);
     
@@ -126,10 +132,13 @@ public class RentPostsServletTest {
   * Sets mock HTTP request's parameters to corresponding input values.
   */
   private void setRequestParameters(String description, String endDate, String leaseType,
-      String numRooms, String price, String roomType, String startDate, String title) {
+      String numRooms, String price, String roomType, String startDate, String title,
+      String lat, String lng) {
     when(request.getParameter(REQUEST_DESCRIPTION)).thenReturn(description);
     when(request.getParameter(REQUEST_END_DATE)).thenReturn(endDate);
+    when(request.getParameter(REQUEST_LAT)).thenReturn(lat);
     when(request.getParameter(REQUEST_LEASE_TYPE)).thenReturn(leaseType);
+    when(request.getParameter(REQUEST_LNG)).thenReturn(lng);
     when(request.getParameter(REQUEST_NUM_ROOMS)).thenReturn(numRooms);
     when(request.getParameter(REQUEST_PRICE)).thenReturn(price);
     when(request.getParameter(REQUEST_ROOM_TYPE)).thenReturn(roomType);
@@ -143,12 +152,14 @@ public class RentPostsServletTest {
   * @return map of <database key, value> of expected data sent to database on a
   *          servlet call to post()
   */
-  private Map<String, Object> getExpectedRentData(String description, String endDate, String leaseType,
-      String numRooms, String price, String roomType, String startDate, String title) {
+  private Map<String, Object> getExpectedRentData(String description, String endDate,
+      String leaseType, String numRooms, String price, String roomType, 
+      String startDate, String title, String lat, String lng) {
     RentPost post = RentPost.builder()
       .setDescription(description)
       .setEndDate(endDate)
       .setLeaseType(leaseType)
+      .setLocation(lat, lng)
       .setNumRooms(numRooms)
       .setPrice(price)
       .setRoomType(roomType)
