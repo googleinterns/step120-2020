@@ -18,7 +18,9 @@ import static com.google.sps.Constants.DATE_FORMAT;
 import static com.google.sps.Constants.INDEX_URL;
 import static com.google.sps.Constants.REQUEST_DESCRIPTION;
 import static com.google.sps.Constants.REQUEST_END_DATE;
+import static com.google.sps.Constants.REQUEST_LAT;
 import static com.google.sps.Constants.REQUEST_LEASE_TYPE;
+import static com.google.sps.Constants.REQUEST_LNG;
 import static com.google.sps.Constants.REQUEST_NUM_ROOMS;
 import static com.google.sps.Constants.REQUEST_PRICE;
 import static com.google.sps.Constants.REQUEST_ROOM_TYPE;
@@ -63,6 +65,8 @@ public class RentPostsServlet extends HttpServlet {
       .setDescription(request.getParameter(REQUEST_DESCRIPTION))
       .setEndDate(request.getParameter(REQUEST_END_DATE))
       .setLeaseType(request.getParameter(REQUEST_LEASE_TYPE))
+      .setLocation(request.getParameter(REQUEST_LAT),
+                  request.getParameter(REQUEST_LNG))
       .setNumRooms(request.getParameter(REQUEST_NUM_ROOMS))
       .setPrice(request.getParameter(REQUEST_PRICE))
       .setRoomType(request.getParameter(REQUEST_ROOM_TYPE))
