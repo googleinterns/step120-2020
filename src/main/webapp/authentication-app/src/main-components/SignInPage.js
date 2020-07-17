@@ -5,6 +5,7 @@ const SignInPage = () => {
   const [userPassword, setUserPassword] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [error, setError] = useState(null);
+
   const signInHandler = (event,email,password) => {
     event.preventDefault();
   };
@@ -77,6 +78,6 @@ const SignInPage = () => {
       </div>
 
         
-  )
+  );
 }
 export default SignInPage;

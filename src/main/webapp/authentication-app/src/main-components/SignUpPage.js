@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "@reach/router";
 
-const SignUp = () => {
+const SignUpPage = () => {
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
@@ -11,10 +11,10 @@ const SignUp = () => {
         event.preventDefault();
         setUserEmail("");
         setUserPassword("");
-        setDisplayname("");
+        setDisplayName("");
     };
 
-    const onChangehandler = event => {
+    const onChangeHandler = (event) => {
         const { name, value } = event.currentTarget;
         if( name === userPassword) {
             setUserPassword(value);
@@ -42,7 +42,7 @@ const SignUp = () => {
               value={displayName}
               placeholder= "E.x: AwesomeDude123"
               id="displayName"
-              onChange={event => onChangeHandler(event)}
+              onChange={(event) => onChangeHandler(event)}
             />
             <label htmlFor="userEmail" className="block">
               Your Email:
@@ -69,7 +69,7 @@ const SignUp = () => {
             />
             <button 
               className="signUpbutton"
-              onClick= { event => {createUser(event, userEmail, userPassword)}}>
+              onClick= { (event) => {createUser(event, userEmail, userPassword)}}>
               Click to Sign Up
             </button>
           </form>
@@ -78,11 +78,11 @@ const SignUp = () => {
           <p className="">
             Already have an Account? Sign In! {" "}
             <Link to = "/" className="signin-link">
-              Sign up 
-            </Link>{" "}
+              Sign In 
+            </Link>
           </p>
         </div>
       </div>
-    )
+    );
 }
 export default SignUpPage;
