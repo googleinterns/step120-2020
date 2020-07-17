@@ -10,11 +10,10 @@
     "firebase": "^7.16.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-<<<<<<< Updated upstream
+    
     "react-scripts": "3.4.1"
-=======
-    "react-scripts": "^2.1.8"
->>>>>>> Stashed changes
+
+  
   },
   "scripts": {
     "start": "react-scripts start",
