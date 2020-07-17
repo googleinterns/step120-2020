@@ -12,10 +12,10 @@ const SignInPage = () => {
 
   const onChangeHandler = (event) => {
       const {name, value} = event.currentTarget;
-      if(text === 'userEmail') {
+      if(name === 'userEmail') {
         setUserEmail(value);
       }
-      else if(text === 'userPassword') {
+      else if(name === 'userPassword') {
         setUserPassword(value);
       }
   };

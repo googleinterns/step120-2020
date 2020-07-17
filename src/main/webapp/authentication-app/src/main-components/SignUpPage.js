@@ -14,7 +14,7 @@ const SignUpPage = () => {
         setDisplayName("");
     };
 
-    const onChangeHandler = (event) => {
+    const onChangehandler = event => {
         const { name, value } = event.currentTarget;
         if( name === userPassword) {
             setUserPassword(value);
@@ -42,7 +42,7 @@ const SignUpPage = () => {
               value={displayName}
               placeholder= "E.x: AwesomeDude123"
               id="displayName"
-              onChange={(event) => onChangeHandler(event)}
+              onChange={event => onChangeHandler(event)}
             />
             <label htmlFor="userEmail" className="block">
               Your Email:
@@ -69,7 +69,7 @@ const SignUpPage = () => {
             />
             <button 
               className="signUpbutton"
-              onClick= { (event) => {createUser(event, userEmail, userPassword)}}>
+              onClick= { event => {createUser(event, userEmail, userPassword)}}>
               Click to Sign Up
             </button>
           </form>
@@ -78,12 +78,12 @@ const SignUpPage = () => {
           <p className="">
             Already have an Account? Sign In! {" "}
             <Link to = "/" className="signin-link">
-              Sign In 
-            </Link>
+              Sign up 
+            </Link>{" "}
           </p>
         </div>
       </div>
-    );
+    )
 }
 export default SignUpPage;
 
