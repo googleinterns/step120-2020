@@ -10,19 +10,19 @@ const SignInPage = () => {
   };
 
   const onChangeHandler = (event) => {
-      const {text, value} = event.currentTarget;
+      const {name, value} = event.currentTarget;
       {/* gets the . part of the address to check if its edu */}
-      const emailEnd = text.substring(text.length - 4, text.length);
+      const emailEnd = name.substring(name.length - 4, name.length);
       
       {/*
         TODO redirect the user to an error page
         that tells them that their email addresses
         is invalid and must be a .edu address 
         */}
-      if(text === 'userEmail') {
+      if(name === 'userEmail') {
         setUserEmail(value);
       }
-      else if(text === 'userPassword') {
+      else if(name === 'userPassword') {
         setUserPassword(value);
       }
   };
