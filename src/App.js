@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import Comment from './Comment/component/Comment';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.addComment = this.addComment.bind(this);
+    this.handleCommentEditorChange = this.handleCommentEditorChange.bind(this);
+
+    this.state = {
+      comments: [],
+      newCommentBody: '',
+    }
+  }
+
+  addComment(){
+    const newState = Object.assign({}, this.state);
+    newState.comments.push(this.state.newCommentBody);
+    newState.newCommentBody = '';
+    this.setState(newState);
+  }
+
+  handleCommentEditorChange(event){
+    this.setState({
+      newCommentBody: event.target.value
+    })
+  }
+
+  render(){
+    return (
+      <div>
+        { 
+          this.state.comments.map((commentBody, i) => {
+            return (
+              <Comment key={i} commentBody={commentBody}/>
+            )
+          })
+        }
+        
+        <div className="comment-editor">
+          <textarea className="comment-input" value={this.state.newCommentBody} onChange={this.handleCommentEditorChange}/>
+          <button className="post-button" onClick={this.addComment}>Post</button>
+        </div>
+        
+      </div>
+    );
+  }
 }
 
 export default App;
