@@ -33,7 +33,7 @@ public class FirebaseDatabase implements Database {
   * has not been initialized.
   *
   * @return Firestore database instance
-  * @throws IOException if database initialization fails.
+  * @throws IOException if database initialization fails
   */
   @Override
   public Firestore getDatabase() throws IOException {
@@ -45,7 +45,7 @@ public class FirebaseDatabase implements Database {
 
   /**
   * Sets the database instance for this project.
-  * Use for setting database to be a mock database for unit testing.
+  * Use for setting database to a mock database instance for testing.
   */
   @Override
   @VisibleForTesting
@@ -56,8 +56,8 @@ public class FirebaseDatabase implements Database {
   /**
   * Add a document to a collection using a map.
   *
-  * @param collectionName
-  * @param doc 
+  * @param collectionName name of collection in Firestore
+  * @param doc document that implements the document interface
   */
   @Override
   public void addDocumentAsMap(String collectionName, Document doc) {
@@ -65,6 +65,14 @@ public class FirebaseDatabase implements Database {
     this.db.collection(collectionName).add(data);
   }
 
+  /**
+  * Add a document to a collection as a class.
+  * All document fields must be serializable. The document class must implement
+  * Serializable and have an empty constructor.
+  *
+  * @param collectionName name of collection in Firestore
+  * @param doc document that implements the document interface
+  */
   @Override
   public void addDocumentAsClass(String collectionName, Document doc) throws Exception {
     ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
@@ -73,6 +81,10 @@ public class FirebaseDatabase implements Database {
 
   /**
   * Update a document with the specified input fields.
+  *
+  * @param collectionName name of collection in Firestore
+  * @param documentID ID of document to update in Firestore
+  * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   @Override
   public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate) {
@@ -81,6 +93,12 @@ public class FirebaseDatabase implements Database {
         docRef.update(fieldName, fieldValue));
   }
 
+  /**
+  * Get a document from Firestore in a map of <key, value>.
+  *
+  * @param collectionName name of collection in Firestore
+  * @param documentID ID of document to get from Firestore
+  */
   @Override
   public Map<String, Object> getDocumentAsMap(String collectionName, String documentID) throws Exception {
     DocumentReference docRef = this.db.collection(collectionName).document(documentID);
@@ -93,6 +111,13 @@ public class FirebaseDatabase implements Database {
     }
   }
 
+  /**
+  * Get all documents with the input field value.
+  *
+  * @param collectionName name of collection in Firestore
+  * @param field document field to search
+  * @param fieldValue value of field
+  */
   @Override
   public List<QueryDocumentSnapshot> getDocumentsWithFieldValue(
       String collectionName, String field, Object fieldValue) throws Exception {
@@ -102,6 +127,11 @@ public class FirebaseDatabase implements Database {
     return documents;
   }
   
+  /**
+  * Get all documents in specified collection.
+  *
+  * @param collectionName name of collection in Firestore
+  */
   @Override
   public List<QueryDocumentSnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
     ApiFuture<QuerySnapshot> future = db.collection(collectionName).get();
