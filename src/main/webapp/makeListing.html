@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Make Rent Post</title>
+    <title>Make Listing</title>
     <link rel="stylesheet" href="resources/css/makeListing.css">
     <script src="resources/js/makeListing.js"></script>
   </head>
@@ -10,11 +10,11 @@
     <div id="navbar">        
       <ul id="navbarul">
         <li class="navbarli"><a href="index.html">Home</a></li>
-        <li class="navbarli"><a class="active" href="makeRentPost.html">Rent Post</a></li>
+        <li class="navbarli"><a class="active" href="makeListing.html">Make Listing</a></li>
       </ul>
     </div>
     <div id="header">
-      <h1>Post in Rent</h1>
+      <h1>Post a Listing</h1>
     </div>
     <form action="/listings" id="listingForm" method="POST">
         <p>Title:</p>
@@ -31,7 +31,6 @@
         <label for="singlePrice"> $ </label>
         <input type="number" id="singlePrice" name="singlePrice" min="0" value="0"
           step="0.01" onClick="this.select()" onchange="calculateListingPrice()" required>
-        <p>Number of shared rooms:</p>
         <label for="numShared"> Shared: </label>
         <input type="number" id="numShared" name="numShared" min="0" value="0"
           onClick="this.select()" onchange="calculateListingPrice()" required>
