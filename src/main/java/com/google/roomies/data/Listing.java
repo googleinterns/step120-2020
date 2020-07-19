@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
@@ -44,7 +45,8 @@ abstract class Listing implements Document, Serializable {
     YEAR_LONG, 
     MONTH_TO_MONTH;
   }
-
+  abstract Optional<String> documentId();
+  abstract Optional<Timestamp> timestamp();
   abstract String title();
   abstract String description();
   abstract Date startDate();
@@ -64,6 +66,8 @@ abstract class Listing implements Document, Serializable {
 
   @AutoValue.Builder
   public abstract static class Builder implements Serializable {
+    abstract Builder setTimestamp(Optional<Timestamp> timestamp);
+    abstract Builder setDocumentId(Optional<String> documentId);
     abstract Builder setTitle(String title);
     abstract Builder setDescription(String description);
     abstract Builder setStartDate(Date startDate);
@@ -91,21 +95,33 @@ abstract class Listing implements Document, Serializable {
       return this;
     }
 
+    /**
+    * Throws NumberFormatException if input is not parseable.
+    */
     public Builder setNumRooms(String numRooms) {
       setNumRooms(Integer.parseInt(numRooms));
       return this;
     }
 
+    /**
+    * Throws NumberFormatException if input is not parseable.
+    */
     public Builder setNumBathrooms(String numBathrooms) {
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
 
+    /**
+    * Throws NumberFormatException if input is not parseable.
+    */
     public Builder setNumShared(String numShared) {
       setNumShared(Integer.parseInt(numShared));
       return this;     
     }
 
+    /**
+    * Throws NumberFormatException if input is not parseable.
+    */
     public Builder setNumSingles(String numSingles) {
       setNumSingles(Integer.parseInt(numSingles));
       return this;     
