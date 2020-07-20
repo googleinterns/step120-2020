@@ -40,6 +40,7 @@ import org.javamoney.moneta.Money;
 abstract class Listing implements Document, Serializable {
   /**
   * Describes the two different lease types for a listing.
+  * If input is not one of these two options, servlet throws an error.
   */
   enum LeaseType {
     YEAR_LONG, 
