@@ -77,8 +77,6 @@ public class ListingsServletTest {
   String startDate = "2020-07-10";
   String title = "Test title";
   
-  Listing.Builder listingBuilder;
-
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
@@ -92,12 +90,11 @@ public class ListingsServletTest {
 
     setRequestParameters(description, endDate, leaseType, numBathrooms, numRooms, numShared,
       numSingles, sharedPrice, singlePrice, listingPrice, startDate, title);
-    listingBuilder = Listing.builder().fromServletRequest(request);
   }
 
   @Test
   public void testPost_postsSingleListing() throws Exception {
-    listing = listingBuilder.build();
+    listing = Listing.builder().fromServletRequest(request).build();
     Map<String, Object> expectedData = listing.toMap();
     
     listingsServlet.doPost(request, response);
@@ -106,6 +103,44 @@ public class ListingsServletTest {
     verify(collectionMock, Mockito.times(1)).add(expectedData);
   }
   
+
+  @Test
+  public void testPost_requestHasUnparseableDates_servletResponseIsSetToBadRequest() throws Exception {
+    String illegalEndDate = "202020/20/10";
+    String illegalStartDate = "07/10/2020";
+    when(request.getParameter(END_DATE)).thenReturn(illegalEndDate);
+    when(request.getParameter(START_DATE)).thenReturn(illegalStartDate);
+    listing = Listing.builder().fromServletRequest(request).build();
+    Map<String, Object> expectedData = listing.toMap();
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
+
+  @Test
+  public void testPost_requestHasInvalidLeaseType_servletResponseIsSetToBadRequest() throws Exception {
+    when(request.getParameter(LEASE_TYPE)).thenReturn("yearlong");
+    listing = Listing.builder().fromServletRequest(request).build();
+    Map<String, Object> expectedData = listing.toMap();
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
+
+  @Test
+  public void testPost_requestHasInvalidPrice_servletResponseIsSetToBadRequest() throws Exception {
+    when(request.getParameter(LISTING_PRICE)).thenReturn("price");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("$3");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("$3");
+    listing = Listing.builder().fromServletRequest(request).build();
+    Map<String, Object> expectedData = listing.toMap();
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
   /**
   * Sets mock HTTP request's parameters to corresponding input values.
   */
