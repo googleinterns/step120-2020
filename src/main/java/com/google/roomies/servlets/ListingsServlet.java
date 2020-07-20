@@ -55,8 +55,7 @@ public class ListingsServlet extends HttpServlet {
   private Database database;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) {
     try {
       database = DatabaseFactory.getDatabase();
       Listing post = Listing.builder()
