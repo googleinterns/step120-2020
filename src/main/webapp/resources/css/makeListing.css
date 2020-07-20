@@ -1,34 +1,16 @@
-#map {
-  height: 100%;
-}
-
-#navbarul {
-  list-style-type: none;
-  margin: 0 auto;
-  padding-left: 0px;
-  overflow: hidden;
-  background-color: rgb(185, 207, 209); /* Gray green */
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-.navbarli {
-  float: left;
-}
-
-ul {
-  list-style-position: inside;
+.active {
+  background-color: rgb(81, 178, 165); /* Teal */
+  color: white;
 }
 
 li a {
+  color: rgb(33, 54, 53); /* Dark gray green */
   display: block;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
   font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
   font-size: 24px;
-  color: rgb(33, 54, 53); /* Dark gray green */
+  padding: 14px 16px;
+  text-align: center;
+  text-decoration: none;
 }
 
 li a:hover {
@@ -36,7 +18,21 @@ li a:hover {
   color: white;
 }
 
-.active {
-  background-color: rgb(81, 178, 165); /* Teal */
-  color: white;
+.navbarli {
+  float: left;
+}
+
+#navbarul {
+  background-color: rgb(185, 207, 209); /* Gray green */
+  list-style-type: none;
+  margin: 0 auto;
+  overflow: hidden;
+  padding-left: 0px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+ul {
+  list-style-position: inside;
 }
