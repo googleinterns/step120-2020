@@ -3,7 +3,6 @@ import PostCommentsDisplay from './PostCommentsDisplay/components/PostCommentsDi
 import './App.css';
 
 class App extends Component {
-
     render(){
         return (
             <PostCommentsDisplay />
