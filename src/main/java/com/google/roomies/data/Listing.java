@@ -46,6 +46,22 @@ abstract class Listing implements Document, Serializable {
     YEAR_LONG, 
     MONTH_TO_MONTH;
   }
+
+  public Optional<String> documentId;
+  public Optional<Timestamp> timestamp;
+  public String title;
+  public String description;
+  public Date startDate;
+  public Date endDate;
+  public LeaseType leaseType;
+  public int numRooms;
+  public int numBathrooms;
+  public int numShared;
+  public int numSingles;
+  public Money sharedPrice;
+  public Money singlePrice;
+  public Money listingPrice;
+
   abstract Optional<String> documentId();
   abstract Optional<Timestamp> timestamp();
   abstract String title();

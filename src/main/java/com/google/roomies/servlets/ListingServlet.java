@@ -51,7 +51,7 @@ import javax.servlet.ServletException;
 
 /** Servlet that posts and fetches listings. */
 @WebServlet("/listings")
-public class ListingsServlet extends HttpServlet {
+public class ListingServlet extends HttpServlet {
   private Database database;
 
   @Override
@@ -63,7 +63,7 @@ public class ListingsServlet extends HttpServlet {
         .fromServletRequest(request)
         .build();
 
-      database.addDocumentAsMap(LISTING_COLLECTION_NAME, post);
+      database.addDocumentAsClass(LISTING_COLLECTION_NAME, post);
 
       response.sendRedirect(INDEX_URL);
     } catch (Exception e) {
