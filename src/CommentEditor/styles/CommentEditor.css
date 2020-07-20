@@ -1,0 +1,18 @@
+.comment-editor{
+    margin: 1em 20%;
+}
+
+@media (max-width:900px) {
+    .comment-editor{
+        margin: 1em;
+    }
+}
+
+.comment-input{
+    width: 100%;
+}
+
+.post-button{
+    float: right;
+    margin-top: 1em;
+}
