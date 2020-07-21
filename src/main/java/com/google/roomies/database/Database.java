@@ -1,28 +1,19 @@
-package com.google.roomies;
+package com.google.roomies.database;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.roomies.Document;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
-interface Database {
-  /**
-  * Gets the database instance.
-  *
-  * @throws IOException if database cannot be initialized
-  */
-  public Firestore getDatabase() throws IOException;
+public interface Database {
 
-  /**
-  * Sets the database instance.
-  * Used to set database to a mock for testing.
-  *
-  * @throws IOException if database cannot be initialized
-  */
-  public void setDatabaseForTest(Firestore database);
-  
+  public void setDatabaseForTest(Firestore db);
   /**
   * Add a document to a collection using a map.
   *
@@ -56,7 +47,7 @@ interface Database {
   * @param collectionName name of collection in database
   * @param documentID ID of document to get from database
   */
-  public Map<String, Object> getDocumentAsMap(String collectionName, String documentID) throws Exception;
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception;
 
   /**
   * Get all documents with the input field value.
@@ -65,12 +56,12 @@ interface Database {
   * @param field document field to search
   * @param fieldValue value of field
   */
-  public List<QueryDocumentSnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue) throws Exception;
+  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue) throws Exception;
   
   /**
   * Get all documents in specified collection.
   *
   * @param collectionName name of collection in database
   */
-  public List<QueryDocumentSnapshot> getAllDocumentsInCollection(String collectionName) throws Exception;
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception;
 }
