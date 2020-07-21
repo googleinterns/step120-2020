@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Home from './Home/components/Home';
-import ListingDisplay from './ListingDisplay/components/ListingDisplay';
+import MakeListingDisplay from './MakeListingDisplay/components/MakeListingDisplay';
 import Navigation from './Navigation';
 
 import './App.css';
@@ -15,7 +15,7 @@ class App extends Component {
                     <Navigation />
                     <Switch>
                         <Route path="/" component={Home} exact/>
-                        <Route path="/listing" component={ListingDisplay}/>
+                        <Route path="/makeListing" component={MakeListingDisplay}/>
                     </Switch>
                 </BrowserRouter>
 

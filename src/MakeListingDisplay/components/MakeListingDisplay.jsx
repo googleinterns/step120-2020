@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import '../styles/ListingDisplay.css';
 
-class ListingDisplay extends Component {
+class MakeListingDisplay extends Component {
     render(){
         return (
             <div>
@@ -58,4 +58,4 @@ class ListingDisplay extends Component {
     }
 }
 
-export default ListingDisplay;
+export default MakeListingDisplay;

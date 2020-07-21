@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/CommentEditor.css';
 
+/* */
 class CommentEditor extends Component {
     constructor(props) {
         super(props);
