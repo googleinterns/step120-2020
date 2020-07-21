@@ -37,6 +37,8 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.roomies.database.Database;
+import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,11 +60,9 @@ public class ListingsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
     try {
       database = DatabaseFactory.getDatabase();
-      Listing post = Listing.builder()
-        .fromServletRequest(request)
-        .build();
+      Listing post = Listing.fromServletRequest(request);
 
-      database.addDocumentAsClass(LISTING_COLLECTION_NAME, post);
+      database.addDocumentAsMap(LISTING_COLLECTION_NAME, post);
 
       response.sendRedirect(INDEX_URL);
     } catch (Exception e) {
@@ -70,4 +70,21 @@ public class ListingsServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
+
+  // @Override
+  // public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  //   database = DatabaseFactory.getDatabase();
+  //   int numComments = getNumberOfCommentsToDisplay(request);
+  //   List<Listing> listings = new ArrayList();
+  //   StreamSupport.stream(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME))
+  //   .limit(numComments)
+  //   .forEach()
+  //   response.setContentType("application/json");
+  //   response.getWriter().println(convertToJsonUsingGson(comments));) {
+  // }
+
+  // private String convertToJsonUsingGson(List data) {
+  //   Gson gson = new Gson();
+  //   return gson.toJson(data);
+  // }
 }

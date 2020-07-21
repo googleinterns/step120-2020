@@ -15,6 +15,7 @@ import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,8 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
+import com.google.roomies.database.Database;
+import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -63,19 +66,6 @@ public class ListingsServletTest {
   private Listing listing;
   private ListingsServlet listingsServlet;
   private Database db;
-
-  String description = "Test description";
-  String endDate = "2020-07-10";
-  String leaseType = "YEAR_LONG";
-  String numBathrooms = "3";
-  String numRooms = "2";
-  String numShared = "1";
-  String numSingles = "0";
-  String sharedPrice = "100";
-  String singlePrice = "0";
-  String listingPrice = "100";
-  String startDate = "2020-07-10";
-  String title = "Test title";
   
   @Before
   public void setUp() throws Exception {    
@@ -84,17 +74,16 @@ public class ListingsServletTest {
     listingsServlet = new ListingsServlet();
     listingsServlet.init();
 
-    db = DatabaseFactory.getDatabase();    
+    db = DatabaseFactory.getDatabase();
     db.setDatabaseForTest(dbMock);
     when(dbMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    setRequestParameters(description, endDate, leaseType, numBathrooms, numRooms, numShared,
-      numSingles, sharedPrice, singlePrice, listingPrice, startDate, title);
+    setRequestParameters();
   }
 
   @Test
   public void testPost_postsSingleListing() throws Exception {
-    listing = Listing.builder().fromServletRequest(request).build();
+    listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
     
     listingsServlet.doPost(request, response);
@@ -102,17 +91,14 @@ public class ListingsServletTest {
     verify(dbMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).add(expectedData);
   }
-  
 
   @Test
   public void testPost_requestHasUnparseableDates_servletResponseIsSetToBadRequest() throws Exception {
-    String illegalEndDate = "202020/20/10";
-    String illegalStartDate = "07/10/2020";
-    when(request.getParameter(END_DATE)).thenReturn(illegalEndDate);
-    when(request.getParameter(START_DATE)).thenReturn(illegalStartDate);
-    listing = Listing.builder().fromServletRequest(request).build();
-    Map<String, Object> expectedData = listing.toMap();
-    
+    String invalidEndDate = "202020/20/10";
+    String invalidStartDate = "07/10/2020";
+    when(request.getParameter(END_DATE)).thenReturn(invalidEndDate);
+    when(request.getParameter(START_DATE)).thenReturn(invalidStartDate);
+
     listingsServlet.doPost(request, response);
 
     verify(response).setStatus(400);
@@ -120,9 +106,8 @@ public class ListingsServletTest {
 
   @Test
   public void testPost_requestHasInvalidLeaseType_servletResponseIsSetToBadRequest() throws Exception {
-    when(request.getParameter(LEASE_TYPE)).thenReturn("yearlong");
-    listing = Listing.builder().fromServletRequest(request).build();
-    Map<String, Object> expectedData = listing.toMap();
+    String invalidLeaseType = "yearlong";
+    when(request.getParameter(LEASE_TYPE)).thenReturn(invalidLeaseType);
     
     listingsServlet.doPost(request, response);
 
@@ -130,23 +115,61 @@ public class ListingsServletTest {
   }
 
   @Test
-  public void testPost_requestHasInvalidPrice_servletResponseIsSetToBadRequest() throws Exception {
-    when(request.getParameter(LISTING_PRICE)).thenReturn("price");
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("$3");
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("$3");
-    listing = Listing.builder().fromServletRequest(request).build();
-    Map<String, Object> expectedData = listing.toMap();
+  public void testPost_requestHasInvalidListingPrice_servletResponseIsSetToBadRequest() throws Exception {
+    String invalidListingPrice = "price";
+    when(request.getParameter(LISTING_PRICE)).thenReturn(invalidListingPrice);
     
     listingsServlet.doPost(request, response);
 
     verify(response).setStatus(400);
   }
+
+  @Test
+  public void testPost_requestHasInvalidSharedPrice_servletResponseIsSetToBadRequest() throws Exception {
+    String invalidSharedPrice = "$3";
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(invalidSharedPrice);
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
+
+  @Test
+  public void testPost_requestHasInvalidSinglePrice_servletResponseIsSetToBadRequest() throws Exception {
+    String invalidSinglePrice = "-.3";
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(invalidSinglePrice);
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
+
+  @Test
+  public void testPost_databaseDoesNotExist_servletResponseIsSetToBadRequest() throws Exception {
+    db.setDatabaseForTest(null);
+    
+    listingsServlet.doPost(request, response);
+
+    verify(response).setStatus(400);
+  }
+
   /**
   * Sets mock HTTP request's parameters to corresponding input values.
   */
-  private void setRequestParameters(String description, String endDate, String leaseType,
-      String numBathrooms, String numRooms, String numShared, String numSingles, String sharedPrice,
-      String singlePrice, String listingPrice, String startDate, String title) {
+  private void setRequestParameters() {
+    String description = "Test description";
+    String endDate = "2020-07-10";
+    String leaseType = "YEAR_LONG";
+    String numBathrooms = "3";
+    String numRooms = "2";
+    String numShared = "1";
+    String numSingles = "0";
+    String sharedPrice = "100";
+    String singlePrice = "0";
+    String listingPrice = "100";
+    String startDate = "2020-07-10";
+    String title = "Test title";
+
     when(request.getParameter(DESCRIPTION)).thenReturn(description);
     when(request.getParameter(END_DATE)).thenReturn(endDate);
     when(request.getParameter(LEASE_TYPE)).thenReturn(leaseType);

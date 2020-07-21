@@ -1,4 +1,4 @@
-package com.google.roomies;
+package com.google.roomies.database;
 
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
@@ -18,36 +18,21 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.roomies.Document;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
 public class FirebaseDatabase implements Database {
   private Firestore db;
-  public FirebaseDatabase() throws IOException {
+  FirebaseDatabase() throws IOException {
     this.db = initializeDatabase();
-  }
-
-  /**
-  * Gets the database instance for this project. Initializes database if it
-  * has not been initialized.
-  *
-  * @return Firestore database instance
-  * @throws IOException if database initialization fails
-  */
-  @Override
-  public Firestore getDatabase() throws IOException {
-    if (this.db == null) {
-      this.db = initializeDatabase();
-    }
-    return this.db;
   }
 
   /**
   * Sets the database instance for this project.
   * Use for setting database to a mock database instance for testing.
   */
-  @Override
   @VisibleForTesting
   public void setDatabaseForTest(Firestore database) {
     this.db = database;
@@ -100,15 +85,9 @@ public class FirebaseDatabase implements Database {
   * @param documentID ID of document to get from Firestore
   */
   @Override
-  public Map<String, Object> getDocumentAsMap(String collectionName, String documentID) throws Exception {
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception {
     DocumentReference docRef = this.db.collection(collectionName).document(documentID);
-    ApiFuture<DocumentSnapshot> future = docRef.get();
-    DocumentSnapshot document = future.get();
-    if(document.exists()) {
-      return document.getData();
-    } else {
-      throw new Exception("Error getting document");
-    }
+    return docRef.get();
   }
 
   /**
@@ -119,12 +98,11 @@ public class FirebaseDatabase implements Database {
   * @param fieldValue value of field
   */
   @Override
-  public List<QueryDocumentSnapshot> getDocumentsWithFieldValue(
+  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
       String collectionName, String field, Object fieldValue) throws Exception {
     ApiFuture<QuerySnapshot> future =
       db.collection(collectionName).whereEqualTo(field, fieldValue).get();
-    List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-    return documents;
+    return future;
   }
   
   /**
@@ -133,10 +111,8 @@ public class FirebaseDatabase implements Database {
   * @param collectionName name of collection in Firestore
   */
   @Override
-  public List<QueryDocumentSnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
-    ApiFuture<QuerySnapshot> future = db.collection(collectionName).get();
-    List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-    return documents;
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
+    return db.collection(collectionName).get();
   }
   
   /**

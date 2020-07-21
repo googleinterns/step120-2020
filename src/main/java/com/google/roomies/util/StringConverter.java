@@ -10,8 +10,8 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import org.javamoney.moneta.Money;
 
-public final class StringConverterUtils {
-  private StringConverterUtils() {}
+public final class StringConverter {
+  private StringConverter() {}
 
   /**
   * Converts a string to a Date in the format "yyyy-MM-dd."
