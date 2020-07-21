@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import '../styles/ListingDisplay.css';
+import '../styles/MakeListingDisplay.css';
 
 class MakeListingDisplay extends Component {
     render(){

@@ -13,8 +13,16 @@ class App extends Component {
                 <h1>Roomies</h1>
 
                 <nav>
-                    <Link to="/">Home</Link> {" "}
-                    <Link to="/makeListing">Make a Listing</Link>
+                    <Link to="/">
+                        <button type="button">
+                            Home
+                        </button>
+                    </Link>
+                    <Link to="/makeListing">
+                        <button type="button">
+                            Make a Listing
+                        </button>
+                    </Link>
                 </nav>
 
                 <Router>
