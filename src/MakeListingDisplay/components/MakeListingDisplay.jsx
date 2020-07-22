@@ -3,54 +3,90 @@ import React, { Component } from 'react';
 import '../styles/MakeListingDisplay.css';
 
 class MakeListingDisplay extends Component {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            title: '',
+            description: '',
+            totalNumOfRooms: '',
+            numOfRoomsForRentSingles: '',
+            singleRoomPrice: '',
+            numOfRoomsForRentShared: '',
+            sharedRoomPrice: '',
+            numOfBathrooms: '',
+            leaseType: '',
+            startDate: '',
+            endDate: ''
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(event) {
+        const target = event.target;
+        this.setState({
+            [target.name]: target.value
+        });
+    }
+
+    handleSubmit(event) {
+        alert("GOT IT!")
+        console.log(this.state);
+        event.preventDefault();
+    }
+
     render(){
         return (
-            <div>
+            <div className="make-a-listing-body">
                 <div id="header">
                     <h1>Post a Listing</h1>
                 </div>
-                <form action="/listings" id="listingForm" method="POST">
+                <form onSubmit={this.handleSubmit}>
                     <p>Title:</p>
-                    <input name="title" placeholder="Enter your title here" required/>
+                    <input type="text" name="title" value={this.state.title} 
+                    placeholder="Enter a title here" onChange={this.handleChange} required/>
 
                     <p>Description:</p>
-                    <input name="description" placeholder="Enter a description here" required/>
-
+                    <input type="text" name="description" value={this.state.description} 
+                    placeholder="Enter a description here" onChange={this.handleChange} required/>
+                    
                     <p>Total number of rooms in apartment:</p>
-                    <input type="number" id="numRooms" name="numRooms" min="1" required/>
-                    
+                    <input type="number" name="totalNumOfRooms"  
+                    min="1" onChange={this.handleChange} required/>
+
                     <p>Number of rooms for rent:</p>
-                    <label for="numSingles"> Singles: </label>
-                    <input type="number" id="numSingles" name="numSingles" min="0" value="0"
-                    onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    
+                    <label> Singles: </label>
+                    <input type="number" name="numOfRoomsForRentSingles" min="0" 
+                    onChange={this.handleChange} required/>
                     <p>Monthly Rent Per Single:</p>
-                    <label for="singlePrice"> $ </label>
-                    <input type="number" id="singlePrice" name="singlePrice" min="0" value="0"
-                    step="0.01" onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    <label for="numShared"> Shared: </label>
-                    <input type="number" id="numShared" name="numShared" min="0" value="0"
-                    onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    
+                    <label> $ </label>
+                    <input type="number" name="singleRoomPrice" min="0"
+                    step="0.5" onChange={this.handleChange} required/>
+                    <br></br>
+
+                    <label> Shared: </label>
+                    <input type="number" name="numOfRoomsForRentShared" min="0"
+                    onChange={this.handleChange} required/>
                     <p>Monthly Rent Per Shared Room:</p>
-                    <label for="sharedPrice"> $ </label>
-                    <input type="number" id="sharedPrice" name="sharedPrice" min="0" value="0"
-                    step="0.01" onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    <div id="listingPriceDisplay"></div>
-                    <input id="listingPrice" name="listingPrice" type="hidden"/>
-                    
+                    <label> $ </label>
+                    <input type="number" name="sharedRoomPrice" min="0"
+                    step="0.01" onChange={this.handleChange} required/>
+
                     <p>Number of bathrooms:</p>
-                    <input type="number" id="numBathrooms" name="numBathrooms" min="0" required/>
-                    
+                    <input type="number" name="numOfBathrooms" min="0" onChange={this.handleChange} required/>
+
                     <p>Lease type:</p>
-                    <select name="leaseTypes" size="2" required>
+                    <select name="leaseType" size="2" onChange={this.handleChange} required>
                         <option value="YEAR_LONG">Year-long</option>
                         <option value="MONTH_TO_MONTH">Month-to-Month</option>
                     </select>
-                    <label for="startDate">Lease Start Date:</label>
-                    <input type="date" id="startDate" name="startDate" required/>
-                    <label for="endDate">Lease End Date:</label>
-                    <input type="date" id="endDate" name="endDate" required/>
+                    <label>Lease Start Date:</label>
+                    <input type="date" name="startDate" onChange={this.handleChange} required/>
+                    <label>Lease End Date:</label>
+                    <input type="date" name="endDate" onChange={this.handleChange} required/>
+                    
                     <input type="submit" value="Post Listing"/>
                 </form>
             </div>
@@ -59,3 +95,24 @@ class MakeListingDisplay extends Component {
 }
 
 export default MakeListingDisplay;
+
+/*
+
+
+                    
+   
+    
+
+    <p>Number of bathrooms:</p>
+    <input type="number" id="numBathrooms" name="numBathrooms" min="0" required/>
+
+    <p>Lease type:</p>
+    <select name="leaseTypes" size="2" required>
+        <option value="YEAR_LONG">Year-long</option>
+        <option value="MONTH_TO_MONTH">Month-to-Month</option>
+    </select>
+    <label for="startDate">Lease Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required/>
+    <label for="endDate">Lease End Date:</label>
+    <input type="date" id="endDate" name="endDate" required/>
+*/
