@@ -1,3 +1,2 @@
 # Ignore generated Maven build files
 target/
-node_modules/
