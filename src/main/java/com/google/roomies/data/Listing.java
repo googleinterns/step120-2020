@@ -69,7 +69,7 @@ abstract class Listing implements Document, Serializable {
   abstract Money singlePrice();
   abstract Money listingPrice();
 
-  public static Builder builder() {
+  static Builder builder() {
     return new AutoValue_Listing.Builder();
   }
 
@@ -99,7 +99,7 @@ abstract class Listing implements Document, Serializable {
     * Throws IllegalArgumentException if input does not match a LeaseType enum 
     * value (case sensistive).
     */
-    public Builder setLeaseType(String leaseType) {
+    Builder setLeaseType(String leaseType) {
       setLeaseType(LeaseType.valueOf(leaseType));
       return this;
     }
@@ -107,7 +107,7 @@ abstract class Listing implements Document, Serializable {
     /**
     * Throws NumberFormatException if input is not parseable.
     */
-    public Builder setNumRooms(String numRooms) {
+    Builder setNumRooms(String numRooms) {
       setNumRooms(Integer.parseInt(numRooms));
       return this;
     }
@@ -116,7 +116,7 @@ abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer.
     * Throws NumberFormatException if input is not parseable.
     */
-    public Builder setNumBathrooms(String numBathrooms) {
+    Builder setNumBathrooms(String numBathrooms) {
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
@@ -124,7 +124,7 @@ abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer.
     * Throws NumberFormatException if input is not parseable.
     */
-    public Builder setNumShared(String numShared) {
+    Builder setNumShared(String numShared) {
       setNumShared(Integer.parseInt(numShared));
       return this;     
     }
@@ -133,7 +133,7 @@ abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer.
     * Throws NumberFormatException if input is not parseable.
     */
-    public Builder setNumSingles(String numSingles) {
+    Builder setNumSingles(String numSingles) {
       setNumSingles(Integer.parseInt(numSingles));
       return this;     
     }
@@ -142,7 +142,7 @@ abstract class Listing implements Document, Serializable {
     * Input should be in the format "yyyy-MM-dd."
     * Throws ParseException if date is not in correct format.
     */
-    public Builder setStartDate(String startDate) throws ParseException {
+    Builder setStartDate(String startDate) throws ParseException {
       setStartDate(StringConverter.stringToDate(startDate));
       return this;
     }
@@ -151,26 +151,17 @@ abstract class Listing implements Document, Serializable {
     * Input should be in the format "yyyy-MM-dd."
     * Throws ParseException if date is not in correct format.
     */
-    public Builder setEndDate(String endDate) throws ParseException {
+    Builder setEndDate(String endDate) throws ParseException {
       setEndDate(StringConverter.stringToDate(endDate));
       return this;
     }
-
-    // /**
-    // * Input should be in the format "yyyy-MM-dd."
-    // * Throws ParseException if date is not in correct format.
-    // */
-    // public Builder setTimestamp(String timestamp) throws ParseException {
-    //   setTimestamp(Optional.of(StringConverter.stringToDate(timestamp)));
-    //   return this;
-    // }
 
     /**
     * Input should be a postive number corresponding to a valid USD dollar amount,
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setSharedPrice(String sharedPrice) throws Exception {
+    Builder setSharedPrice(String sharedPrice) throws Exception {
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
       return this;
     }
@@ -180,7 +171,7 @@ abstract class Listing implements Document, Serializable {
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setSinglePrice(String singlePrice) throws Exception {
+    Builder setSinglePrice(String singlePrice) throws Exception {
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
       return this;
     }
@@ -190,7 +181,7 @@ abstract class Listing implements Document, Serializable {
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setListingPrice(String listingPrice) throws Exception {
+    Builder setListingPrice(String listingPrice) throws Exception {
       setListingPrice(StringConverter.stringToMoney(listingPrice));
       return this;
     }

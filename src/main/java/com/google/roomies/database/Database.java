@@ -3,6 +3,7 @@ package com.google.roomies.database;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -20,7 +21,7 @@ public interface Database {
   * @param collectionName name of collection in database
   * @param doc document that implements the document interface
   */  
-  public void addDocumentAsMap(String collectionName, Document doc);
+  public ApiFuture<DocumentReference> addDocumentAsMap(String collectionName, Document doc);
 
   /**
   * Add a document to a collection as a class.

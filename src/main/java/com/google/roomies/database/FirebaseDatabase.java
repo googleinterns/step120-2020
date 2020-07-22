@@ -45,9 +45,9 @@ public class FirebaseDatabase implements Database {
   * @param doc document that implements the document interface
   */
   @Override
-  public void addDocumentAsMap(String collectionName, Document doc) {
+  public ApiFuture<DocumentReference> addDocumentAsMap(String collectionName, Document doc) {
     Map<String, Object> data = doc.toMap();
-    this.db.collection(collectionName).add(data);
+    return this.db.collection(collectionName).add(data);
   }
 
   /**
@@ -112,6 +112,7 @@ public class FirebaseDatabase implements Database {
   */
   @Override
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
+    System.err.println("this db: " + (db == null));
     return db.collection(collectionName).get();
   }
   

@@ -77,7 +77,7 @@ public class ListingsServlet extends HttpServlet {
 
       response.sendRedirect(INDEX_URL);
     } catch (Exception e) {
-        System.err.println("Error posting" + e);
+        System.err.println("Error posting " + e);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
@@ -90,13 +90,12 @@ public class ListingsServlet extends HttpServlet {
     try {
       documents = database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
-      
      listings = StreamSupport.stream(documents.spliterator(), false)
       .map(listingDocument -> {
         try {
           return Listing.fromFirestore(listingDocument);
         } catch (Exception e) {
-          System.err.println("Error posting" + e);
+          System.err.println("Error fetching listing document " + e);
           return null;
         }
       })
@@ -106,8 +105,10 @@ public class ListingsServlet extends HttpServlet {
       response.setContentType("application/json");
       response.getWriter().println(convertToJsonUsingGson(listings));
     } catch (Exception e) {
-      System.err.println("Error posting" + e);
+      System.err.println("Error fetching " + e);
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.setContentType("text/html");
+      response.getWriter().println("request failed");
     }
   }
 
