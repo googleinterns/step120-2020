@@ -64,16 +64,17 @@ public class ListingsServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
   @Mock Database db;
-  @Mock ApiFuture<DocumentReference> apiFuture;
+  ApiFuture<DocumentReference> apiFuture;
   @Mock DocumentReference queryDocument;
- // @Mock 
   private Listing listing;
   private ListingsServlet listingsServlet;
  // private Database db;
  // private StringWriter stringWriter;
   
   @Before
-  public void setUp() throws Exception {    
+  public void setUp() throws Exception {
+    //DatabaseFactory.setDatabaseForTest(db);
+    
     MockitoAnnotations.initMocks(this);
 
  //   stringWriter = new StringWriter();
@@ -107,14 +108,16 @@ public class ListingsServletTest {
   public void testPost_postsSingleListing() throws Exception {
     listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
-    when(db.addDocumentAsMap(LISTING_COLLECTION_NAME, listing)).thenReturn(apiFuture);
-    when(apiFuture.get()).thenReturn(queryDocument);
+    when(db.addDocumentAsMap(LISTING_COLLECTION_NAME, listing)).thenReturn(apiFuture);    
     
-
     listingsServlet.doPost(request, response);
-  assertEquals(DatabaseFactory.getDatabase(), db);
     
-    Map<String, Object> map = apiFuture.get().get();
+    verify(db, Mockito.times(1)).addDocumentAsMap(LISTING_COLLECTION_NAME, listing);
+    assertNotNull(apiFuture);
+    assertNotNull(apiFuture.get().getId());
+      //  when(apiFuture.get()).thenReturn(queryDocument);
+
+ //   Map<String, Object> map = apiFuture.get().get();
   
 //  assertEquals(db, null);
     // ApiFuture<QuerySnapshot> future = DatabaseFactory.getDatabase().getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
