@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Comment from '../../Comment/components/Comment';
+import Comment from './Comment';
 import CommentEditor from '../../CommentEditor/components/CommentEditor';
 
 /**Component Class that displays all of the comments, the input box, and the post button.

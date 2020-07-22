@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import '../styles/MakeListingDisplay.css';
 
+/**Component class that displays the input fields for a user to post a listing */
 class MakeListingDisplay extends Component {
     render(){
         return (
