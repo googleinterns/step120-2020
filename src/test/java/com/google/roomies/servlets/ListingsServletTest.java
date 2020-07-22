@@ -76,6 +76,7 @@ public class ListingsServletTest {
     listingsServlet = new ListingsServlet();
     listingsServlet.init();
 
+    apiFuture = new ApiFuture<DocumentReference>();
     DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
   }
