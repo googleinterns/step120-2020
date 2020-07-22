@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import InputField from './InputField';
+
 import '../styles/MakeListingDisplay.css';
 
 /**Component class that displays the input fields for a user to post a listing */
@@ -11,47 +13,31 @@ class MakeListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
                 <form action="/listings" id="listingForm" method="POST">
-                    <p>Title:</p>
-                    <input name="title" placeholder="Enter your title here" required/>
-
-                    <p>Description:</p>
-                    <input name="description" placeholder="Enter a description here" required/>
-
-                    <p>Total number of rooms in apartment:</p>
-                    <input type="number" id="numRooms" name="numRooms" min="1" required/>
+                    <InputField fieldHeader="Title:" fieldName="title" fieldType="text" />
+                    <InputField fieldHeader="Description:" fieldName="description" fieldType="text" />
+                    <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" />
                     
                     <p>Number of rooms for rent:</p>
-                    <label for="numSingles"> Singles: </label>
-                    <input type="number" id="numSingles" name="numSingles" min="0" value="0"
-                    onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    
-                    <p>Monthly Rent Per Single:</p>
-                    <label for="singlePrice"> $ </label>
-                    <input type="number" id="singlePrice" name="singlePrice" min="0" value="0"
-                    step="0.01" onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    <label for="numShared"> Shared: </label>
-                    <input type="number" id="numShared" name="numShared" min="0" value="0"
-                    onClick="this.select()" onchange="calculateListingPrice()" required/>
-                    
-                    <p>Monthly Rent Per Shared Room:</p>
-                    <label for="sharedPrice"> $ </label>
-                    <input type="number" id="sharedPrice" name="sharedPrice" min="0" value="0"
-                    step="0.01" onClick="this.select()" onchange="calculateListingPrice()" required/>
+                    <div id="singleInfo">
+                        <InputField fieldHeader="Singles:" fieldName="numSingles" fieldType="number" />
+                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" />
+                    </div>
+                    <div id="sharedInfo">
+                        <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" />
+                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" />
+                    </div>
                     <div id="listingPriceDisplay"></div>
-                    <input id="listingPrice" name="listingPrice" type="hidden"/>
-                    
-                    <p>Number of bathrooms:</p>
-                    <input type="number" id="numBathrooms" name="numBathrooms" min="0" required/>
+
+                    <InputField fieldHeader="" fieldName="listingPrice" fieldType="hidden" />
+                    <InputField fieldHeader="Number of bathrooms:" fieldName="numBathrooms" fieldType="number" />
                     
                     <p>Lease type:</p>
                     <select name="leaseTypes" size="2" required>
                         <option value="YEAR_LONG">Year-long</option>
                         <option value="MONTH_TO_MONTH">Month-to-Month</option>
                     </select>
-                    <label for="startDate">Lease Start Date:</label>
-                    <input type="date" id="startDate" name="startDate" required/>
-                    <label for="endDate">Lease End Date:</label>
-                    <input type="date" id="endDate" name="endDate" required/>
+                    <InputField fieldHeader="Lease Start Date:" fieldName="startDate" fieldType="date" />
+                    <InputField fieldHeader="Lease End Date:" fieldName="endDate" fieldType="date" />
                     <input type="submit" value="Post Listing"/>
                 </form>
             </div>
