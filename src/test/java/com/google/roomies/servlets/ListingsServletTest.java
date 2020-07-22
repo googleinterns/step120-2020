@@ -68,41 +68,17 @@ public class ListingsServletTest {
   @Mock DocumentReference queryDocument;
   private Listing listing;
   private ListingsServlet listingsServlet;
- // private Database db;
- // private StringWriter stringWriter;
   
   @Before
-  public void setUp() throws Exception {
-    //DatabaseFactory.setDatabaseForTest(db);
-    
+  public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
-
- //   stringWriter = new StringWriter();
 
     listingsServlet = new ListingsServlet();
     listingsServlet.init();
- //   db = new FirebaseDatabase();
-    DatabaseFactory.setDatabaseForTest(db);
- //   db.setDatabaseForTest(dbMock);
 
+    DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
   }
-
-  // @Test
-  // public void testGet_returnsSingleListing() throws Exception {
-  //   listing = Listing.fromServletRequest(request);
-  //       Map<String, Object> expectedData = listing.toMap();
-  //   listingsServlet.doPost(request, response);
-  //   when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-
-  //   listingsServlet.doGet(request, response);
-
-  //   verify(dbMock, Mockito.times(2)).collection(LISTING_COLLECTION_NAME);
-  //   verify(collectionMock, Mockito.times(1)).add(expectedData);
-
-  //   verify(collectionMock, Mockito.times(1)).get();
-  //   assertEquals(stringWriter.getBuffer(), "[\"Bob: Nice\"]");
-  // }
 
   @Test
   public void testPost_postsSingleListing() throws Exception {
