@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
-public class FirebaseDatabase implements Database {
+/** A Firestore Database that implements the NoSQLDatabase interface. 
+    Allows for fetching and posting of data to Firestore. */
+public class FirebaseDatabase implements NoSQLDatabase {
   private Firestore db;
   FirebaseDatabase() throws IOException {
     this.db = initializeDatabase();
@@ -39,14 +41,18 @@ public class FirebaseDatabase implements Database {
   }
 
   /**
-  * Add a document to a collection using a map.
+  * Add a listing to a collection using a map.
   *
+  * Note: Listings include JavaMoney variables that are currently not serializable 
+  *       by Firestore. Adding listings as a custom class was explored and ultimately
+  *       not used because of this restriction with JavaMoney.
+  * 
   * @param collectionName name of collection in Firestore
-  * @param doc document that implements the document interface
+  * @param listing an instance of Listing
   */
   @Override
-  public void addDocumentAsMap(String collectionName, Document doc) {
-    Map<String, Object> data = doc.toMap();
+  public void addListingAsMap(String collectionName, Listing listing) {
+    Map<String, Object> data = listing.toMap();
     this.db.collection(collectionName).add(data);
   }
 

@@ -10,6 +10,7 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import org.javamoney.moneta.Money;
 
+/** Functions that convert strings to other data types. */
 public final class StringConverter {
   private StringConverter() {}
 

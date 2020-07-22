@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
-public interface Database {
+/** A NoSQL Database interface. */
+public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
   /**
@@ -20,7 +21,7 @@ public interface Database {
   * @param collectionName name of collection in database
   * @param doc document that implements the document interface
   */  
-  public void addDocumentAsMap(String collectionName, Document doc);
+  public void addListingAsMap(String collectionName, Listing listing);
 
   /**
   * Add a document to a collection as a class.
