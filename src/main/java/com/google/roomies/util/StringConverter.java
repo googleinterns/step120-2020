@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
+import javax.money.UnknownCurrencyException;
+import javax.money.format.MonetaryParseException;
 import org.javamoney.moneta.Money;
 
 public final class StringConverter {
@@ -31,8 +33,18 @@ public final class StringConverter {
   * @param price string representation of a monetary amount
   * @return a Money instance of the price in USD.
   */
-  public static Money stringToMoney(String price) {
-    CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
-    return Money.of(Integer.parseInt(price), usd);
+  public static Money stringToMoney(String price) throws Exception {
+    Money convertedPrice;
+    try {
+      convertedPrice = Money.parse(price);
+    } catch (MonetaryParseException | UnknownCurrencyException | NumberFormatException e) {
+      try {
+        CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
+        convertedPrice = Money.of(Integer.parseInt(price.toString()), usd);
+      } catch (NumberFormatException numFormatException) {
+        throw new Exception(numFormatException);
+      }
+    }
+    return convertedPrice;
   }
 }

@@ -34,22 +34,33 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.common.collect.Streams;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.roomies.database.Database;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.javamoney.moneta.Money;
 
 /** Servlet that posts and fetches listings. */
 @WebServlet("/listings")
@@ -71,20 +82,40 @@ public class ListingsServlet extends HttpServlet {
     }
   }
 
-  // @Override
-  // public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  //   database = DatabaseFactory.getDatabase();
-  //   int numComments = getNumberOfCommentsToDisplay(request);
-  //   List<Listing> listings = new ArrayList();
-  //   StreamSupport.stream(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME))
-  //   .limit(numComments)
-  //   .forEach()
-  //   response.setContentType("application/json");
-  //   response.getWriter().println(convertToJsonUsingGson(comments));) {
-  // }
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    database = DatabaseFactory.getDatabase();
+    List<Listing> listings = new ArrayList();
+    List<QueryDocumentSnapshot> documents;
+    try {
+      documents = database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
-  // private String convertToJsonUsingGson(List data) {
-  //   Gson gson = new Gson();
-  //   return gson.toJson(data);
-  // }
+      
+     listings = StreamSupport.stream(documents.spliterator(), false)
+      .map(listingDocument -> {
+        try {
+          return Listing.fromFirestore(listingDocument);
+        } catch (Exception e) {
+          System.err.println("Error posting" + e);
+          return null;
+        }
+      })
+      .filter(listing -> listing != null)
+      .collect(Collectors.toList());
+
+      response.setContentType("application/json");
+      response.getWriter().println(convertToJsonUsingGson(listings));
+    } catch (Exception e) {
+      System.err.println("Error posting" + e);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+  }
+
+
+  private String convertToJsonUsingGson(List data) {
+    Gson gson = new GsonBuilder()
+                  .registerTypeAdapter(Money.class, new MoneySerializer())
+                  .create();
+    return gson.toJson(data);
+  }
 }

@@ -20,6 +20,7 @@ import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import java.text.ParseException;
@@ -155,12 +156,21 @@ abstract class Listing implements Document, Serializable {
       return this;
     }
 
+    // /**
+    // * Input should be in the format "yyyy-MM-dd."
+    // * Throws ParseException if date is not in correct format.
+    // */
+    // public Builder setTimestamp(String timestamp) throws ParseException {
+    //   setTimestamp(Optional.of(StringConverter.stringToDate(timestamp)));
+    //   return this;
+    // }
+
     /**
     * Input should be a postive number corresponding to a valid USD dollar amount,
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setSharedPrice(String sharedPrice) {
+    public Builder setSharedPrice(String sharedPrice) throws Exception {
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
       return this;
     }
@@ -170,7 +180,7 @@ abstract class Listing implements Document, Serializable {
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setSinglePrice(String singlePrice) {
+    public Builder setSinglePrice(String singlePrice) throws Exception {
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
       return this;
     }
@@ -180,7 +190,7 @@ abstract class Listing implements Document, Serializable {
     * without the $ sign.
     * Throws Exception if price is not in correct format.
     */
-    public Builder setListingPrice(String listingPrice) {
+    public Builder setListingPrice(String listingPrice) throws Exception {
       setListingPrice(StringConverter.stringToMoney(listingPrice));
       return this;
     }
@@ -215,7 +225,31 @@ abstract class Listing implements Document, Serializable {
     /**
     * Sets all listing values to the corresponding HTTP Servlet request parameter.
     */
-    public static Listing fromServletRequest(HttpServletRequest request) throws ParseException {
+    public static Listing fromFirestore(QueryDocumentSnapshot document) throws Exception {
+      ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
+      System.out.println("listing data" + listingData);
+      return Listing.builder()
+      .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
+      .setDocumentId(Optional.of(document.getId()))
+       .setTitle(listingData.get(TITLE).toString())
+      .setDescription(listingData.get(DESCRIPTION).toString())
+      .setStartDate(listingData.get(START_DATE).toString())
+      .setEndDate(listingData.get(END_DATE).toString())
+      .setLeaseType(listingData.get(LEASE_TYPE).toString())
+      .setNumRooms(((Long) listingData.get(NUM_ROOMS)).intValue())
+      .setNumBathrooms(((Long) listingData.get(NUM_BATHROOMS)).intValue())
+      .setNumShared(((Long) listingData.get(NUM_SHARED)).intValue())
+      .setNumSingles(((Long) listingData.get(NUM_SINGLES)).intValue())
+      .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
+      .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
+      .setListingPrice(listingData.get(LISTING_PRICE).toString())
+      .build();
+    }
+
+    /**
+    * Sets all listing values to the corresponding HTTP Servlet request parameter.
+    */
+    public static Listing fromServletRequest(HttpServletRequest request) throws Exception {
       return Listing.builder()
       .setTitle(request.getParameter(TITLE))
       .setDescription(request.getParameter(DESCRIPTION))
