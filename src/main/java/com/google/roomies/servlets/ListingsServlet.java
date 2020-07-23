@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.google.roomies;
 
 import static com.google.roomies.ProjectConstants.INDEX_URL;
@@ -34,27 +33,38 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.common.collect.Streams;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.roomies.database.Database;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.javamoney.moneta.Money;
 
 /** Servlet that posts and fetches listings. */
 @WebServlet("/listings")
-public class ListingServlet extends HttpServlet {
-  private Database database;
+public class ListingsServlet extends HttpServlet {
+  private NoSQLDatabase database;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
@@ -62,11 +72,11 @@ public class ListingServlet extends HttpServlet {
       database = DatabaseFactory.getDatabase();
       Listing post = Listing.fromServletRequest(request);
 
-      database.addDocumentAsMap(LISTING_COLLECTION_NAME, post);
+      database.addListingAsMap(LISTING_COLLECTION_NAME, post);
 
       response.sendRedirect(INDEX_URL);
     } catch (Exception e) {
-        System.err.println("Error posting" + e);
+        System.err.println("Error posting " + e);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
