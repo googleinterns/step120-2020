@@ -1,37 +1,35 @@
 import React, {useState} from "react";
 import {Link} from "@reach/router";
+import { authentication } from "../firebase";
 
 const SignInPage = () => {
   const [userPassword, setUserPassword] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [error, setError] = useState(null);
 
-  const signInHandler = (event,email,password) => {
+  const signInHandler = async (event,email,password) => {
+      console.log("been called");
     event.preventDefault();
+    authentication.signInWithEmailAndPassword(email, password).catch(error => {
+        setError("Error signing in with password and email!");
+        console.error("Error signing in with password and email", error);
+    });
   };
-
-  const onChangeHandler = (event) => {
-      const {name, value} = event.currentTarget;
-      {/* gets the . part of the address to check if its edu */}
-      const emailEnd = name.substring(name.length - 4, name.length);
-      
-      {/*
-        TODO redirect the user to an error page
-        that tells them that their email addresses
-        is invalid and must be a .edu address 
-        */}
-      if(name === 'userEmail') {
-        setUserEmail(value);
-      }
-      else if(name === 'userPassword') {
+  
+  const onUserPasswordChangeHandler = event => {
+        const {value} = event.currentTarget;
         setUserPassword(value);
-      }
-  };
+    }
+    const onUserEmailChangeHandler = event => {
+        const {value} = event.currentTarget;
+        setUserEmail(value);
+    }
 
   return (
       <div className="SignIn">
         <h1 className="Title">Sign In </h1>
         <div className="SignIn-Area">
+          {error !== null && <div>{error}</div>}
           <form className="SignIn-form">
             <label htmlFor="userEmail" className="block">
               Your Email:
@@ -43,10 +41,10 @@ const SignInPage = () => {
               value= {userEmail}
               placeholder= "E.x: JohnAppleseed@gmail.com"
               id="userEmail"
-              onChange = {(event) => onChangeHandler(event)} 
+              onChange = {(event) => onUserEmailChangeHandler(event)} 
             />
             <label htmlFor="userPassword" className="block">
-              Make a Strong Password:
+              Your Password:
             </label>
             <input
               type="userPassword"
@@ -54,7 +52,7 @@ const SignInPage = () => {
               name="userPassword"
               value= {userPassword}
               placeholder="Your Password Here"
-              onChange = {(event) => onChangeHandler(event)}
+              onChange = {(event) => onUserPasswordChangeHandler(event)}
             />
             <button 
               className="SignInButton"

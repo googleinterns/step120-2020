@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAjse2YjCJHUUe5w1i7I9jkjH8cqqRcAIU",
@@ -15,5 +16,25 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
+
+  export const generateUserDocument = async (user, furtherData) => {
+      if(!user) return;
+      
+      //fill doc with user data
+      
+      return getUserDocument(user.uid);
+  };
+  const getUserDocument = async uid => {
+      if (!uid) return null;
+      try {
+          const userDocument = await firestore.doc(`users/${uid}`).get();
+          return {
+              uid,
+              ...userDocument.data()
+          };
+      } catch (error) {
+          console.error("Error fetching user", error);
+      }
+  };
   export const authentication = firebase.auth();
   export const firestore = firebase.firestore();
