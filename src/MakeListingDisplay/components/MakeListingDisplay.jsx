@@ -20,11 +20,11 @@ class MakeListingDisplay extends Component {
                     <p>Number of rooms for rent:</p>
                     <div id="singleInfo">
                         <InputField fieldHeader="Singles:" fieldName="numSingles" fieldType="number" />
-                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" />
+                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" fieldStep="0.01"/>
                     </div>
                     <div id="sharedInfo">
                         <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" />
-                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" />
+                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" fieldStep="0.01"/>
                     </div>
                     <div id="listingPriceDisplay"></div>
 
