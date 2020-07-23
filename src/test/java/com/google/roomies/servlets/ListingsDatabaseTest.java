@@ -35,6 +35,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.roomies.database.NoSQLDatabase;
+import com.google.roomies.database.FirebaseDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,91 +59,46 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
-public class ListingsServletTest {
+public class ListingsDatabaseTest {
   @Mock CollectionReference collectionMock;
   @Mock Firestore dbMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
-  @Mock NoSQLDatabase db;
   private Listing listing;
-  private ListingsServlet listingsServlet;
+  private NoSQLDatabase db;
   
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
 
-    listingsServlet = new ListingsServlet();
-    listingsServlet.init();
+    db = DatabaseFactory.getDatabase();
+    db.setDatabaseForTest(dbMock);
+    when(dbMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
+    listing = Listing.fromServletRequest(request);
   }
 
   @Test
-  public void testPost_postsSingleListing() throws Exception {
-    listing = Listing.fromServletRequest(request);
+  public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
     Map<String, Object> expectedData = listing.toMap();
     
-    listingsServlet.doPost(request, response);
-    
-    verify(db, Mockito.times(1)).addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+
+    verify(dbMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
+    verify(collectionMock, Mockito.times(1)).add(expectedData);
   }
 
-  @Test
-  public void testPost_requestHasUnparseableDates_servletResponseIsSetToBadRequest() throws Exception {
+  @Test(expected = ParseException.class)
+  public void testAddListingAsMap_listingHasInvalidInput_exceptionThrownBeforeListingIsPosted()
+     throws Exception {
     String invalidEndDate = "202020/20/10";
     String invalidStartDate = "07/10/2020";
     when(request.getParameter(END_DATE)).thenReturn(invalidEndDate);
     when(request.getParameter(START_DATE)).thenReturn(invalidStartDate);
+    listing = Listing.fromServletRequest(request);
 
-    listingsServlet.doPost(request, response);
-
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
-    verify(response).setStatus(400);
-  }
-
-  @Test
-  public void testPost_requestHasInvalidLeaseType_servletResponseIsSetToBadRequest() throws Exception {
-    String invalidLeaseType = "yearlong";
-    when(request.getParameter(LEASE_TYPE)).thenReturn(invalidLeaseType);
-    
-    listingsServlet.doPost(request, response);
-
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
-    verify(response).setStatus(400);
-  }
-
-  @Test
-  public void testPost_requestHasInvalidListingPrice_servletResponseIsSetToBadRequest() throws Exception {
-    String invalidListingPrice = "price";
-    when(request.getParameter(LISTING_PRICE)).thenReturn(invalidListingPrice);
- 
-    listingsServlet.doPost(request, response);
-
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
-    verify(response).setStatus(400);
-  }
-
-  @Test
-  public void testPost_requestHasInvalidSharedPrice_servletResponseIsSetToBadRequest() throws Exception {
-    String invalidSharedPrice = "$3";
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(invalidSharedPrice);
-    
-    listingsServlet.doPost(request, response);
-
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
-    verify(response).setStatus(400);
-  }
-
-  @Test
-  public void testPost_requestHasInvalidSinglePrice_servletResponseIsSetToBadRequest() throws Exception {
-    String invalidSinglePrice = "-.3";
-    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(invalidSinglePrice);
-  
-    listingsServlet.doPost(request, response);
-
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
-    verify(response).setStatus(400);
+    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
   }
 
   /**
