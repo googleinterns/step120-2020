@@ -5,7 +5,7 @@ import InputField from './InputField';
 import '../styles/PostListingDisplay.css';
 
 /**Component class that displays the input fields for a user to post a listing */
-class MakeListingDisplay extends Component {
+class PostListingDisplay extends Component {
     constructor(props){
         super(props);
 
@@ -42,7 +42,7 @@ class MakeListingDisplay extends Component {
 
     render(){
         return (
-            <div className="make-a-listing-body">
+            <div id="make-a-listing-body">
                 <div id="header">
                     <h1>Post a Listing</h1>
                 </div>
@@ -79,4 +79,4 @@ class MakeListingDisplay extends Component {
     }
 }
 
-export default MakeListingDisplay;
+export default PostListingDisplay;

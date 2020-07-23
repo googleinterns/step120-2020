@@ -1,0 +1,221 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Blank InputField renders correctly 1`] = `
+<div>
+  <p />
+  <input
+    required={true}
+  />
+</div>
+`;
+
+exports[`InputField renders correctly 1`] = `
+<div>
+  <p>
+    Header
+  </p>
+  <input
+    name="name"
+    required={true}
+    type="text"
+  />
+</div>
+`;
+
+exports[`InputField with just one of each prop renders correctly 1`] = `
+<div>
+  <p>
+    Header
+  </p>
+  <input
+    required={true}
+  />
+</div>
+`;
+
+exports[`InputField with just one of each prop renders correctly 2`] = `
+<div>
+  <p />
+  <input
+    name="name"
+    required={true}
+  />
+</div>
+`;
+
+exports[`InputField with just one of each prop renders correctly 3`] = `
+<div>
+  <p />
+  <input
+    required={true}
+    type="text"
+  />
+</div>
+`;
+
+exports[`PostListingDisplay renders correctly 1`] = `
+<div
+  id="make-a-listing-body"
+>
+  <div
+    id="header"
+  >
+    <h1>
+      Post a Listing
+    </h1>
+  </div>
+  <form
+    onSubmit={[Function]}
+  >
+    <div>
+      <p>
+        Title:
+      </p>
+      <input
+        name="title"
+        onChange={[Function]}
+        required={true}
+        type="text"
+      />
+    </div>
+    <div>
+      <p>
+        Description:
+      </p>
+      <input
+        name="description"
+        onChange={[Function]}
+        required={true}
+        type="text"
+      />
+    </div>
+    <div>
+      <p>
+        Total number of rooms in apartment:
+      </p>
+      <input
+        name="numRooms"
+        onChange={[Function]}
+        required={true}
+        type="number"
+      />
+    </div>
+    <p>
+      Number of rooms for rent:
+    </p>
+    <div
+      id="singleInfo"
+    >
+      <div>
+        <p>
+          Singles:
+        </p>
+        <input
+          name="numSingles"
+          onChange={[Function]}
+          required={true}
+          type="number"
+        />
+      </div>
+      <div>
+        <p>
+          Monthly Rent Per Single:
+        </p>
+        <input
+          name="singlePrice"
+          onChange={[Function]}
+          required={true}
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      id="sharedInfo"
+    >
+      <div>
+        <p>
+          Shared:
+        </p>
+        <input
+          name="numShared"
+          onChange={[Function]}
+          required={true}
+          type="number"
+        />
+      </div>
+      <div>
+        <p>
+          Monthly Rent Per Shared Room:
+        </p>
+        <input
+          name="sharedPrice"
+          onChange={[Function]}
+          required={true}
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      id="listingPriceDisplay"
+    />
+    <div>
+      <p>
+        Number of bathrooms:
+      </p>
+      <input
+        name="numBathrooms"
+        onChange={[Function]}
+        required={true}
+        type="number"
+      />
+    </div>
+    <p>
+      Lease type:
+    </p>
+    <select
+      name="leaseTypes"
+      onChange={[Function]}
+      required={true}
+      size="2"
+    >
+      <option
+        value="YEAR_LONG"
+      >
+        Year-long
+      </option>
+      <option
+        value="MONTH_TO_MONTH"
+      >
+        Month-to-Month
+      </option>
+    </select>
+    <div>
+      <p>
+        Lease Start Date:
+      </p>
+      <input
+        name="startDate"
+        onChange={[Function]}
+        required={true}
+        type="date"
+      />
+    </div>
+    <div>
+      <p>
+        Lease End Date:
+      </p>
+      <input
+        name="endDate"
+        onChange={[Function]}
+        required={true}
+        type="date"
+      />
+    </div>
+    <input
+      id="post-listing-button"
+      type="submit"
+      value="Post Listing"
+    />
+  </form>
+</div>
+`;
