@@ -20,6 +20,7 @@ import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import java.text.ParseException;
@@ -37,7 +38,7 @@ import org.javamoney.moneta.Money;
 
 /** A listing made by a user. */
 @AutoValue
-abstract class Listing implements Serializable {
+public abstract class Listing implements Document, Serializable {
   /**
   * Describes the two different lease types for a listing.
   * If input is not one of these two options, servlet throws an error.
@@ -68,7 +69,7 @@ abstract class Listing implements Serializable {
   abstract Money singlePrice();
   abstract Money listingPrice();
 
-  public static Builder builder() {
+  static Builder builder() {
     return new AutoValue_Listing.Builder();
   }
 
@@ -95,23 +96,16 @@ abstract class Listing implements Serializable {
     abstract Listing build();
     
     /**
-    * Sets the lease type to a Lease Type enum value given a string representation of
-    * the lease type.
-    * 
-    * Input should match a LeaseType enum (ex. "YEAR_LONG").
-    * @throws IllegalArgumentException if input does not match a LeaseType enum 
+    * Throws IllegalArgumentException if input does not match a LeaseType enum 
     * value (case sensistive).
     */
     Builder setLeaseType(String leaseType) {
       setLeaseType(LeaseType.valueOf(leaseType));
       return this;
     }
+
     /**
-    * Sets the number of bedrooms to an integer given a string representation of
-    * the number.
-    *
-    * Input should be a non-negative integer (ex. "2").
-    * @throws NumberFormatException if input is not parseable.
+    * Throws NumberFormatException if input is not parseable.
     */
     Builder setNumRooms(String numRooms) {
       setNumRooms(Integer.parseInt(numRooms));
@@ -119,23 +113,16 @@ abstract class Listing implements Serializable {
     }
 
     /**
-    * Sets the number of bathrooms to an integer given a string representation of
-    * the number.
-    *
-    * Input should be a non-negative integer (ex. "2").
-    * @throws NumberFormatException if input is not parseable.
+    * Input should be a non-negative integer.
+    * Throws NumberFormatException if input is not parseable.
     */
     Builder setNumBathrooms(String numBathrooms) {
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
-
     /**
-    * Sets the number of shared bedrooms to an integer given a string representation
-    * of the number.
-    *
-    * Input should be a non-negative integer (ex. "2").
-    * @throws NumberFormatException if input is not parseable.
+    * Input should be a non-negative integer.
+    * Throws NumberFormatException if input is not parseable.
     */
     Builder setNumShared(String numShared) {
       setNumShared(Integer.parseInt(numShared));
@@ -143,11 +130,8 @@ abstract class Listing implements Serializable {
     }
 
     /**
-    * Sets the number of singles to an integer given a string representation of
-    * the number.
-    *
-    * Input should be a non-negative integer (ex. "2").
-    * @throws NumberFormatException if input is not parseable.
+    * Input should be a non-negative integer.
+    * Throws NumberFormatException if input is not parseable.
     */
     Builder setNumSingles(String numSingles) {
       setNumSingles(Integer.parseInt(numSingles));
@@ -155,10 +139,8 @@ abstract class Listing implements Serializable {
     }
 
     /**
-    * Sets the start date to be a Date given a string representation of the start date.
-    *
-    * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
-    * @throws ParseException if date is not in correct format.
+    * Input should be in the format "yyyy-MM-dd."
+    * Throws ParseException if date is not in correct format.
     */
     Builder setStartDate(String startDate) throws ParseException {
       setStartDate(StringConverter.stringToDate(startDate));
@@ -166,10 +148,8 @@ abstract class Listing implements Serializable {
     }
 
     /**
-    * Sets the end date to be a Date given a string representation of the end date.
-    *
-    * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
-    * @throws ParseException if date is not in correct format.
+    * Input should be in the format "yyyy-MM-dd."
+    * Throws ParseException if date is not in correct format.
     */
     Builder setEndDate(String endDate) throws ParseException {
       setEndDate(StringConverter.stringToDate(endDate));
@@ -177,40 +157,31 @@ abstract class Listing implements Serializable {
     }
 
     /**
-    * Sets the shared room price (of type Money) given a string representation of
-    * the price.  
-    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign (ex. "300")
-    * @throws Exception if price is not in correct format.
+    * without the $ sign.
+    * Throws Exception if price is not in correct format.
     */
-    Builder setSharedPrice(String sharedPrice) {
+    Builder setSharedPrice(String sharedPrice) throws Exception {
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
       return this;
     }
 
     /**
-    * Sets the single room price (of type Money) given a string representation of
-    * the price.  
-    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign (ex. "300")
-    * @throws Exception if price is not in correct format.
+    * without the $ sign.
+    * Throws Exception if price is not in correct format.
     */
-    Builder setSinglePrice(String singlePrice) {
+    Builder setSinglePrice(String singlePrice) throws Exception {
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
       return this;
     }
 
     /**
-    * Sets the listing price (of type Money) given a string representation of
-    * the price.  
-    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign (ex. "300")
-    * @throws Exception if price is not in correct format.
+    * without the $ sign.
+    * Throws Exception if price is not in correct format.
     */
-    Builder setListingPrice(String listingPrice) {
+    Builder setListingPrice(String listingPrice) throws Exception {
       setListingPrice(StringConverter.stringToMoney(listingPrice));
       return this;
     }
@@ -245,7 +216,7 @@ abstract class Listing implements Serializable {
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
   */
-  public static Listing fromServletRequest(HttpServletRequest request) throws ParseException {
+  public static Listing fromServletRequest(HttpServletRequest request) throws Exception {
     return Listing.builder()
     .setTitle(request.getParameter(TITLE))
     .setDescription(request.getParameter(DESCRIPTION))
