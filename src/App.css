@@ -2,10 +2,10 @@ button {
   color: rgb(33, 54, 53); /* Dark gray green */
   font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
   font-size: 24px;
+  margin-right: 1em;
   padding: 14px 16px;
   text-align: center;
   text-decoration: none;
-  margin-right: 1em;
 }
 
 button:hover {
