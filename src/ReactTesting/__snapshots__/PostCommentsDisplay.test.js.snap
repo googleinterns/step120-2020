@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comment renders correctly 1`] = `
+<div
+  className="comment-body"
+>
+  Hello There!
+</div>
+`;
+
+exports[`CommentEditor renders correctly 1`] = `
+<div
+  className="comment-editor"
+>
+  <textarea
+    className="comment-input"
+    onChange={[Function]}
+    value=""
+  />
+  <button
+    className="post-button"
+    onClick={[Function]}
+  >
+    Post
+  </button>
+</div>
+`;
+
+exports[`PostCommentDisplay renders correctly 1`] = `
+<div>
+  <div
+    className="comment-editor"
+  >
+    <textarea
+      className="comment-input"
+      onChange={[Function]}
+      value=""
+    />
+    <button
+      className="post-button"
+      onClick={[Function]}
+    >
+      Post
+    </button>
+  </div>
+</div>
+`;
