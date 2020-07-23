@@ -38,7 +38,7 @@ import org.javamoney.moneta.Money;
 
 /** A listing made by a user. */
 @AutoValue
-abstract class Listing implements Document, Serializable {
+public abstract class Listing implements Document, Serializable {
   /**
   * Describes the two different lease types for a listing.
   * If input is not one of these two options, servlet throws an error.

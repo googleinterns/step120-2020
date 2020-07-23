@@ -41,7 +41,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.roomies.database.Database;
+import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.text.ParseException;
@@ -65,7 +65,7 @@ import org.javamoney.moneta.Money;
 /** Servlet that posts and fetches listings. */
 @WebServlet("/listings")
 public class ListingsServlet extends HttpServlet {
-  private Database database;
+  private NoSQLDatabase database;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
@@ -73,7 +73,7 @@ public class ListingsServlet extends HttpServlet {
       database = DatabaseFactory.getDatabase();
       Listing post = Listing.fromServletRequest(request);
 
-      database.addDocumentAsMap(LISTING_COLLECTION_NAME, post);
+      database.addListingAsMap(LISTING_COLLECTION_NAME, post);
 
       response.sendRedirect(INDEX_URL);
     } catch (Exception e) {

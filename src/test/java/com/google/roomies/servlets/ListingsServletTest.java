@@ -34,7 +34,7 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
-import com.google.roomies.database.Database;
+import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -63,9 +63,7 @@ public class ListingsServletTest {
   @Mock Firestore dbMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
-  @Mock Database db;
-  ApiFuture<DocumentReference> apiFuture;
-  @Mock DocumentReference queryDocument;
+  @Mock NoSQLDatabase db;
   private Listing listing;
   private ListingsServlet listingsServlet;
   
@@ -84,11 +82,10 @@ public class ListingsServletTest {
   public void testPost_postsSingleListing() throws Exception {
     listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
-    when(db.addDocumentAsMap(LISTING_COLLECTION_NAME, listing)).thenReturn(apiFuture);    
     
     listingsServlet.doPost(request, response);
     
-    verify(db, Mockito.times(1)).addDocumentAsMap(LISTING_COLLECTION_NAME, listing);
+    verify(db, Mockito.times(1)).addListingAsMap(LISTING_COLLECTION_NAME, listing);
   }
 
   @Test
@@ -100,7 +97,7 @@ public class ListingsServletTest {
 
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addDocumentAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -111,7 +108,7 @@ public class ListingsServletTest {
     
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addDocumentAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -122,7 +119,7 @@ public class ListingsServletTest {
  
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addDocumentAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -133,7 +130,7 @@ public class ListingsServletTest {
     
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addDocumentAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -144,7 +141,7 @@ public class ListingsServletTest {
   
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addDocumentAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
     verify(response).setStatus(400);
   }
 

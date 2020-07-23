@@ -8,20 +8,21 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.roomies.Document;
+import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
-public interface Database {
+public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
   /**
   * Add a document to a collection using a map.
   *
   * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
+  * @param listing instance of Listing class
   */  
-  public ApiFuture<DocumentReference> addDocumentAsMap(String collectionName, Document doc);
+  public void addListingAsMap(String collectionName, Listing listing);
 
   /**
   * Add a document to a collection as a class.
