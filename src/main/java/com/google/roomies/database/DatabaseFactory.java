@@ -20,4 +20,8 @@ public class DatabaseFactory {
     }
     return db;
   }
+
+  public static void setDatabaseForTest(NoSQLDatabase database) {
+    db = database;
+  }
 }

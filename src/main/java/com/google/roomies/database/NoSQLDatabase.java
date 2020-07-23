@@ -3,15 +3,18 @@ package com.google.roomies.database;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.roomies.Document;
+import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
-/** A NoSQL Database interface. */
+/** A NoSQL Database interface. Specifies required fetch, update, and get methods
+    for a database. */
 public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
@@ -19,7 +22,7 @@ public interface NoSQLDatabase {
   * Add a document to a collection using a map.
   *
   * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
+  * @param listing instance of Listing class
   */  
   public void addListingAsMap(String collectionName, Listing listing);
 

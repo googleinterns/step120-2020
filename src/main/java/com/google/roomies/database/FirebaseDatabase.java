@@ -19,6 +19,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.roomies.Document;
+import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
