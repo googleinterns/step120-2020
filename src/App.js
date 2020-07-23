@@ -6,7 +6,7 @@ import MakeListingDisplay from './MakeListingDisplay/components/MakeListingDispl
 
 import './App.css';
 
-/**Component class to render the whole comments page */
+/** Component class to render the whole comments page*/
 function App(props) {
     return (
         <div>

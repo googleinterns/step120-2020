@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/CommentEditor.css';
 
-/**Component class for the input box and the post button of the comment area.
+/** Component class for the input box and the post button of the comment area.
 Handles the creation of comments based on input into text box and click of the button.
 Takes in a function. addComment, that takes the text in the text box and puts it into
  the array of comments*/

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Comment from './Comment';
 import CommentEditor from './CommentEditor';
 
-/**Component Class that displays all of the comments, the input box, and the post button.
-Handles adding text from the text box to the array of comments. */
+/** Component Class that displays all of the comments, the input box, and the post button.
+Handles adding text from the text box to the array of comments.*/
 class PostCommentsDisplay extends Component {
     constructor(props) {
         super(props);
