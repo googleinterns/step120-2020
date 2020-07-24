@@ -7,6 +7,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
@@ -35,6 +36,14 @@ public interface NoSQLDatabase {
   * @param doc document that implements the document interface
   */
   public void addDocumentAsClass(String collectionName, Document doc) throws Exception;
+
+  /**
+  * Add a comment to a collection as a class.
+  *
+  * @param collectionName name of collection in database
+  * @param comment a Comment instance 
+  */
+  public void addCommentAsMap(String collectionName, Comment comment) throws Exception;
 
   /**
   * Update a document with the specified input fields.

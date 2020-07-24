@@ -18,6 +18,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
@@ -71,6 +72,21 @@ public class FirebaseDatabase implements NoSQLDatabase {
     addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
   }
 
+  /**
+  * Add a comment to a collection as a map.
+  *
+  * @param collectionName name of collection in database
+  * @param comment a Comment instance 
+  */
+  @Override
+  public void addCommentAsMap(String collectionName, Comment comment) throws Exception {
+        Map<String, Object> data = comment.toMap();
+    this.db.collection(collectionName).add(data);
+
+    // ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(comment);
+    // System.out.println("added doc");
+    // addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
+  }
   /**
   * Update a document with the specified input fields.
   *
