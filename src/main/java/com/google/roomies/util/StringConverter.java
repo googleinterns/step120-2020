@@ -35,8 +35,8 @@ public final class StringConverter {
   * @param moneyRepresentation string representation of a monetary amount
   * @return a Money instance of the input price.
   */
-  public static Money stringToMoney(String moneyRepresentation) throws UnknownCurrencyException,
-      MonetaryParseException, NumberFormatException {
+  public static Money stringToMoney(String moneyRepresentation) throws
+     UnknownCurrencyException,MonetaryParseException, NumberFormatException {
     Money convertedPrice;
     try {
       convertedPrice = priceAndCurrencyToMoney(moneyRepresentation);
@@ -53,8 +53,8 @@ public final class StringConverter {
   * @param priceAndCurrency string representation of a monetary amount
   * @return a Money instance of the price in specified currency code
   */
-  private static Money priceAndCurrencyToMoney(String priceAndCurrency) throws UnknownCurrencyException,
-      MonetaryParseException, NumberFormatException {
+  private static Money priceAndCurrencyToMoney(String priceAndCurrency) throws
+    UnknownCurrencyException, MonetaryParseException, NumberFormatException {
     return Money.parse(priceAndCurrency);
   }
 

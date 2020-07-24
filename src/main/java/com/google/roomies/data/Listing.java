@@ -252,8 +252,9 @@ public abstract class Listing implements Document, Serializable {
     /**
     * Sets all listing values to the corresponding HTTP Servlet request parameter.
     *
-    * Note: Using a map representation of listing data when fetched (and posted) from Firestore
-    * due to serialization problem with JavaMoney, which Firestore was not able to serialize.
+    * Note: Using a map representation of listing data when fetched
+    * (and posted) from Firestore due to serialization problem with JavaMoney,
+    * which Firestore was not able to serialize.
     */
     public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException, ParseException {
@@ -280,7 +281,8 @@ public abstract class Listing implements Document, Serializable {
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
   */
-  public static Listing fromServletRequest(HttpServletRequest request) throws Exception {
+  public static Listing fromServletRequest(HttpServletRequest request) throws UnknownCurrencyException,
+        MonetaryParseException, NumberFormatException, ParseException {
     return Listing.builder()
     .setTitle(request.getParameter(TITLE))
     .setDescription(request.getParameter(DESCRIPTION))

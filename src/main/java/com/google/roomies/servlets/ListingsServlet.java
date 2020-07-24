@@ -86,7 +86,8 @@ public class ListingsServlet extends HttpServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     database = DatabaseFactory.getDatabase();
     try {
       List<Listing> listings = getAllListingsFromCollection();
