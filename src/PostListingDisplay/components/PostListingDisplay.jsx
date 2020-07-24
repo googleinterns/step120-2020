@@ -10,17 +10,19 @@ class PostListingDisplay extends Component {
         super(props);
 
         this.state = {
-            title: '',
-            description: '',
-            numRooms: '',
-            numSingles: '',
-            singlePrice: '',
-            numShared: '',
-            sharedPrice: '',
-            numBathrooms: '',
-            leaseTypes: '',
-            startDate: '',
-            endDate: ''
+            userInput:{
+                title: '',
+                description: '',
+                numRooms: '',
+                numSingles: '',
+                singlePrice: '',
+                numShared: '',
+                sharedPrice: '',
+                numBathrooms: '',
+                leaseTypes: '',
+                startDate: '',
+                endDate: ''
+            }
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,16 +30,36 @@ class PostListingDisplay extends Component {
     }
 
     handleChange(event) {
-        const target = event.target;
-        this.setState({
-            [target.name]: target.value
-        });
+        let value = event.target.value;
+        let name = event.target.name;
+        this.setState( prevState => {
+            return { 
+                userInput : {
+                    ...prevState.userInput, [name]: value
+                }
+            }
+        }
+        )
     }
 
     handleSubmit(event) {
         alert("GOT IT!")
         console.log(this.state);
         event.preventDefault();
+        let userInput = this.state.userInput;
+
+        fetch('/listings',{
+            method: "POST",
+            body: JSON.stringify(userInput),
+            // headers: {
+            // 'Accept': 'application/json',
+            // 'Content-Type': 'application/json'
+            // },
+        }).then(response => {
+            response.json().then(data =>{
+            console.log("Successful" + data);
+            })
+        })
     }
 
     render(){
@@ -47,7 +69,7 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form onSubmit={this.handleSubmit} >
+                <form onSubmit={this.handleSubmit} action="/listings" method="POST">
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
