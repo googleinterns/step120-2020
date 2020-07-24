@@ -221,22 +221,23 @@ public abstract class Listing implements Document, Serializable {
     */
     public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws Exception {
       ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
+      
       return Optional.of(Listing.builder()
-      .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
-      .setDocumentId(Optional.of(document.getId()))
-      .setTitle(listingData.get(TITLE).toString())
-      .setDescription(listingData.get(DESCRIPTION).toString())
-      .setStartDate(listingData.get(START_DATE).toString())
-      .setEndDate(listingData.get(END_DATE).toString())
-      .setLeaseType(listingData.get(LEASE_TYPE).toString())
-      .setNumRooms(((Long) listingData.get(NUM_ROOMS)).intValue())
-      .setNumBathrooms(((Long) listingData.get(NUM_BATHROOMS)).intValue())
-      .setNumShared(((Long) listingData.get(NUM_SHARED)).intValue())
-      .setNumSingles(((Long) listingData.get(NUM_SINGLES)).intValue())
-      .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
-      .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
-      .setListingPrice(listingData.get(LISTING_PRICE).toString())
-      .build());
+        .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
+        .setDocumentId(Optional.of(document.getId()))
+        .setTitle(listingData.get(TITLE).toString())
+        .setDescription(listingData.get(DESCRIPTION).toString())
+        .setStartDate(listingData.get(START_DATE).toString())
+        .setEndDate(listingData.get(END_DATE).toString())
+        .setLeaseType(listingData.get(LEASE_TYPE).toString())
+        .setNumRooms(((Long) listingData.get(NUM_ROOMS)).intValue())
+        .setNumBathrooms(((Long) listingData.get(NUM_BATHROOMS)).intValue())
+        .setNumShared(((Long) listingData.get(NUM_SHARED)).intValue())
+        .setNumSingles(((Long) listingData.get(NUM_SINGLES)).intValue())
+        .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
+        .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
+        .setListingPrice(listingData.get(LISTING_PRICE).toString())
+        .build());
     }
 
     /**

@@ -86,23 +86,13 @@ public class ListingsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     database = DatabaseFactory.getDatabase();
-    List<Listing> listings = new ArrayList();
-    List<QueryDocumentSnapshot> documents;
     try {
-      documents = database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
+      List<QueryDocumentSnapshot> documents = 
+        database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
-      listings = StreamSupport.stream(documents.spliterator(), false)
-      .map(listingDocument -> {
-        try {
-          return Listing.fromFirestore(listingDocument);
-        } catch (Exception e) {
-          System.err.println("Error fetching listing document " + e);
-          Optional<Listing> optional = Optional.empty();
-          return optional;
-        }
-      })
-      .filter(Optional::isPresent)
-      .map(Optional::get)
+      List<Listing> listings = StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+      .map(this::getListingFromDocument)
+      .flatMap(Optional::stream)
       .collect(Collectors.toList());
 
       response.setContentType("application/json");
@@ -120,5 +110,14 @@ public class ListingsServlet extends HttpServlet {
                   .registerTypeAdapter(Money.class, new MoneySerializer())
                   .create();
     return gson.toJson(data);
+  }
+
+  private Optional<Listing> getListingFromDocument(QueryDocumentSnapshot document) {
+    try {
+      return Listing.fromFirestore(document);
+    } catch (Exception e) {
+      System.err.println("Error fetching listing document " + e);
+      return Optional.<Listing>empty();
+    }
   }
 }
