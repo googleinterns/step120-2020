@@ -34,22 +34,16 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
-<<<<<<< HEAD
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-=======
->>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
 import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
->>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,22 +63,22 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class ListingsServletTest {
-  @Mock CollectionReference collectionMock;
   @Mock Firestore dbMock;
-  @Mock HttpServletRequest request;
-  @Mock HttpServletResponse response;
-  @Mock NoSQLDatabase db;
-  private Listing listing;
-  private ListingsServlet listingsServlet;
-<<<<<<< HEAD
-  private StringWriter stringWriter;
+  @Mock CollectionReference collectionMock;
   @Mock QueryDocumentSnapshot queryDocumentMock;
   @Mock ApiFuture<QuerySnapshot> futureMock;
   @Mock QuerySnapshot querySnapshotMock;
   @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
-=======
->>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
-  
+
+  @Mock NoSQLDatabase db;
+
+  @Mock HttpServletRequest request;
+  @Mock HttpServletResponse response;
+
+  private Listing listing;
+  private ListingsServlet listingsServlet;
+  private StringWriter stringWriter;
+
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
@@ -94,8 +88,6 @@ public class ListingsServletTest {
 
     DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
-<<<<<<< HEAD
-
     defineDatabaseMockBehavior();
 
     stringWriter = new StringWriter();
@@ -104,14 +96,8 @@ public class ListingsServletTest {
  
   @Test
   public void testGet_returnsSingleListing() throws Exception {
-    listing = Listing.fromServletRequest(request);
-    Map<String, Object> listingData = mapOfListingDataForGetTests(listing);
-    List<QueryDocumentSnapshot> queryDocumentList = new ArrayList();
-    queryDocumentList.add(queryDocumentMock);
-    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
-    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
+    Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     when(queryDocumentMock.getData()).thenReturn(listingData);
-    when(queryDocumentMock.getId()).thenReturn("documentID");
  
     listingsServlet.doGet(request, response);
     String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
@@ -135,8 +121,20 @@ public class ListingsServletTest {
 
     verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
     verify(queryDocumentMock, Mockito.times(0)).getData();
-=======
->>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
+    assertEquals(stringWriter.getBuffer().toString().trim(), "[]");
+  }
+
+  @Test
+  public void testGet_fetchedListingHasInvalidParams_returnsNoListings() throws Exception {
+    String invalidLeaseType = "yearlong";
+    Map<String, Object> listingData = mapOfListingDataForGetTests(request);
+    listingData.put(LEASE_TYPE, invalidLeaseType);
+    when(queryDocumentMock.getData()).thenReturn(listingData);
+
+    listingsServlet.doGet(request, response);
+    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
+    verify(queryDocumentMock, Mockito.times(1)).getData();
+    assertEquals(stringWriter.getBuffer().toString().trim(), "[]");
   }
 
   @Test
@@ -223,15 +221,18 @@ public class ListingsServletTest {
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
   }
-<<<<<<< HEAD
 
   /**
   * Configure mock database instance behavior.
   */
   private void defineDatabaseMockBehavior() throws Exception {
+    List<QueryDocumentSnapshot> queryDocumentList = List.of(queryDocumentMock);
+
     when(db.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(futureMock);
     when(futureMock.get()).thenReturn(querySnapshotMock);
     when(querySnapshotMock.getDocuments()).thenReturn(queryDocumentsMock);
+    when(queryDocumentMock.getId()).thenReturn("documentID");
+    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
   }
 
   /**
@@ -242,7 +243,8 @@ public class ListingsServletTest {
   * of a FieldValue used in toMap(), expects certain date and number formats due to
   * Firestore's serialization process).
   */
-  private Map<String, Object> mapOfListingDataForGetTests(Listing listing) {
+  private Map<String, Object> mapOfListingDataForGetTests(HttpServletRequest request) throws Exception {
+    Listing listing = Listing.fromServletRequest(request);
     Map<String, Object> listingData = Maps.newHashMap(listing.toMap());
 
     listingData.put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"));
@@ -255,8 +257,5 @@ public class ListingsServletTest {
     
     return listingData;
   }
+}
 
-}
-=======
-}
->>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
