@@ -6,6 +6,7 @@ import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.FirebaseDatabase;
 import java.io.IOException;
 
+/** Database factory that contains the single NoSQLDatabase instance for the project. */
 public class DatabaseFactory {
   private static NoSQLDatabase db;
 

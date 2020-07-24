@@ -11,7 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
 package com.google.roomies;
 
 import static com.google.roomies.ProjectConstants.INDEX_URL;
@@ -82,6 +85,7 @@ public class ListingsServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
+<<<<<<< HEAD
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -121,3 +125,6 @@ public class ListingsServlet extends HttpServlet {
     }
   }
 }
+=======
+}
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9

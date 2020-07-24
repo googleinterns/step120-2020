@@ -96,7 +96,11 @@ public abstract class Listing implements Document, Serializable {
     abstract Listing build();
     
     /**
-    * Throws IllegalArgumentException if input does not match a LeaseType enum 
+    * Sets the lease type to a Lease Type enum value given a string representation of
+    * the lease type.
+    * 
+    * Input should match a LeaseType enum (ex. "YEAR_LONG").
+    * @throws IllegalArgumentException if input does not match a LeaseType enum 
     * value (case sensistive).
     */
     Builder setLeaseType(String leaseType) {
@@ -105,7 +109,11 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Throws NumberFormatException if input is not parseable.
+    * Sets the number of bedrooms to an integer given a string representation of
+    * the number.
+    *
+    * Input should be a non-negative integer (ex. "2").
+    * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumRooms(String numRooms) {
       setNumRooms(Integer.parseInt(numRooms));
@@ -113,16 +121,23 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Input should be a non-negative integer.
-    * Throws NumberFormatException if input is not parseable.
+    * Sets the number of bathrooms to an integer given a string representation of
+    * the number.
+    *
+    * Input should be a non-negative integer (ex. "2").
+    * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumBathrooms(String numBathrooms) {
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
+
     /**
-    * Input should be a non-negative integer.
-    * Throws NumberFormatException if input is not parseable.
+    * Sets the number of shared bedrooms to an integer given a string representation
+    * of the number.
+    *
+    * Input should be a non-negative integer (ex. "2").
+    * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumShared(String numShared) {
       setNumShared(Integer.parseInt(numShared));
@@ -130,8 +145,11 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Input should be a non-negative integer.
-    * Throws NumberFormatException if input is not parseable.
+    * Sets the number of singles to an integer given a string representation of
+    * the number.
+    *
+    * Input should be a non-negative integer (ex. "2").
+    * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumSingles(String numSingles) {
       setNumSingles(Integer.parseInt(numSingles));
@@ -139,8 +157,10 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Input should be in the format "yyyy-MM-dd."
-    * Throws ParseException if date is not in correct format.
+    * Sets the start date to be a Date given a string representation of the start date.
+    *
+    * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
+    * @throws ParseException if date is not in correct format.
     */
     Builder setStartDate(String startDate) throws ParseException {
       setStartDate(StringConverter.stringToDate(startDate));
@@ -148,8 +168,10 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Input should be in the format "yyyy-MM-dd."
-    * Throws ParseException if date is not in correct format.
+    * Sets the end date to be a Date given a string representation of the end date.
+    *
+    * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
+    * @throws ParseException if date is not in correct format.
     */
     Builder setEndDate(String endDate) throws ParseException {
       setEndDate(StringConverter.stringToDate(endDate));
@@ -157,9 +179,12 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
+    * Sets the shared room price (of type Money) given a string representation of
+    * the price.  
+    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign.
-    * Throws Exception if price is not in correct format.
+    * without the $ sign (ex. "300")
+    * @throws Exception if price is not in correct format.
     */
     Builder setSharedPrice(String sharedPrice) throws Exception {
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
@@ -167,9 +192,12 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
+    * Sets the single room price (of type Money) given a string representation of
+    * the price.  
+    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign.
-    * Throws Exception if price is not in correct format.
+    * without the $ sign (ex. "300")
+    * @throws Exception if price is not in correct format.
     */
     Builder setSinglePrice(String singlePrice) throws Exception {
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
@@ -177,9 +205,12 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
+    * Sets the listing price (of type Money) given a string representation of
+    * the price.  
+    *
     * Input should be a postive number corresponding to a valid USD dollar amount,
-    * without the $ sign.
-    * Throws Exception if price is not in correct format.
+    * without the $ sign (ex. "300")
+    * @throws Exception if price is not in correct format.
     */
     Builder setListingPrice(String listingPrice) throws Exception {
       setListingPrice(StringConverter.stringToMoney(listingPrice));
@@ -259,4 +290,24 @@ public abstract class Listing implements Document, Serializable {
       .setListingPrice(request.getParameter(LISTING_PRICE))
       .build();
     }
+
+  /**
+  * Sets all listing values to the corresponding HTTP Servlet request parameter.
+  */
+  public static Listing fromServletRequest(HttpServletRequest request) throws ParseException {
+    return Listing.builder()
+    .setTitle(request.getParameter(TITLE))
+    .setDescription(request.getParameter(DESCRIPTION))
+    .setStartDate(request.getParameter(START_DATE))
+    .setEndDate(request.getParameter(END_DATE))
+    .setLeaseType(request.getParameter(LEASE_TYPE))
+    .setNumRooms(request.getParameter(NUM_ROOMS))
+    .setNumBathrooms(request.getParameter(NUM_BATHROOMS))
+    .setNumShared(request.getParameter(NUM_SHARED))
+    .setNumSingles(request.getParameter(NUM_SINGLES))
+    .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
+    .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
+    .setListingPrice(request.getParameter(LISTING_PRICE))
+    .build();
+  }
 }

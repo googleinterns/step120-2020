@@ -34,16 +34,22 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
+<<<<<<< HEAD
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+=======
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
 import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,11 +76,14 @@ public class ListingsServletTest {
   @Mock NoSQLDatabase db;
   private Listing listing;
   private ListingsServlet listingsServlet;
+<<<<<<< HEAD
   private StringWriter stringWriter;
   @Mock QueryDocumentSnapshot queryDocumentMock;
   @Mock ApiFuture<QuerySnapshot> futureMock;
   @Mock QuerySnapshot querySnapshotMock;
   @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
+=======
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
   
   @Before
   public void setUp() throws Exception {    
@@ -85,6 +94,7 @@ public class ListingsServletTest {
 
     DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
+<<<<<<< HEAD
 
     defineDatabaseMockBehavior();
 
@@ -125,6 +135,8 @@ public class ListingsServletTest {
 
     verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
     verify(queryDocumentMock, Mockito.times(0)).getData();
+=======
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9
   }
 
   @Test
@@ -211,6 +223,7 @@ public class ListingsServletTest {
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
   }
+<<<<<<< HEAD
 
   /**
   * Configure mock database instance behavior.
@@ -244,3 +257,6 @@ public class ListingsServletTest {
   }
 
 }
+=======
+}
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9

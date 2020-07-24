@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map; 
 
+/** A NoSQL Database interface. Specifies required fetch, update, and get methods
+    for a database. */
 public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
@@ -66,4 +68,8 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4c4f01cfff3ceebf372e2992e9494372433ea1e9

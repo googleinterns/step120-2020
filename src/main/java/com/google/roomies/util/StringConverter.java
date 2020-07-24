@@ -12,15 +12,16 @@ import javax.money.UnknownCurrencyException;
 import javax.money.format.MonetaryParseException;
 import org.javamoney.moneta.Money;
 
+/** Functions that convert strings to other data types. */
 public final class StringConverter {
   private StringConverter() {}
 
   /**
-  * Converts a string to a Date in the format "yyyy-MM-dd."
+  * Converts a string in the format "yyyy-MM-dd" to a Date.
   *
   * @param date string date
-  * @return a Date in the format "yyyy-MM-dd."
-  * @throws ParseException if Date cannot be parsed into the format.
+  * @return a Date object representing the input date
+  * @throws ParseException if date cannot be parsed in the format.
   */
   public static Date stringToDate(String date) throws ParseException {
     SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
