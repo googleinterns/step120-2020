@@ -55,6 +55,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.money.Monetary;
+import javax.money.UnknownCurrencyException;
+import javax.money.format.MonetaryParseException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -86,18 +89,12 @@ public class ListingsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     database = DatabaseFactory.getDatabase();
     try {
-      List<QueryDocumentSnapshot> documents = 
-        database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
-
-      List<Listing> listings = StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
-        .map(this::getListingFromDocument)
-        .flatMap(Optional::stream)
-        .collect(Collectors.toList());
+      List<Listing> listings = getAllListingsFromCollection();
 
       response.setContentType("application/json");
       response.getWriter().println(convertToJsonUsingGson(listings));
     } catch (Exception e) {
-      System.err.println("Error fetching " + e);
+      System.err.println("Error fetching listings: " + e);
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.setContentType("text/html");
       response.getWriter().println("request failed");
@@ -111,10 +108,33 @@ public class ListingsServlet extends HttpServlet {
     return gson.toJson(data);
   }
 
+  /**
+  * Gets all listings from the listing collection in Firestore.
+  * 
+  * @return list of Listing instances
+  */
+  private List<Listing> getAllListingsFromCollection() throws Exception {
+    List<QueryDocumentSnapshot> documents = 
+      database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
+
+    return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+      .map(this::getListingFromDocument)
+      .flatMap(Optional::stream)
+      .collect(Collectors.toList());
+  }
+
+  /**
+  * Creates Listing instance given document from Firestore.
+  * 
+  * @param document a QueryDocumentSnapshot from Firestore
+  * @return an Optional<Listing> containing the Listing instance or an empty 
+  *   Optional if Listing could not be created.
+  */
   private Optional<Listing> getListingFromDocument(QueryDocumentSnapshot document) {
     try {
       return Listing.fromFirestore(document);
-    } catch (Exception e) {
+    } catch (UnknownCurrencyException | MonetaryParseException | IllegalArgumentException
+       | ParseException e) {
       System.err.println("Error fetching listing document " + e);
       return Optional.<Listing>empty();
     }

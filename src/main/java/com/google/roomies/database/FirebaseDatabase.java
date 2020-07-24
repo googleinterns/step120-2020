@@ -118,7 +118,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param collectionName name of collection in Firestore
   */
   @Override
-  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
   }
   

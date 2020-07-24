@@ -33,6 +33,8 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
+import javax.money.UnknownCurrencyException;
+import javax.money.format.MonetaryParseException;
 import javax.servlet.http.HttpServletRequest;
 import org.javamoney.moneta.Money;
 
@@ -186,7 +188,8 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setSharedPrice(String sharedPrice) throws Exception {
+    Builder setSharedPrice(String sharedPrice) throws UnknownCurrencyException,
+        MonetaryParseException, NumberFormatException {
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
       return this;
     }
@@ -199,7 +202,8 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setSinglePrice(String singlePrice) throws Exception {
+    Builder setSinglePrice(String singlePrice) throws UnknownCurrencyException,
+        MonetaryParseException, NumberFormatException {
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
       return this;
     }
@@ -212,7 +216,8 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setListingPrice(String listingPrice) throws Exception {
+    Builder setListingPrice(String listingPrice) throws UnknownCurrencyException,
+        MonetaryParseException, NumberFormatException {
       setListingPrice(StringConverter.stringToMoney(listingPrice));
       return this;
     }
@@ -250,7 +255,8 @@ public abstract class Listing implements Document, Serializable {
     * Note: Using a map representation of listing data when fetched (and posted) from Firestore
     * due to serialization problem with JavaMoney, which Firestore was not able to serialize.
     */
-    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws Exception {
+    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
+        MonetaryParseException, NumberFormatException, ParseException {
       ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
       
       return Optional.of(Listing.builder()
