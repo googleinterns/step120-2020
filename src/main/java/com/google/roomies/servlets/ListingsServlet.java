@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -90,16 +91,18 @@ public class ListingsServlet extends HttpServlet {
     try {
       documents = database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
-     listings = StreamSupport.stream(documents.spliterator(), false)
+      listings = StreamSupport.stream(documents.spliterator(), false)
       .map(listingDocument -> {
         try {
           return Listing.fromFirestore(listingDocument);
         } catch (Exception e) {
           System.err.println("Error fetching listing document " + e);
-          return null;
+          Optional<Listing> optional = Optional.empty();
+          return optional;
         }
       })
-      .filter(listing -> listing != null)
+      .filter(Optional::isPresent)
+      .map(Optional::get)
       .collect(Collectors.toList());
 
       response.setContentType("application/json");
@@ -111,7 +114,6 @@ public class ListingsServlet extends HttpServlet {
       response.getWriter().println("request failed");
     }
   }
-
 
   private String convertToJsonUsingGson(List data) {
     Gson gson = new GsonBuilder()

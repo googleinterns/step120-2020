@@ -215,14 +215,16 @@ public abstract class Listing implements Document, Serializable {
 
     /**
     * Sets all listing values to the corresponding HTTP Servlet request parameter.
+    *
+    * Note: Using a map representation of listing data when fetched (and posted) from Firestore
+    * due to serialization problem with JavaMoney, which Firestore was not able to serialize.
     */
-    public static Listing fromFirestore(QueryDocumentSnapshot document) throws Exception {
+    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws Exception {
       ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
-      System.out.println("listing data" + listingData);
-      return Listing.builder()
+      return Optional.of(Listing.builder()
       .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
       .setDocumentId(Optional.of(document.getId()))
-       .setTitle(listingData.get(TITLE).toString())
+      .setTitle(listingData.get(TITLE).toString())
       .setDescription(listingData.get(DESCRIPTION).toString())
       .setStartDate(listingData.get(START_DATE).toString())
       .setEndDate(listingData.get(END_DATE).toString())
@@ -234,7 +236,7 @@ public abstract class Listing implements Document, Serializable {
       .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
       .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
       .setListingPrice(listingData.get(LISTING_PRICE).toString())
-      .build();
+      .build());
     }
 
     /**

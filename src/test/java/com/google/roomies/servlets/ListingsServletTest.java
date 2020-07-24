@@ -34,12 +34,16 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.roomies.database.NoSQLDatabase;
 import com.google.roomies.database.DatabaseFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +70,11 @@ public class ListingsServletTest {
   @Mock NoSQLDatabase db;
   private Listing listing;
   private ListingsServlet listingsServlet;
+  private StringWriter stringWriter;
+  @Mock QueryDocumentSnapshot queryDocumentMock;
+  @Mock ApiFuture<QuerySnapshot> futureMock;
+  @Mock QuerySnapshot querySnapshotMock;
+  @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
   
   @Before
   public void setUp() throws Exception {    
@@ -76,6 +85,46 @@ public class ListingsServletTest {
 
     DatabaseFactory.setDatabaseForTest(db);
     setRequestParameters();
+
+    defineDatabaseMockBehavior();
+
+    stringWriter = new StringWriter();
+    when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+  }
+ 
+  @Test
+  public void testGet_returnsSingleListing() throws Exception {
+    listing = Listing.fromServletRequest(request);
+    Map<String, Object> listingData = mapOfListingDataForGetTests(listing);
+    List<QueryDocumentSnapshot> queryDocumentList = new ArrayList();
+    queryDocumentList.add(queryDocumentMock);
+    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
+    when(queryDocumentMock.getData()).thenReturn(listingData);
+    when(queryDocumentMock.getId()).thenReturn("documentID");
+ 
+    listingsServlet.doGet(request, response);
+    String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
+      "\"timestamp\":{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"title\":\"Test title\"," +
+      "\"description\":\"Test description\",\"startDate\":\"Jul 10, 2020, 12:00:00 AM\"," + 
+      "\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":\"YEAR_LONG\",\"numRooms\":2," +
+      "\"numBathrooms\":2,\"numShared\":2,\"numSingles\":2,\"sharedPrice\":\"USD 100\","+
+      "\"singlePrice\":\"USD 0\",\"listingPrice\":\"USD 100\"}]";
+
+    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
+    verify(queryDocumentMock, Mockito.times(1)).getData();
+    assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
+  }
+
+  @Test
+  public void testGet_returnsNoListingsWithNoneInFirestore() throws Exception {
+    List<QueryDocumentSnapshot> queryDocumentList = new ArrayList();
+    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
+
+    listingsServlet.doGet(request, response);
+
+    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
+    verify(queryDocumentMock, Mockito.times(0)).getData();
   }
 
   @Test
@@ -162,4 +211,36 @@ public class ListingsServletTest {
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
   }
+
+  /**
+  * Configure mock database instance behavior.
+  */
+  private void defineDatabaseMockBehavior() throws Exception {
+    when(db.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(futureMock);
+    when(futureMock.get()).thenReturn(querySnapshotMock);
+    when(querySnapshotMock.getDocuments()).thenReturn(queryDocumentsMock);
+  }
+
+  /**
+  * Creates and returns a map representation of a listing.
+  * 
+  * Note: Differs from Listing class's toMap() because this method is specifically
+  * for get tests due to their specific requirements (expects a timestamp instead
+  * of a FieldValue used in toMap(), expects certain date and number formats due to
+  * Firestore's serialization process).
+  */
+  private Map<String, Object> mapOfListingDataForGetTests(Listing listing) {
+    Map<String, Object> listingData = Maps.newHashMap(listing.toMap());
+
+    listingData.put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"));
+    listingData.put(START_DATE, "2020-07-10");
+    listingData.put(END_DATE, "2020-07-10");
+    listingData.put(NUM_ROOMS, ((Integer) 2).longValue());
+    listingData.put(NUM_BATHROOMS, ((Integer) 2).longValue());
+    listingData.put(NUM_SHARED, ((Integer) 2).longValue());
+    listingData.put(NUM_SINGLES, ((Integer) 2).longValue());
+    
+    return listingData;
+  }
+
 }
