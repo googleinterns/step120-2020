@@ -12,7 +12,7 @@ class MakeListingDisplay extends Component {
                 <div id="header">
                     <h1>Post a Listing</h1>
                 </div>
-                <form action="/listings" id="listingForm" method="POST">
+                <form id="listingForm" >
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" />
