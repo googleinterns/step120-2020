@@ -29,23 +29,44 @@ public final class StringConverter {
   }
 
   /**
-  * Converts a string price to a Money instance with a USD currency code.
+  * Converts a string price to a Money instance. 
   *
-  * @param price string representation of a monetary amount
-  * @return a Money instance of the price in USD.
+  * If currency code is not specified, defaults to USD.
+  * @param moneyRepresentation string representation of a monetary amount
+  * @return a Money instance of the input price.
   */
-  public static Money stringToMoney(String price) throws Exception {
+  public static Money stringToMoney(String moneyRepresentation) throws UnknownCurrencyException,
+      MonetaryParseException, NumberFormatException {
     Money convertedPrice;
     try {
-      convertedPrice = Money.parse(price);
-    } catch (MonetaryParseException | UnknownCurrencyException | NumberFormatException e) {
-      try {
-        CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
-        convertedPrice = Money.of(Integer.parseInt(price.toString()), usd);
-      } catch (NumberFormatException numFormatException) {
-        throw new Exception(numFormatException);
-      }
+      convertedPrice = priceAndCurrencyToMoney(moneyRepresentation);
+    } catch (MonetaryParseException | NumberFormatException e) {
+      convertedPrice = priceToMoney(moneyRepresentation);
     }
     return convertedPrice;
+  }
+
+  /**
+  * Converts a string price and currency amount to Money.
+  *
+  * Input should be in the form of "CURRENCY_CODE price" (ex. "USD 28.87").
+  * @param priceAndCurrency string representation of a monetary amount
+  * @return a Money instance of the price in specified currency code
+  */
+  private static Money priceAndCurrencyToMoney(String priceAndCurrency) throws UnknownCurrencyException,
+      MonetaryParseException, NumberFormatException {
+    return Money.parse(priceAndCurrency);
+  }
+
+  /**
+  * Converts a string price amount to Money in USD.
+  *
+  * Input should be in the form of "price" (ex. "28.87").
+  * @param price string representation of a monetary amount
+  * @return a Money instance of the price in USD
+  */
+  private static Money priceToMoney(String price) {
+    CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
+    return Money.of(Integer.parseInt(price.toString()), usd);
   }
 }
