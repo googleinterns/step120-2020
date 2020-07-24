@@ -271,30 +271,10 @@ public abstract class Listing implements Document, Serializable {
         .build());
     }
 
-    /**
-    * Sets all listing values to the corresponding HTTP Servlet request parameter.
-    */
-    public static Listing fromServletRequest(HttpServletRequest request) throws Exception {
-      return Listing.builder()
-      .setTitle(request.getParameter(TITLE))
-      .setDescription(request.getParameter(DESCRIPTION))
-      .setStartDate(request.getParameter(START_DATE))
-      .setEndDate(request.getParameter(END_DATE))
-      .setLeaseType(request.getParameter(LEASE_TYPE))
-      .setNumRooms(request.getParameter(NUM_ROOMS))
-      .setNumBathrooms(request.getParameter(NUM_BATHROOMS))
-      .setNumShared(request.getParameter(NUM_SHARED))
-      .setNumSingles(request.getParameter(NUM_SINGLES))
-      .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
-      .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
-      .setListingPrice(request.getParameter(LISTING_PRICE))
-      .build();
-    }
-
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
   */
-  public static Listing fromServletRequest(HttpServletRequest request) throws ParseException {
+  public static Listing fromServletRequest(HttpServletRequest request) throws Exception {
     return Listing.builder()
     .setTitle(request.getParameter(TITLE))
     .setDescription(request.getParameter(DESCRIPTION))
