@@ -2,7 +2,7 @@ import React from 'react';
 import { Router, Link } from '@reach/router';
 
 import Home from './Home/components/Home';
-import MakeListingDisplay from './MakeListingDisplay/components/MakeListingDisplay';
+import PostListingDisplay from './PostListingDisplay/components/PostListingDisplay';
 
 import './App.css';
 
@@ -11,7 +11,6 @@ function App(props) {
     return (
         <div>
             <h1>Roomies</h1>
-
             <nav>
                 <Link to="/">
                     <button type="button">

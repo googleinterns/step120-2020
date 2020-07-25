@@ -7,7 +7,11 @@ function InputField(props) {
     return (
         <div>
             <p>{props.fieldHeader}</p>
+<<<<<<< HEAD:src/MakeListingDisplay/components/InputField.jsx
             <input name={props.fieldName} type={props.fieldType} min={defaultValue} defaultValue={defaultValue} step={props.fieldStep} required/>
+=======
+            <input name={props.fieldName} type={props.fieldType} onChange={props.onChange}required/>
+>>>>>>> Implementtesting:src/PostListingDisplay/components/InputField.jsx
         </div>
     );
 }

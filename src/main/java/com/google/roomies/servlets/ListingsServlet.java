@@ -68,6 +68,7 @@ public class ListingsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
+      System.out.println("1");
     try {
       database = DatabaseFactory.getDatabase();
       Listing post = Listing.fromServletRequest(request);
