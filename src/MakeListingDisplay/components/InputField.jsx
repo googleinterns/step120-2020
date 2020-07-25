@@ -23,13 +23,13 @@ function setDefault(type){
             let day = today.getDate();
             let month = today.getMonth();
             const year = today.getFullYear();
-            if(day<10) {
-                day='0'+day;
+            if(day < 10) {
+                day = '0' + day;
             } 
-            if(month<10) {
-                month='0'+month;
+            if(month < 10) {
+                month = '0' + month;
             } 
-            return year+'-'+day+'-'+month;
+            return year + '-' + day + '-' + month;
         default:
             return "N/A";
     }
