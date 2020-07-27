@@ -48,7 +48,7 @@ class PostListingDisplay extends Component {
         event.preventDefault();
         let userInput = this.state.userInput;
 
-        fetch("/listings",{
+        fetch("http://localhost:8080/listings",{
             method: "POST",
             body: JSON.stringify(userInput),
             headers: {
