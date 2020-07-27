@@ -1,11 +1,11 @@
 import React from "react";
 import UserProvider from "../Providers/UserProvider";
-import Home from "../../Home";
-function UserWrappedHome() {
+import MainPage from "../../MainPage";
+function UserWrappedMain() {
   return (
     <UserProvider>
-      <Home />
+      <MainPage />
     </UserProvider>
   );
 }
-export default UserWrappedHome;
+export default UserWrappedMain;
