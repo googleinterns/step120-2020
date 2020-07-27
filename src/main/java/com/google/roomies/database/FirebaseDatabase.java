@@ -1,7 +1,9 @@
 package com.google.roomies.database;
 
-import static com.google.roomies.ProjectConstants.PROJECT_ID;
+import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingRequestParameterNames.COMMENT_IDS;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
+import static com.google.roomies.ProjectConstants.PROJECT_ID;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -18,6 +20,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.roomies.City;
 import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
@@ -66,11 +69,11 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param collectionName name of collection in Firestore
   * @param doc document that implements the document interface
   */
-  @Override
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception {
-    ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
-    addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
-  }
+  // @Override
+  // public void addCityAsClass(String collectionName, City doc) throws Exception {
+  //   ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
+  //   addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
+  // }
 
   /**
   * Add a comment to a collection as a map.
@@ -79,14 +82,23 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param comment a Comment instance 
   */
   @Override
-  public void addCommentAsMap(String collectionName, Comment comment) throws Exception {
-        Map<String, Object> data = comment.toMap();
+  public void addCommentAsMap(String collectionName, Comment comment) {
+    Map<String, Object> data = comment.toMap();
     this.db.collection(collectionName).add(data);
-
-    // ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(comment);
-    // System.out.println("added doc");
-    // addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
   }
+  
+  /**
+  * Update a listing with the specified input fields.
+  *
+  * @param documentID ID of document to update in Firestore
+  * @param fieldsToUpdate a map of <document key to update, new document value>. 
+  */
+  @Override
+  public void updateCommentIdsInListing(String documentID, String commentId) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME).document(documentID);
+    docRef.update(COMMENT_IDS, FieldValue.arrayUnion(commentId));
+  }
+
   /**
   * Update a document with the specified input fields.
   *

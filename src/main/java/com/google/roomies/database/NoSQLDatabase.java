@@ -7,6 +7,8 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.common.collect.ImmutableList;
+import com.google.roomies.City;
 import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
@@ -27,15 +29,15 @@ public interface NoSQLDatabase {
   */  
   public void addListingAsMap(String collectionName, Listing listing);
 
-  /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
-  *
-  * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
-  */
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception;
+  // /**
+  // * Add a document to a collection as a class.
+  // * All document fields must be serializable. The document class must implement
+  // * Serializable and have an empty constructor.
+  // *
+  // * @param collectionName name of collection in database
+  // * @param doc document that implements the document interface
+  // */
+  // public void addCityAsClass(String collectionName, City doc) throws Exception;
 
   /**
   * Add a comment to a collection as a class.
@@ -43,7 +45,15 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   * @param comment a Comment instance 
   */
-  public void addCommentAsMap(String collectionName, Comment comment) throws Exception;
+  public void addCommentAsMap(String collectionName, Comment comment);
+
+  /**
+  * Update a listing with the specified input fields.
+  *
+  * @param documentID ID of document to update in database
+  * @param fieldsToUpdate a map of <document key to update, new document value>. 
+  */
+  public void updateCommentIdsInListing(String documentID, String commentId);
 
   /**
   * Update a document with the specified input fields.
@@ -53,7 +63,7 @@ public interface NoSQLDatabase {
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate);
-
+  
   /**
   * Get a document from database in a map of <key, value>.
   *
