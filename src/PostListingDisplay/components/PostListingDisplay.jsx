@@ -44,20 +44,23 @@ class PostListingDisplay extends Component {
 
     handleSubmit(event) {
         alert("GOT IT!")
-        console.log(this.state);
+        console.log(this.state.userInput);
         event.preventDefault();
         let userInput = this.state.userInput;
 
-        fetch('/listings',{
+        fetch("/listings",{
             method: "POST",
             body: JSON.stringify(userInput),
-            // headers: {
-            // 'Accept': 'application/json',
-            // 'Content-Type': 'application/json'
-            // },
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
         }).then(response => {
             response.json().then(data =>{
-            console.log("Successful" + data);
+                console.log("Successful" + data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
             })
         })
     }
@@ -69,7 +72,7 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form onSubmit={this.handleSubmit} action="/listings" method="POST">
+                <form onSubmit={this.handleSubmit}>
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />

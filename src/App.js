@@ -17,16 +17,16 @@ function App(props) {
                         Home
                     </button>
                 </Link>
-                <Link to="/makeListing">
+                <Link to="/postListing">
                     <button type="button">
-                        Make a Listing
+                        Post a Listing
                     </button>
                 </Link>
             </nav>
 
             <Router>
                 <Home path="/" />
-                <MakeListingDisplay path="/makeListing" />
+                <PostListingDisplay path="/postListing" />
             </Router>
         </div>
     );
