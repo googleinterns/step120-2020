@@ -103,6 +103,8 @@ public abstract class Listing implements Serializable {
     * value (case sensistive).
     */
     Builder setLeaseType(String leaseType) {
+            System.out.println("setting : " + leaseType);
+
       setLeaseType(LeaseType.valueOf(leaseType));
       return this;
     }
@@ -114,6 +116,8 @@ public abstract class Listing implements Serializable {
     * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumRooms(String numRooms) {
+            System.out.println("setting listing price: " + numRooms);
+
       setNumRooms(Integer.parseInt(numRooms));
       return this;
     }
@@ -126,6 +130,8 @@ public abstract class Listing implements Serializable {
     * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumBathrooms(String numBathrooms) {
+            System.out.println("setting listing price: " + numBathrooms);
+
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
@@ -138,6 +144,8 @@ public abstract class Listing implements Serializable {
     * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumShared(String numShared) {
+            System.out.println("setting listing price: " + numShared);
+
       setNumShared(Integer.parseInt(numShared));
       return this;     
     }
@@ -150,6 +158,8 @@ public abstract class Listing implements Serializable {
     * @throws NumberFormatException if input is not parseable.
     */
     Builder setNumSingles(String numSingles) {
+            System.out.println("setting listing price: " + numSingles);
+
       setNumSingles(Integer.parseInt(numSingles));
       return this;     
     }
@@ -161,6 +171,8 @@ public abstract class Listing implements Serializable {
     * @throws ParseException if date is not in correct format.
     */
     Builder setStartDate(String startDate) throws ParseException {
+            System.out.println("setting listing price: " + startDate);
+
       setStartDate(StringConverter.stringToDate(startDate));
       return this;
     }
@@ -172,6 +184,8 @@ public abstract class Listing implements Serializable {
     * @throws ParseException if date is not in correct format.
     */
     Builder setEndDate(String endDate) throws ParseException {
+            System.out.println("setting listing price: " + endDate);
+
       setEndDate(StringConverter.stringToDate(endDate));
       return this;
     }
@@ -185,6 +199,8 @@ public abstract class Listing implements Serializable {
     * @throws Exception if price is not in correct format.
     */
     Builder setSharedPrice(String sharedPrice) {
+            System.out.println("setting listing price: " + sharedPrice);
+
       setSharedPrice(StringConverter.stringToMoney(sharedPrice));
       return this;
     }
@@ -198,6 +214,8 @@ public abstract class Listing implements Serializable {
     * @throws Exception if price is not in correct format.
     */
     Builder setSinglePrice(String singlePrice) {
+            System.out.println("setting listing price: " + singlePrice);
+
       setSinglePrice(StringConverter.stringToMoney(singlePrice));
       return this;
     }
@@ -211,6 +229,7 @@ public abstract class Listing implements Serializable {
     * @throws Exception if price is not in correct format.
     */
     Builder setListingPrice(String listingPrice) {
+      System.out.println("setting listing price: " + listingPrice);
       setListingPrice(StringConverter.stringToMoney(listingPrice));
       return this;
     }

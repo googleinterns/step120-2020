@@ -21,11 +21,11 @@ class PostListingDisplay extends Component {
                 numBathrooms: '',
                 leaseTypes: '',
                 startDate: '',
-                endDate: ''
+                endDate: '',
+                listingPrice: ''
             }
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -42,29 +42,6 @@ class PostListingDisplay extends Component {
         )
     }
 
-    handleSubmit(event) {
-        alert("GOT IT!")
-        console.log(this.state.userInput);
-        event.preventDefault();
-        let userInput = this.state.userInput;
-
-        fetch("http://localhost:8080/listings",{
-            method: "POST",
-            body: JSON.stringify(userInput),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => {
-            response.json().then(data =>{
-                console.log("Successful" + data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            })
-        })
-    }
-
     render(){
         return (
             <div id="make-a-listing-body">
@@ -72,7 +49,7 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form onSubmit={this.handleSubmit}>
+                <form action="/listings" method="POST">
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
@@ -87,6 +64,8 @@ class PostListingDisplay extends Component {
                         <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handleChange} />
                     </div>
                     <div id="listingPriceDisplay"></div>
+                  {/**TODO: Joey: Implement price calculation for listing price so a user doesn't have to input it in this line below. */}
+                    <InputField fieldHeader="Listing Price:" fieldName="listingPrice" fieldType="number" onChange={this.handleChange} />
 
                     <InputField fieldHeader="Number of bathrooms:" fieldName="numBathrooms" fieldType="number" onChange={this.handleChange} />
 

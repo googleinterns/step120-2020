@@ -69,6 +69,7 @@ public class ListingsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
       System.out.println("1");
+
     try {
       database = DatabaseFactory.getDatabase();
       Listing post = Listing.fromServletRequest(request);
@@ -80,5 +81,12 @@ public class ListingsServlet extends HttpServlet {
         System.err.println("Error posting " + e);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+    response.getWriter().println("listings page");
+
   }
 }
