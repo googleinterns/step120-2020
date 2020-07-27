@@ -105,7 +105,7 @@ public class ListingsServletTest {
       "\"description\":\"Test description\",\"startDate\":\"Jul 10, 2020, 12:00:00 AM\"," + 
       "\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":\"YEAR_LONG\",\"numRooms\":2," +
       "\"numBathrooms\":2,\"numShared\":2,\"numSingles\":2,\"sharedPrice\":\"USD 100\","+
-      "\"singlePrice\":\"USD 0\",\"listingPrice\":\"USD 100\"}]";
+      "\"singlePrice\":\"USD 0\",\"listingPrice\":\"USD 100\",\"commentIds\":[]}]";
 
     verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
     verify(queryDocumentMock, Mockito.times(1)).getData();

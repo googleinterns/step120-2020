@@ -2,6 +2,7 @@ package com.google.roomies;
 
 public final class ListingRequestParameterNames {
   private ListingRequestParameterNames() {}
+  public static final String COMMENT_IDS = "commentIds";
   public static final String DESCRIPTION = "description";
   public static final String END_DATE = "endDate";
   public static final String LEASE_TYPE = "leaseTypes";

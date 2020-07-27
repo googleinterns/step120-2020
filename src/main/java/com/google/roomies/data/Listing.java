@@ -3,6 +3,7 @@ package com.google.roomies;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingRequestParameterNames.COMMENT_IDS;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
@@ -22,6 +23,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -70,6 +72,7 @@ public abstract class Listing implements Document, Serializable {
   abstract Money sharedPrice();
   abstract Money singlePrice();
   abstract Money listingPrice();
+  abstract ImmutableList<String> commentIds();
 
   static Builder builder() {
     return new AutoValue_Listing.Builder();
@@ -91,6 +94,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
+    abstract Builder setCommentIds(ImmutableList<String> commentIds);
 
     abstract LeaseType leaseType();
     abstract int numRooms();
@@ -244,39 +248,41 @@ public abstract class Listing implements Document, Serializable {
       .put(SINGLE_ROOM_PRICE, singlePrice().toString())
       .put(LISTING_PRICE, listingPrice().toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
+      .put(COMMENT_IDS, commentIds())
       .build();
 
     return listingData;
   }
 
-    /**
-    * Sets all listing values to the corresponding HTTP Servlet request parameter.
-    *
-    * Note: Using a map representation of listing data when fetched
-    * (and posted) from Firestore due to serialization problem with JavaMoney,
-    * which Firestore was not able to serialize.
-    */
-    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
-        MonetaryParseException, NumberFormatException, ParseException {
-      ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
-      
-      return Optional.of(Listing.builder()
-        .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
-        .setDocumentId(Optional.of(document.getId()))
-        .setTitle(listingData.get(TITLE).toString())
-        .setDescription(listingData.get(DESCRIPTION).toString())
-        .setStartDate(listingData.get(START_DATE).toString())
-        .setEndDate(listingData.get(END_DATE).toString())
-        .setLeaseType(listingData.get(LEASE_TYPE).toString())
-        .setNumRooms(((Long) listingData.get(NUM_ROOMS)).intValue())
-        .setNumBathrooms(((Long) listingData.get(NUM_BATHROOMS)).intValue())
-        .setNumShared(((Long) listingData.get(NUM_SHARED)).intValue())
-        .setNumSingles(((Long) listingData.get(NUM_SINGLES)).intValue())
-        .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
-        .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
-        .setListingPrice(listingData.get(LISTING_PRICE).toString())
-        .build());
-    }
+  /**
+  * Sets all listing values to the corresponding HTTP Servlet request parameter.
+  *
+  * Note: Using a map representation of listing data when fetched
+  * (and posted) from Firestore due to serialization problem with JavaMoney,
+  * which Firestore was not able to serialize.
+  */
+  public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
+      MonetaryParseException, NumberFormatException, ParseException {
+    ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
+    
+    return Optional.of(Listing.builder()
+      .setTimestamp(Optional.of((Timestamp) listingData.get(TIMESTAMP)))
+      .setDocumentId(Optional.of(document.getId()))
+      .setTitle(listingData.get(TITLE).toString())
+      .setDescription(listingData.get(DESCRIPTION).toString())
+      .setStartDate(listingData.get(START_DATE).toString())
+      .setEndDate(listingData.get(END_DATE).toString())
+      .setLeaseType(listingData.get(LEASE_TYPE).toString())
+      .setNumRooms(((Long) listingData.get(NUM_ROOMS)).intValue())
+      .setNumBathrooms(((Long) listingData.get(NUM_BATHROOMS)).intValue())
+      .setNumShared(((Long) listingData.get(NUM_SHARED)).intValue())
+      .setNumSingles(((Long) listingData.get(NUM_SINGLES)).intValue())
+      .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
+      .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
+      .setListingPrice(listingData.get(LISTING_PRICE).toString())
+      .setCommentIds((ImmutableList<String>) listingData.get(COMMENT_IDS))
+      .build());
+  }
 
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
@@ -296,6 +302,7 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
+    .setCommentIds(ImmutableList.<String>of())
     .build();
   }
 }
