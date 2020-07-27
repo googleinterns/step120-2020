@@ -29,9 +29,8 @@ const SignUpPage = () => {
                     user.updateProfile({
                         displayName: displayName
                     }).then(() => {
-                        console.log("update successful");
+                        generateUserDocument(user);
                     })
-                    generateUserDocument(user);
                 }
             } catch(error) {
                 setError('Error signing up with email and password, ' + error.message);
@@ -82,7 +81,7 @@ const SignUpPage = () => {
               onChange={(event) => onDisplayNameChangeHandler(event)}
             />
             <label htmlFor="userEmail" className="block">
-              Your Email:
+              Enter Your .edu Email:
             </label>
             <input
               type="userEmail"

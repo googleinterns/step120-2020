@@ -2,9 +2,10 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/analytics";
+import APIKey from "./APIKey";
  
 const firebaseConfig = {
-    apiKey: "AIzaSyAjse2YjCJHUUe5w1i7I9jkjH8cqqRcAIU",
+    apiKey: APIKey,
     authDomain: "step120-2020.firebaseapp.com",
     databaseURL: "https://step120-2020.firebaseio.com",
     projectId: "step120-2020",

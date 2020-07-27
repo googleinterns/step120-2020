@@ -8,7 +8,6 @@ const SignInPage = () => {
   const [error, setError] = useState(null);
  
   const signInHandler = async (event,email,password) => {
-      console.log("been called");
     event.preventDefault();
     authentication.signInWithEmailAndPassword(email, password).catch(error => {
         setError("Error signing in with password and email!");
