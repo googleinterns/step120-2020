@@ -35,7 +35,6 @@ class PostListingDisplay extends Component {
             [name]: value
         })
         this.calculateListingPrice();
-        console.log(this.state);
     }
 
     calculateListingPrice(){
