@@ -10,59 +10,49 @@ class PostListingDisplay extends Component {
         super(props);
 
         this.state = {
-            userInput:{
-                title: '',
-                description: '',
-                numRooms: '',
-                numSingles: '',
-                singlePrice: '',
-                numShared: '',
-                sharedPrice: '',
-                numBathrooms: '',
-                leaseTypes: '',
-                startDate: '',
-                endDate: ''
-            }
+            title: '',
+            description: '',
+            numRooms: '',
+            numSingles: '',
+            singlePrice: '',
+            numShared: '',
+            sharedPrice: '',
+            numBathrooms: '',
+            leaseTypes: '',
+            startDate: '',
+            endDate: '',
+            listingPrice: ''
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.calculateListingPrice = this.calculateListingPrice.bind(this);
     }
 
     handleChange(event) {
-        let value = event.target.value;
-        let name = event.target.name;
-        this.setState( prevState => {
-            return { 
-                userInput : {
-                    ...prevState.userInput, [name]: value
-                }
-            }
-        }
-        )
+        const value = event.target.value;
+        const name = event.target.name;
+        this.setState({
+            [name]: value
+        })
+        this.calculateListingPrice();
+        console.log(this.state);
     }
 
-    handleSubmit(event) {
-        alert("GOT IT!")
-        console.log(this.state.userInput);
-        event.preventDefault();
-        let userInput = this.state.userInput;
-
-        fetch("/listings",{
-            method: "POST",
-            body: JSON.stringify(userInput),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => {
-            response.json().then(data =>{
-                console.log("Successful" + data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            })
-        })
+    calculateListingPrice(){
+        const numSingles = this.state.numSingles;
+        const singlePrice = this.state.singlePrice;
+        const numShared = this.state.numShared;
+        const sharedPrice = this.state.sharedPrice;
+        const listingPriceValue = numSingles * singlePrice + numShared * sharedPrice;
+        if (isNaN(listingPriceValue)) {
+            this.setState({
+                listingPrice:'0'
+            });
+        } else {
+            this.setState({
+                listingPrice: listingPriceValue
+            });
+        }
     }
 
     render(){
@@ -72,7 +62,7 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form onSubmit={this.handleSubmit}>
+                <form action="/listings" method="POST">
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
@@ -86,7 +76,8 @@ class PostListingDisplay extends Component {
                         <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" onChange={this.handleChange} />
                         <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handleChange} />
                     </div>
-                    <div id="listingPriceDisplay"></div>
+
+                    <input name="listingPrice" value={this.state.listingPrice} type="hidden"/>
 
                     <InputField fieldHeader="Number of bathrooms:" fieldName="numBathrooms" fieldType="number" onChange={this.handleChange} />
 

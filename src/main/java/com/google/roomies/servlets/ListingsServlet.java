@@ -75,7 +75,7 @@ public class ListingsServlet extends HttpServlet {
 
       database.addListingAsMap(LISTING_COLLECTION_NAME, post);
 
-      //response.sendRedirect(INDEX_URL);
+      response.sendRedirect(INDEX_URL);
     } catch (Exception e) {
         System.err.println("Error posting " + e);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
