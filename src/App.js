@@ -8,7 +8,7 @@ import SignUpPage from "./AuthenticationApp/MainComponents/SignUpPage";
 import UserWrappedMain from "./AuthenticationApp/MainComponents/UserWrappedMain";
 import PostCommentsDisplay from './PostCommentsDisplay/components/PostCommentsDisplay';
 
-/**Component class to render the whole comments page */
+/** Component class to render the whole comments page */
 function App () {
     return (
         <Router>

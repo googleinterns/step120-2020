@@ -7,7 +7,7 @@ const SignInPage = () => {
   const [userEmail, setUserEmail] = useState('');
   const [error, setError] = useState(null);
  
-  const signInHandler = async (event,email,password) => {
+  const signInHandler = async (event, email, password) => {
     event.preventDefault();
     authentication.signInWithEmailAndPassword(email, password).catch(error => {
         setError("Error signing in with password and email!");
@@ -70,9 +70,13 @@ const SignInPage = () => {
               Sign up 
             </Link>{" "}
             <br /> {" "}
-            <Link to = "passwordReset" className="password-reset-link">
-              Forgot your password? Reset it here
-            </Link>
+            <p> 
+              Forgot your password? {" "}
+              <Link to = "passwordReset" className="password-reset-link">
+                Reset {" "}
+              </Link>
+              it here!
+            </p>
           </p>
         </div>
       </div>
