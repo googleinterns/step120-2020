@@ -19,9 +19,14 @@ const SignUpPage = () => {
             event.preventDefault();
             
             try {
-                if (retypedPassword !== userPassword) {
+                var index = userEmail.lastIndexOf('@');
+                if (index <= -1 || userEmail.slice(index + 1) !== "edu.com") {
+                    throw new SyntaxError("Your email is not a .edu address");
+                } 
+                else if (retypedPassword !== userPassword) {
                     throw new SyntaxError("Your passwords don't match");
-                } else {  
+                } 
+                else {  
                     const {user} = await authentication.createUserWithEmailAndPassword(
                         userEmail, 
                         userPassword
@@ -88,7 +93,7 @@ const SignUpPage = () => {
               className=""
               name="userEmail"
               value= {userEmail}
-              placeholder= "E.x: JohnAppleseed@gmail.com"
+              placeholder= "E.x: JohnAppleseed@gmail.edu"
               id="userEmail"
               onChange = {(event) => onUserEmailChangeHandler(event)} 
             />
