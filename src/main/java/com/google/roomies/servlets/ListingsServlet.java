@@ -15,6 +15,7 @@ package com.google.roomies;
 
 import static com.google.roomies.ProjectConstants.INDEX_URL;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingConstants.RESPONSE_CONTENT_TYPE;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
@@ -34,6 +35,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Streams;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
@@ -52,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -92,9 +95,9 @@ public class ListingsServlet extends HttpServlet {
     try {
       List<Listing> listings = getAllListingsFromCollection();
 
-      response.setContentType("application/json");
+      response.setContentType(RESPONSE_CONTENT_TYPE);
       response.getWriter().println(convertToJsonUsingGson(listings));
-    } catch (Exception e) {
+    } catch (InterruptedException | ExecutionException e) {
       System.err.println("Error fetching listings: " + e);
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.setContentType("text/html");
@@ -110,34 +113,40 @@ public class ListingsServlet extends HttpServlet {
   }
 
   /**
-  * Gets all listings from the listing collection in Firestore.
+  * Gets all listings from the listing collection in database.
   * 
   * @return list of Listing instances
   */
-  private List<Listing> getAllListingsFromCollection() throws Exception {
+  private List<Listing> getAllListingsFromCollection() throws InterruptedException, ExecutionException {
     List<QueryDocumentSnapshot> documents = 
       database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
     return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
-      .map(this::getListingFromDocument)
-      .flatMap(Optional::stream)
+      .flatMap(this::getListingFromDocument)
       .collect(Collectors.toList());
   }
 
   /**
-  * Creates Listing instance given document from Firestore.
+  * Creates Listing instance given a document from the database and returns 
+  * a stream of the instance.
   * 
-  * @param document a QueryDocumentSnapshot from Firestore
-  * @return an Optional<Listing> containing the Listing instance or an empty 
-  *   Optional if Listing could not be created.
+  * @param document a QueryDocumentSnapshot from database
+  * @return stream containing the Listing instance or an empty stream 
+  *   if Listing could not be created.
   */
-  private Optional<Listing> getListingFromDocument(QueryDocumentSnapshot document) {
+  private Stream<Listing> getListingFromDocument(QueryDocumentSnapshot document) {
     try {
-      return Listing.fromFirestore(document);
+      return Listing.fromFirestore(document).stream();
     } catch (UnknownCurrencyException | MonetaryParseException | IllegalArgumentException
        | ParseException e) {
-      System.err.println("Error fetching listing document " + e);
-      return Optional.<Listing>empty();
+      String errorMessage = String.format("Error fetching listing %s with exception: %s",
+          mapToString(document.getData()), e);
+      System.err.println(errorMessage);
+      return Stream.<Listing>empty();
     }
+  }
+
+  private String mapToString(Map<String, Object> map) {
+    return Joiner.on(",").withKeyValueSeparator("=").join(map);
   }
 }

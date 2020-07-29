@@ -61,19 +61,19 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public class ListingsDatabaseTest {
   @Mock CollectionReference collectionMock;
-  @Mock Firestore dbMock;
+  @Mock Firestore firestoreMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
   private Listing listing;
-  private NoSQLDatabase db;
+  private NoSQLDatabase database;
   
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
 
-    db = DatabaseFactory.getDatabase();
-    db.setDatabaseForTest(dbMock);
-    when(dbMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
+    database = DatabaseFactory.getDatabase();
+    database.setDatabaseForTest(firestoreMock);
+    when(firestoreMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
 
     setRequestParameters();
     listing = Listing.fromServletRequest(request);
@@ -83,9 +83,9 @@ public class ListingsDatabaseTest {
   public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
     Map<String, Object> expectedData = listing.toMap();
     
-    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
 
-    verify(dbMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
+    verify(firestoreMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).add(expectedData);
   }
 
@@ -98,17 +98,17 @@ public class ListingsDatabaseTest {
     when(request.getParameter(START_DATE)).thenReturn(invalidStartDate);
     listing = Listing.fromServletRequest(request);
 
-    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
   }
 
   @Test
   public void testGetAllDocumentsInCollection_fetchesListingFromFirestore() throws Exception {
-    db.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
     Map<String, Object> expectedData = listing.toMap();
 
-    db.getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
+    database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
 
-    verify(dbMock, Mockito.times(2)).collection(LISTING_COLLECTION_NAME);
+    verify(firestoreMock, Mockito.times(2)).collection(LISTING_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).get();
   }
 

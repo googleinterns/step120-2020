@@ -22,14 +22,17 @@ import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A Firestore Database that implements the NoSQLDatabase interface. 
     Allows for fetching and posting of data to Firestore. */
 public class FirebaseDatabase implements NoSQLDatabase {
   private Firestore db;
   FirebaseDatabase() throws IOException {
-    this.db = initializeDatabase();
+    if (FirebaseApp.getApps().isEmpty()) {
+      this.db = initializeDatabase();
+    }
   }
 
   /**
@@ -66,7 +69,8 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param doc document that implements the document interface
   */
   @Override
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception {
+  public void addDocumentAsClass(String collectionName, Document doc) throws 
+      InterruptedException, ExecutionException {
     ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
     addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
   }
@@ -92,7 +96,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param documentID ID of document to get from Firestore
   */
   @Override
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception {
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) {
     DocumentReference docRef = this.db.collection(collectionName).document(documentID);
     return docRef.get();
   }
@@ -106,7 +110,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   */
   @Override
   public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
-      String collectionName, String field, Object fieldValue) throws Exception {
+      String collectionName, String field, Object fieldValue)  {
     ApiFuture<QuerySnapshot> future =
       db.collection(collectionName).whereEqualTo(field, fieldValue).get();
     return future;
