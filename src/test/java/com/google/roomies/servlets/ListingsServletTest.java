@@ -63,14 +63,12 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class ListingsServletTest {
-  @Mock Firestore dbMock;
-  @Mock CollectionReference collectionMock;
   @Mock QueryDocumentSnapshot queryDocumentMock;
   @Mock ApiFuture<QuerySnapshot> futureMock;
   @Mock QuerySnapshot querySnapshotMock;
   @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
 
-  @Mock NoSQLDatabase db;
+  @Mock NoSQLDatabase database;
 
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
@@ -86,9 +84,14 @@ public class ListingsServletTest {
     listingsServlet = new ListingsServlet();
     listingsServlet.init();
 
-    DatabaseFactory.setDatabaseForTest(db);
-    setRequestParameters();
-    defineDatabaseMockBehavior();
+    DatabaseFactory.setDatabaseForTest(database);
+    
+    List<QueryDocumentSnapshot> queryDocumentList = List.of(queryDocumentMock);
+    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(futureMock);
+    when(futureMock.get()).thenReturn(querySnapshotMock);
+    when(querySnapshotMock.getDocuments()).thenReturn(queryDocumentsMock);
+    when(queryDocumentMock.getId()).thenReturn("documentID");
+    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
 
     stringWriter = new StringWriter();
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
@@ -96,55 +99,86 @@ public class ListingsServletTest {
  
   @Test
   public void testGet_returnsSingleListing() throws Exception {
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     when(queryDocumentMock.getData()).thenReturn(listingData);
  
     listingsServlet.doGet(request, response);
     String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
-      "\"timestamp\":{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"title\":\"Test title\"," +
-      "\"description\":\"Test description\",\"startDate\":\"Jul 10, 2020, 12:00:00 AM\"," + 
-      "\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":\"YEAR_LONG\",\"numRooms\":2," +
-      "\"numBathrooms\":2,\"numShared\":2,\"numSingles\":2,\"sharedPrice\":\"USD 100\","+
-      "\"singlePrice\":\"USD 0\",\"listingPrice\":\"USD 100\",\"commentIds\":[]}]";
+      "\"timestamp\":{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"title\":"+
+      "\"Test title\",\"description\":\"Test description\",\"startDate\":\"Jul 10," + 
+      " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
+      "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
+      "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
+      "\"USD 100\"}]";
 
-    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
-    verify(queryDocumentMock, Mockito.times(1)).getData();
     assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
   }
 
   @Test
-  public void testGet_returnsNoListingsWithNoneInFirestore() throws Exception {
-    List<QueryDocumentSnapshot> queryDocumentList = new ArrayList();
-    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
+  public void testGet_returnsNoListingsWithNoneInDatabasae() throws Exception {
+    when(queryDocumentsMock.spliterator()).thenReturn(new ArrayList().spliterator());
 
     listingsServlet.doGet(request, response);
 
-    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
-    verify(queryDocumentMock, Mockito.times(0)).getData();
     assertEquals(stringWriter.getBuffer().toString().trim(), "[]");
   }
 
   @Test
   public void testGet_fetchedListingHasInvalidParams_returnsNoListings() throws Exception {
     String invalidLeaseType = "yearlong";
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     listingData.put(LEASE_TYPE, invalidLeaseType);
     when(queryDocumentMock.getData()).thenReturn(listingData);
 
     listingsServlet.doGet(request, response);
-    verify(db, Mockito.times(1)).getAllDocumentsInCollection(LISTING_COLLECTION_NAME);
-    verify(queryDocumentMock, Mockito.times(1)).getData();
+    
     assertEquals(stringWriter.getBuffer().toString().trim(), "[]");
   }
 
   @Test
   public void testPost_postsSingleListing() throws Exception {
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
     listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
     
     listingsServlet.doPost(request, response);
     
-    verify(db, Mockito.times(1)).addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    verify(database, Mockito.times(1)).addListingAsMap(listing);
   }
 
   @Test
@@ -153,10 +187,20 @@ public class ListingsServletTest {
     String invalidStartDate = "07/10/2020";
     when(request.getParameter(END_DATE)).thenReturn(invalidEndDate);
     when(request.getParameter(START_DATE)).thenReturn(invalidStartDate);
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
 
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -164,10 +208,21 @@ public class ListingsServletTest {
   public void testPost_requestHasInvalidLeaseType_servletResponseIsSetToBadRequest() throws Exception {
     String invalidLeaseType = "yearlong";
     when(request.getParameter(LEASE_TYPE)).thenReturn(invalidLeaseType);
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
     
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -175,10 +230,21 @@ public class ListingsServletTest {
   public void testPost_requestHasInvalidListingPrice_servletResponseIsSetToBadRequest() throws Exception {
     String invalidListingPrice = "price";
     when(request.getParameter(LISTING_PRICE)).thenReturn(invalidListingPrice);
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
  
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -186,10 +252,21 @@ public class ListingsServletTest {
   public void testPost_requestHasInvalidSharedPrice_servletResponseIsSetToBadRequest() throws Exception {
     String invalidSharedPrice = "$3";
     when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(invalidSharedPrice);
-    
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
+
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -197,10 +274,21 @@ public class ListingsServletTest {
   public void testPost_requestHasInvalidSinglePrice_servletResponseIsSetToBadRequest() throws Exception {
     String invalidSinglePrice = "-.3";
     when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(invalidSinglePrice);
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
   
     listingsServlet.doPost(request, response);
 
-    verify(db, Mockito.times(0)).addListingAsMap(eq(LISTING_COLLECTION_NAME), any(Listing.class));
+    verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
 
@@ -220,19 +308,6 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-  }
-
-  /**
-  * Configure mock database instance behavior.
-  */
-  private void defineDatabaseMockBehavior() throws Exception {
-    List<QueryDocumentSnapshot> queryDocumentList = List.of(queryDocumentMock);
-
-    when(db.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(futureMock);
-    when(futureMock.get()).thenReturn(querySnapshotMock);
-    when(querySnapshotMock.getDocuments()).thenReturn(queryDocumentsMock);
-    when(queryDocumentMock.getId()).thenReturn("documentID");
-    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
   }
 
   /**

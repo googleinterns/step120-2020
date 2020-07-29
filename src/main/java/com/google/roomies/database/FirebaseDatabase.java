@@ -26,14 +26,17 @@ import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A Firestore Database that implements the NoSQLDatabase interface. 
     Allows for fetching and posting of data to Firestore. */
 public class FirebaseDatabase implements NoSQLDatabase {
   private Firestore db;
   FirebaseDatabase() throws IOException {
-    this.db = initializeDatabase();
+    if (FirebaseApp.getApps().isEmpty()) {
+      this.db = initializeDatabase();
+    }
   }
 
   /**
@@ -56,24 +59,10 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param listing an instance of Listing
   */
   @Override
-  public void addListingAsMap(String collectionName, Listing listing) {
+  public void addListingAsMap(Listing listing) {
     Map<String, Object> data = listing.toMap();
-    this.db.collection(collectionName).add(data);
+    this.db.collection(LISTING_COLLECTION_NAME).add(data);
   }
-
-  /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param doc document that implements the document interface
-  */
-  // @Override
-  // public void addCityAsClass(String collectionName, City doc) throws Exception {
-  //   ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
-  //   addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
-  // }
 
   /**
   * Add a comment to a collection as a map.
@@ -88,27 +77,27 @@ public class FirebaseDatabase implements NoSQLDatabase {
   }
   
   /**
-  * Update a listing with the specified input fields.
+  * Add comment ID to listing document.
   *
   * @param documentID ID of document to update in Firestore
-  * @param fieldsToUpdate a map of <document key to update, new document value>. 
+  * @param commentId ID of comment to add under listing document 
   */
   @Override
-  public void updateCommentIdsInListing(String documentID, String commentId) {
+  public void addCommentIDtoListing(String documentID, String commentId) {
     DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME).document(documentID);
     docRef.update(COMMENT_IDS, FieldValue.arrayUnion(commentId));
   }
 
   /**
-  * Update a document with the specified input fields.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in Firestore
   * @param documentID ID of document to update in Firestore
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   @Override
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate) {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+        .document(documentID);
     fieldsToUpdate.forEach((fieldName, fieldValue) -> 
         docRef.update(fieldName, fieldValue));
   }
@@ -120,7 +109,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param documentID ID of document to get from Firestore
   */
   @Override
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception {
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) {
     DocumentReference docRef = this.db.collection(collectionName).document(documentID);
     return docRef.get();
   }
@@ -134,7 +123,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   */
   @Override
   public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
-      String collectionName, String field, Object fieldValue) throws Exception {
+      String collectionName, String field, Object fieldValue)  {
     ApiFuture<QuerySnapshot> future =
       db.collection(collectionName).whereEqualTo(field, fieldValue).get();
     return future;

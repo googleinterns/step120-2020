@@ -74,16 +74,16 @@ public abstract class Listing implements Document, Serializable {
   abstract Money listingPrice();
   abstract ImmutableList<String> commentIds();
 
-  static Builder builder() {
+  public static Builder builder() {
     return new AutoValue_Listing.Builder();
   }
 
   @AutoValue.Builder
   public abstract static class Builder implements Serializable {
-    abstract Builder setTimestamp(Optional<Timestamp> timestamp);
-    abstract Builder setDocumentId(Optional<String> documentId);
-    abstract Builder setTitle(String title);
-    abstract Builder setDescription(String description);
+    public abstract Builder setTimestamp(Optional<Timestamp> timestamp);
+    public abstract Builder setDocumentId(Optional<String> documentId);
+    public abstract Builder setTitle(String title);
+    public abstract Builder setDescription(String description);
     abstract Builder setStartDate(Date startDate);
     abstract Builder setEndDate(Date endDate);
     abstract Builder setLeaseType(LeaseType leaseType);
@@ -99,7 +99,7 @@ public abstract class Listing implements Document, Serializable {
     abstract LeaseType leaseType();
     abstract int numRooms();
 
-    abstract Listing build();
+    public abstract Listing build();
     
     /**
     * Sets the lease type to a Lease Type enum value given a string representation of
@@ -109,7 +109,7 @@ public abstract class Listing implements Document, Serializable {
     * @throws IllegalArgumentException if input does not match a LeaseType enum 
     * value (case sensistive).
     */
-    Builder setLeaseType(String leaseType) {
+    public Builder setLeaseType(String leaseType) {
       setLeaseType(LeaseType.valueOf(leaseType));
       return this;
     }
@@ -121,7 +121,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer (ex. "2").
     * @throws NumberFormatException if input is not parseable.
     */
-    Builder setNumRooms(String numRooms) {
+    public Builder setNumRooms(String numRooms) {
       setNumRooms(Integer.parseInt(numRooms));
       return this;
     }
@@ -133,7 +133,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer (ex. "2").
     * @throws NumberFormatException if input is not parseable.
     */
-    Builder setNumBathrooms(String numBathrooms) {
+    public Builder setNumBathrooms(String numBathrooms) {
       setNumBathrooms(Integer.parseInt(numBathrooms));
       return this;     
     }
@@ -145,7 +145,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer (ex. "2").
     * @throws NumberFormatException if input is not parseable.
     */
-    Builder setNumShared(String numShared) {
+    public Builder setNumShared(String numShared) {
       setNumShared(Integer.parseInt(numShared));
       return this;     
     }
@@ -157,7 +157,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be a non-negative integer (ex. "2").
     * @throws NumberFormatException if input is not parseable.
     */
-    Builder setNumSingles(String numSingles) {
+    public Builder setNumSingles(String numSingles) {
       setNumSingles(Integer.parseInt(numSingles));
       return this;     
     }
@@ -168,7 +168,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
     * @throws ParseException if date is not in correct format.
     */
-    Builder setStartDate(String startDate) throws ParseException {
+    public Builder setStartDate(String startDate) throws ParseException {
       setStartDate(StringConverter.stringToDate(startDate));
       return this;
     }
@@ -179,7 +179,7 @@ public abstract class Listing implements Document, Serializable {
     * Input should be in the format "yyyy-MM-dd" (ex. "2020-07-20").
     * @throws ParseException if date is not in correct format.
     */
-    Builder setEndDate(String endDate) throws ParseException {
+    public Builder setEndDate(String endDate) throws ParseException {
       setEndDate(StringConverter.stringToDate(endDate));
       return this;
     }
@@ -192,9 +192,9 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setSharedPrice(String sharedPrice) throws UnknownCurrencyException,
+    public Builder setSharedPrice(String sharedPrice) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException {
-      setSharedPrice(StringConverter.stringToMoney(sharedPrice));
+      setSharedPrice(StringConverter.stringToNonNegativeMoney(sharedPrice));
       return this;
     }
 
@@ -206,9 +206,9 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setSinglePrice(String singlePrice) throws UnknownCurrencyException,
+    public Builder setSinglePrice(String singlePrice) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException {
-      setSinglePrice(StringConverter.stringToMoney(singlePrice));
+      setSinglePrice(StringConverter.stringToNonNegativeMoney(singlePrice));
       return this;
     }
 
@@ -220,11 +220,12 @@ public abstract class Listing implements Document, Serializable {
     * without the $ sign (ex. "300")
     * @throws Exception if price is not in correct format.
     */
-    Builder setListingPrice(String listingPrice) throws UnknownCurrencyException,
+    public Builder setListingPrice(String listingPrice) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException {
-      setListingPrice(StringConverter.stringToMoney(listingPrice));
+      setListingPrice(StringConverter.stringToNonNegativeMoney(listingPrice));
       return this;
     }
+ 
   }
 
   /**
