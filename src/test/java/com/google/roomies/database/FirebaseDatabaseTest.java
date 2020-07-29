@@ -32,6 +32,8 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableMap;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,7 +60,7 @@ import org.mockito.MockitoAnnotations;
 public class FirebaseDatabaseTest {
   @Mock CollectionReference collectionMock;
   @Mock Firestore firestoreMock;
-  private Listing listing;
+  @Mock Listing listing;
   private FirebaseDatabase database;
   
   @Before
@@ -72,48 +74,27 @@ public class FirebaseDatabaseTest {
 
   @Test
   public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
-    listing = Listing.builder()
-      .setTitle("Test title")
-      .setDescription("Test description")
-      .setStartDate("2020-07-10")
-      .setEndDate("2021-07-10")
-      .setLeaseType("YEAR_LONG")
-      .setNumRooms("2")
-      .setNumBathrooms("3")
-      .setNumShared("1")
-      .setNumSingles("2")
-      .setSharedPrice("100")
-      .setSinglePrice("0")
-      .setListingPrice("100")
+    ImmutableMap<String, Object> listingData = 
+      ImmutableMap.<String, Object>builder()
+      .put(TITLE, "Test title")
+      .put(DESCRIPTION, "Test description")
+      .put(START_DATE, "2020-07-10")
+      .put(END_DATE, "2021-07-10")
+      .put(LEASE_TYPE, "YEAR_LONG")
+      .put(NUM_ROOMS, "2")
+      .put(NUM_BATHROOMS, "3")
+      .put(NUM_SHARED, "1")
+      .put(NUM_SINGLES, "0")
+      .put(SHARED_ROOM_PRICE, "100")
+      .put(SINGLE_ROOM_PRICE, "10")
+      .put(LISTING_PRICE, "100")
+      .put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"))
       .build();
-    Map<String, Object> expectedData = listing.toMap();
+    when(listing.toMap()).thenReturn(listingData);
     
     database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
 
     verify(firestoreMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
-    verify(collectionMock, Mockito.times(1)).add(expectedData);
-  }
-
-  @Test(expected = ParseException.class)
-  public void testAddListingAsMap_listingHasInvalidInput_exceptionThrownBeforeListingIsPosted()
-     throws Exception {
-    String invalidEndDate = "202020/20/10";
-    String invalidStartDate = "07/10/2020";
-    listing = Listing.builder()
-      .setTitle("Test title")
-      .setDescription("Test description")
-      .setStartDate(invalidStartDate)
-      .setEndDate(invalidEndDate)
-      .setLeaseType("YEAR_LONG")
-      .setNumRooms("2")
-      .setNumBathrooms("3")
-      .setNumShared("1")
-      .setNumSingles("2")
-      .setSharedPrice("100")
-      .setSinglePrice("0")
-      .setListingPrice("100")
-      .build();
-
-    database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    verify(collectionMock, Mockito.times(1)).add(listingData);
   }
 }
