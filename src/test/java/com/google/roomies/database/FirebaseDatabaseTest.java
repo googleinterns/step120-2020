@@ -60,7 +60,10 @@ import org.mockito.MockitoAnnotations;
 public class FirebaseDatabaseTest {
   @Mock CollectionReference collectionMock;
   @Mock Firestore firestoreMock;
-  @Mock Listing listing;
+  @Mock DocumentReference docReferenceMock;
+  @Mock ApiFuture<DocumentSnapshot> docSnapshotMock;
+  @Mock ApiFuture<QuerySnapshot> querySnapshotMock;
+  private Listing listing;
   private FirebaseDatabase database;
   
   @Before
@@ -74,27 +77,80 @@ public class FirebaseDatabaseTest {
 
   @Test
   public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
-    ImmutableMap<String, Object> listingData = 
-      ImmutableMap.<String, Object>builder()
-      .put(TITLE, "Test title")
-      .put(DESCRIPTION, "Test description")
-      .put(START_DATE, "2020-07-10")
-      .put(END_DATE, "2021-07-10")
-      .put(LEASE_TYPE, "YEAR_LONG")
-      .put(NUM_ROOMS, "2")
-      .put(NUM_BATHROOMS, "3")
-      .put(NUM_SHARED, "1")
-      .put(NUM_SINGLES, "0")
-      .put(SHARED_ROOM_PRICE, "100")
-      .put(SINGLE_ROOM_PRICE, "10")
-      .put(LISTING_PRICE, "100")
-      .put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"))
+    listing = Listing.builder()
+      .setTitle("Test title")
+      .setDescription("Test description")
+      .setStartDate("2020-07-10")
+      .setEndDate("2021-07-10")
+      .setLeaseType("YEAR_LONG")
+      .setNumRooms("2")
+      .setNumBathrooms("3")
+      .setNumShared("1")
+      .setNumSingles("0")
+      .setSharedPrice("100")
+      .setSinglePrice("10")
+      .setListingPrice("100")
       .build();
-    when(listing.toMap()).thenReturn(listingData);
+    ImmutableMap<String, Object> listingData = listing.toMap();
     
-    database.addListingAsMap(LISTING_COLLECTION_NAME, listing);
+    database.addListingAsMap(listing);
 
     verify(firestoreMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).add(listingData);
+  }
+
+  @Test
+  public void testUpdateListing_updatesListingWithSpecifiedFields() {
+    String documentId = "myDocument";
+    String newTitle = "New title";
+    String newStartDate = "2020-10-09";
+    Map<String, Object> fieldsToUpdate = ImmutableMap.of(TITLE, newTitle,
+        START_DATE, newStartDate);
+    when(collectionMock.document(documentId)).thenReturn(docReferenceMock);
+    
+    database.updateListing(documentId, fieldsToUpdate);
+
+    verify(docReferenceMock, Mockito.times(1)).update(TITLE, newTitle);
+    verify(docReferenceMock, Mockito.times(1)).update(START_DATE, newStartDate);
+  }
+
+  @Test
+  public void testGetDocument_getsSingleDocument() {
+    String documentId = "myDocument";
+    String collectionName = LISTING_COLLECTION_NAME;
+    when(docReferenceMock.get()).thenReturn(docSnapshotMock);
+    when(collectionMock.document(documentId)).thenReturn(docReferenceMock);
+
+    ApiFuture<DocumentSnapshot> docSnapshot = 
+      database.getDocument(collectionName, documentId);
+
+    assertEquals(docSnapshot, docSnapshotMock);
+  }
+
+  @Test
+  public void testGetDocumentWithFieldValue_getsDocumentsWithSpecifiedFieldValue() {
+    String collectionName = LISTING_COLLECTION_NAME;
+    String field = TITLE;
+    String fieldValue = "Test title";
+    when(collectionMock.whereEqualTo(field, fieldValue))
+      .thenReturn(collectionMock);
+    when(collectionMock.whereEqualTo(field, fieldValue).get())
+      .thenReturn(querySnapshotMock);
+    
+    ApiFuture<QuerySnapshot> querySnapshot = 
+      database.getDocumentsWithFieldValue(collectionName, field, fieldValue);
+
+    assertEquals(querySnapshot, querySnapshotMock);
+  }
+
+  @Test
+  public void testGetAllDocumentsInCollection_getsAllDocuments() {
+    String collectionName = LISTING_COLLECTION_NAME;
+    when(collectionMock.get()).thenReturn(querySnapshotMock);
+
+    ApiFuture<QuerySnapshot> querySnapshot = 
+      database.getAllDocumentsInCollection(collectionName);
+
+    assertEquals(querySnapshot, querySnapshotMock);
   }
 }

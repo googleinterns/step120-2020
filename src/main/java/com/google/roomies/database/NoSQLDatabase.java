@@ -20,32 +20,19 @@ public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
   /**
-  * Add a document to a collection using a map.
+  * Add a listing document to a collection using a map.
   *
-  * @param collectionName name of collection in database
   * @param listing instance of Listing class
   */  
-  public void addListingAsMap(String collectionName, Listing listing);
+  public void addListingAsMap(Listing listing);
 
   /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
-  */
-  public void addDocumentAsClass(String collectionName, Document doc) throws
-   InterruptedException, ExecutionException;
-
-  /**
-  * Update a document with the specified input fields.
-  *
-  * @param collectionName name of collection in database
   * @param documentID ID of document to update in database
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
 
   /**
   * Get a document from database in a map of <key, value>.

@@ -1,6 +1,7 @@
 package com.google.roomies.database;
 
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
+import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 
 import com.google.api.core.ApiFuture;
@@ -55,36 +56,21 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param listing an instance of Listing
   */
   @Override
-  public void addListingAsMap(String collectionName, Listing listing) {
+  public void addListingAsMap(Listing listing) {
     Map<String, Object> data = listing.toMap();
-    this.db.collection(collectionName).add(data);
+    this.db.collection(LISTING_COLLECTION_NAME).add(data);
   }
 
   /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in Firestore
-  * @param doc document that implements the document interface
-  */
-  @Override
-  public void addDocumentAsClass(String collectionName, Document doc) throws 
-      InterruptedException, ExecutionException {
-    ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
-    addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
-  }
-
-  /**
-  * Update a document with the specified input fields.
-  *
-  * @param collectionName name of collection in Firestore
   * @param documentID ID of document to update in Firestore
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   @Override
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate) {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+        .document(documentID);
     fieldsToUpdate.forEach((fieldName, fieldValue) -> 
         docRef.update(fieldName, fieldValue));
   }

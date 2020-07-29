@@ -15,6 +15,7 @@ import org.javamoney.moneta.Money;
 
 /** Functions that convert strings to other data types. */
 public final class StringConverter {
+  private static final CurrencyUnit CURRENCY = Monetary.getCurrency(CURRENCY_CODE);
   private StringConverter() {}
 
   /**
@@ -61,7 +62,7 @@ public final class StringConverter {
     Money convertedPrice = stringToMoney(moneyRepresentation);
 
     if (convertedPrice.isNegative()) {
-      throw new IllegalArgumentException("Negative monetary amounts are not" + 
+      throw new IllegalArgumentException("Negative monetary amounts are not " + 
         "accepted.");
     }
 
@@ -88,8 +89,7 @@ public final class StringConverter {
   * @return a Money instance of the price in USD
   */
   private static Money priceToMoney(String price) {
-    CurrencyUnit usd = Monetary.getCurrency(CURRENCY_CODE);
-    return Money.of(new BigDecimal(price), usd);
+    return Money.of(new BigDecimal(price), CURRENCY);
   }
  
 }
