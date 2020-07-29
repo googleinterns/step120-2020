@@ -11,7 +11,8 @@ import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A NoSQL Database interface. Specifies required fetch, update, and get methods
     for a database. */
@@ -19,31 +20,19 @@ public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
   /**
-  * Add a document to a collection using a map.
+  * Add a listing document to a collection using a map.
   *
-  * @param collectionName name of collection in database
   * @param listing instance of Listing class
   */  
-  public void addListingAsMap(String collectionName, Listing listing);
+  public void addListingAsMap(Listing listing);
 
   /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
-  */
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception;
-
-  /**
-  * Update a document with the specified input fields.
-  *
-  * @param collectionName name of collection in database
   * @param documentID ID of document to update in database
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
 
   /**
   * Get a document from database in a map of <key, value>.
@@ -51,7 +40,7 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   * @param documentID ID of document to get from database
   */
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception;
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID);
 
   /**
   * Get all documents with the input field value.
@@ -60,12 +49,12 @@ public interface NoSQLDatabase {
   * @param field document field to search
   * @param fieldValue value of field
   */
-  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue) throws Exception;
+  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue);
   
   /**
   * Get all documents in specified collection.
   *
   * @param collectionName name of collection in database
   */
-  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception;
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
 }

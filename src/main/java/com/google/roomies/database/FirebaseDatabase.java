@@ -1,6 +1,7 @@
 package com.google.roomies.database;
 
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
+import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 
 import com.google.api.core.ApiFuture;
@@ -22,14 +23,17 @@ import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A Firestore Database that implements the NoSQLDatabase interface. 
     Allows for fetching and posting of data to Firestore. */
 public class FirebaseDatabase implements NoSQLDatabase {
   private Firestore db;
   FirebaseDatabase() throws IOException {
-    this.db = initializeDatabase();
+    if (FirebaseApp.getApps().isEmpty()) {
+      this.db = initializeDatabase();
+    }
   }
 
   /**
@@ -52,35 +56,21 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param listing an instance of Listing
   */
   @Override
-  public void addListingAsMap(String collectionName, Listing listing) {
+  public void addListingAsMap(Listing listing) {
     Map<String, Object> data = listing.toMap();
-    this.db.collection(collectionName).add(data);
+    this.db.collection(LISTING_COLLECTION_NAME).add(data);
   }
 
   /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in Firestore
-  * @param doc document that implements the document interface
-  */
-  @Override
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception {
-    ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
-    addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
-  }
-
-  /**
-  * Update a document with the specified input fields.
-  *
-  * @param collectionName name of collection in Firestore
   * @param documentID ID of document to update in Firestore
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   @Override
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate) {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+        .document(documentID);
     fieldsToUpdate.forEach((fieldName, fieldValue) -> 
         docRef.update(fieldName, fieldValue));
   }
@@ -92,7 +82,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param documentID ID of document to get from Firestore
   */
   @Override
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception {
+  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) {
     DocumentReference docRef = this.db.collection(collectionName).document(documentID);
     return docRef.get();
   }
@@ -106,7 +96,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   */
   @Override
   public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
-      String collectionName, String field, Object fieldValue) throws Exception {
+      String collectionName, String field, Object fieldValue)  {
     ApiFuture<QuerySnapshot> future =
       db.collection(collectionName).whereEqualTo(field, fieldValue).get();
     return future;
@@ -118,7 +108,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param collectionName name of collection in Firestore
   */
   @Override
-  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
   }
   

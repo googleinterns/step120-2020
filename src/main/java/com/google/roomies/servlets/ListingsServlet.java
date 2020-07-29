@@ -15,6 +15,7 @@ package com.google.roomies;
 
 import static com.google.roomies.ProjectConstants.INDEX_URL;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingConstants.RESPONSE_CONTENT_TYPE;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
@@ -34,7 +35,9 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Streams;
+import com.google.common.flogger.FluentLogger;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -51,9 +54,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.money.Monetary;
+import javax.money.UnknownCurrencyException;
+import javax.money.format.MonetaryParseException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -65,19 +73,84 @@ import org.javamoney.moneta.Money;
 @WebServlet("/listings")
 public class ListingsServlet extends HttpServlet {
   private NoSQLDatabase database;
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    database = DatabaseFactory.getDatabase();
     try {
-      database = DatabaseFactory.getDatabase();
       Listing post = Listing.fromServletRequest(request);
 
-      database.addListingAsMap(LISTING_COLLECTION_NAME, post);
+      database.addListingAsMap(post);
 
       response.sendRedirect(INDEX_URL);
-    } catch (Exception e) {
-        System.err.println("Error posting " + e);
+    } catch (IllegalArgumentException | UnknownCurrencyException | 
+          MonetaryParseException | ParseException e) {
+        logger.atInfo().withCause(e).log("Error posting: %s", e);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    database = DatabaseFactory.getDatabase();
+    try {
+      List<Listing> listings = getAllListingsFromCollection();
+
+      response.setContentType(RESPONSE_CONTENT_TYPE);
+      response.getWriter().println(convertToJsonUsingGson(listings));
+    } catch (InterruptedException | ExecutionException e) {
+      logger.atInfo().withCause(e).log("Error fetching: %s", e);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.setContentType("text/html");
+      response.getWriter().println("request failed");
+    }
+  }
+
+  private String convertToJsonUsingGson(List data) {
+    Gson gson = new GsonBuilder()
+                  .registerTypeAdapter(Money.class, new MoneySerializer())
+                  .create();
+    return gson.toJson(data);
+  }
+
+  /**
+  * Gets all listings from the listing collection in database.
+  * 
+  * @return list of Listing instances
+  */
+  private List<Listing> getAllListingsFromCollection() throws InterruptedException, ExecutionException {
+    List<QueryDocumentSnapshot> documents = 
+      database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
+
+    return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+      .map(this::getListingFromDocument)
+      .flatMap(Optional::stream)
+      .collect(Collectors.toList());
+  }
+
+  /**
+  * Creates Listing instance given a document from the database and returns 
+  * an optional of the instance.
+  * 
+  * @param document a QueryDocumentSnapshot from database
+  * @return Optional containing the Listing instance or an empty optional 
+  *   if Listing could not be created.
+  */
+  private Optional<Listing> getListingFromDocument(QueryDocumentSnapshot document) {
+    try {
+      return Listing.fromFirestore(document);
+    } catch (UnknownCurrencyException | MonetaryParseException | IllegalArgumentException
+       | ParseException e) {
+      String errorMessage = String.format("Error fetching listing %s with exception: %s",
+          mapToString(document.getData()), e);
+      logger.atInfo().withCause(e).log(errorMessage);
+      return Optional.<Listing>empty();
+    }
+  }
+
+  private String mapToString(Map<String, Object> map) {
+    return Joiner.on(",").withKeyValueSeparator("=").join(map);
   }
 }
