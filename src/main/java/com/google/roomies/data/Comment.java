@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpServletRequest;
  
 @AutoValue
-public abstract class Comment implements Document {
+public abstract class Comment {
   abstract Optional<String> documentId();
   abstract Optional<Timestamp> timestamp();
   abstract String listingId();
@@ -38,6 +38,12 @@ public abstract class Comment implements Document {
 
     abstract Comment autoBuild();
 
+    /**
+    * Builds Comment instance.
+    * 
+    * Verifies that listing id for comment exists in database. If it does not,
+    * Comment instance is not created and exception is thrown.
+    */
     public Comment build() throws IOException, InterruptedException,
         ExecutionException {
       Comment comment = autoBuild();
@@ -49,6 +55,9 @@ public abstract class Comment implements Document {
     }
   }
 
+  /**
+  * Sets all comment values to the corresponding HTTP Servlet request parameter.
+  */
   public static Comment fromServletRequest(HttpServletRequest request) throws
       IOException, InterruptedException, ExecutionException {
     String listingId = request.getParameter(LISTING_ID);
@@ -60,7 +69,12 @@ public abstract class Comment implements Document {
       .build();
   }
 
-  @Override
+  /**
+  * Creates a map of <string key, value> of properties of a comment
+  * that can be posted to the database.
+  *
+  * @return map of <string key (database key), value>   
+  */
   public ImmutableMap<String, Object> toMap() {
     ImmutableMap<String, Object> commentData = ImmutableMap.<String, Object>builder()
       .put(LISTING_ID, listingId())
@@ -70,6 +84,11 @@ public abstract class Comment implements Document {
     return commentData;
   }
 
+  /**
+  * Checks if listing ID exists in database.
+  *
+  * @return true if ID exists, false otherwise
+  */
   private static boolean listingWithIdExists(String listingId) throws IOException,
       InterruptedException, ExecutionException {
     ApiFuture<DocumentSnapshot> listing = 
