@@ -25,17 +25,22 @@ class PostListingDisplay extends Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handlePriceChange = this.handlePriceChange.bind(this);
         this.calculateListingPrice = this.calculateListingPrice.bind(this);
+        this.updateListingPrice = this.updateListingPrice.bind(this);
     }
 
     handleChange(event) {
         const value = event.target.value;
         const name = event.target.name;
-        this.setState({ [name]: value }, () => {
-            if(name === "numSingles" || name === "singlePrice" || name === "numShared" || name === "sharedPrice"){
-                this.calculateListingPrice();
-            }
+        this.setState({
+            [name]: value
         });
+    }
+
+    handlePriceChange(event){
+        this.handleChange(event);
+        this.updateListingPrice();
     }
 
     calculateListingPrice(){
@@ -43,7 +48,11 @@ class PostListingDisplay extends Component {
         const singlePrice = this.state.singlePrice;
         const numShared = this.state.numShared;
         const sharedPrice = this.state.sharedPrice;
-        const listingPriceValue = numSingles * singlePrice + numShared * sharedPrice;
+        return numSingles * singlePrice + numShared * sharedPrice;
+    }
+
+    updateListingPrice(){
+        const listingPriceValue = this.calculateListingPrice();
         if (isNaN(listingPriceValue)) {
             this.setState({
                 listingPrice:''
@@ -69,12 +78,12 @@ class PostListingDisplay extends Component {
 
                     <p>Number of rooms for rent:</p>
                     <div id="singleInfo">
-                        <InputField fieldHeader="Singles:" fieldName="numSingles" fieldType="number" onChange={this.handleChange} />
-                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" onChange={this.handleChange} />
+                        <InputField fieldHeader="Singles:" fieldName="numSingles" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" onChange={this.handlePriceChange} />
                     </div>
                     <div id="sharedInfo">
-                        <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" onChange={this.handleChange} />
-                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handleChange} />
+                        <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handlePriceChange} />
                     </div>
 
                     <input name="listingPrice" value={this.state.listingPrice} type="hidden"/>
