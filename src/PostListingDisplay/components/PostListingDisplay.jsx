@@ -31,10 +31,11 @@ class PostListingDisplay extends Component {
     handleChange(event) {
         const value = event.target.value;
         const name = event.target.name;
-        this.setState({
-            [name]: value
-        })
-        this.calculateListingPrice();
+        this.setState({ [name]: value }, () => {
+            if(name === "numSingles" || name === "singlePrice" || name === "numShared" || name === "sharedPrice"){
+                this.calculateListingPrice();
+            }
+        });
     }
 
     calculateListingPrice(){
@@ -45,7 +46,7 @@ class PostListingDisplay extends Component {
         const listingPriceValue = numSingles * singlePrice + numShared * sharedPrice;
         if (isNaN(listingPriceValue)) {
             this.setState({
-                listingPrice:'0'
+                listingPrice:''
             });
         } else {
             this.setState({
