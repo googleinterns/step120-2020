@@ -1,5 +1,7 @@
 package com.google.roomies.database;
 
+import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.COMMENT_IDS;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
@@ -71,9 +73,9 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param comment a Comment instance 
   */
   @Override
-  public void addCommentAsMap(String collectionName, Comment comment) {
+  public ApiFuture<DocumentReference> addCommentAsMap(Comment comment) {
     Map<String, Object> data = comment.toMap();
-    this.db.collection(collectionName).add(data);
+    return this.db.collection(COMMENT_COLLECTION_NAME).add(data);
   }
   
   /**
@@ -83,7 +85,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * @param commentId ID of comment to add under listing document 
   */
   @Override
-  public void addCommentIDtoListing(String documentID, String commentId) {
+  public void addCommentIdToListing(String documentID, String commentId) {
     DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME).document(documentID);
     docRef.update(COMMENT_IDS, FieldValue.arrayUnion(commentId));
   }
@@ -103,14 +105,14 @@ public class FirebaseDatabase implements NoSQLDatabase {
   }
 
   /**
-  * Get a document from Firestore in a map of <key, value>.
+  * Get a listing from Firestore in a map of <key, value>.
   *
-  * @param collectionName name of collection in Firestore
   * @param documentID ID of document to get from Firestore
   */
   @Override
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public ApiFuture<DocumentSnapshot> getListing(String documentID) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+      .document(documentID);
     return docRef.get();
   }
 
