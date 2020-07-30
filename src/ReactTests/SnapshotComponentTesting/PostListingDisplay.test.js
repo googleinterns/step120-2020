@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import PostListingDisplay from '../PostListingDisplay/components/PostListingDisplay.jsx';
-import InputField from '../PostListingDisplay/components/InputField.jsx';
+import PostListingDisplay from '../../PostListingDisplay/components/PostListingDisplay.jsx';
+import InputField from '../../PostListingDisplay/components/InputField.jsx';
 
 test('PostListingDisplay renders correctly', () => {
   const tree = renderer

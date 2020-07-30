@@ -2,7 +2,7 @@
 
 exports[`Blank InputField renders correctly 1`] = `
 <div>
-  <p />
+  <label />
   <input
     defaultValue="N/A"
     min="N/A"
@@ -13,11 +13,14 @@ exports[`Blank InputField renders correctly 1`] = `
 
 exports[`InputField renders correctly 1`] = `
 <div>
-  <p>
+  <label
+    htmlFor="name"
+  >
     Header
-  </p>
+  </label>
   <input
     defaultValue="None"
+    id="name"
     min="None"
     name="name"
     required={true}
@@ -28,9 +31,9 @@ exports[`InputField renders correctly 1`] = `
 
 exports[`InputField with just one of each prop renders correctly 1`] = `
 <div>
-  <p>
+  <label>
     Header
-  </p>
+  </label>
   <input
     defaultValue="N/A"
     min="N/A"
@@ -41,9 +44,12 @@ exports[`InputField with just one of each prop renders correctly 1`] = `
 
 exports[`InputField with just one of each prop renders correctly 2`] = `
 <div>
-  <p />
+  <label
+    htmlFor="name"
+  />
   <input
     defaultValue="N/A"
+    id="name"
     min="N/A"
     name="name"
     required={true}
@@ -53,7 +59,7 @@ exports[`InputField with just one of each prop renders correctly 2`] = `
 
 exports[`InputField with just one of each prop renders correctly 3`] = `
 <div>
-  <p />
+  <label />
   <input
     defaultValue="None"
     min="None"
@@ -76,14 +82,18 @@ exports[`PostListingDisplay renders correctly 1`] = `
   </div>
   <form
     action="/listings"
+    data-testid="form"
     method="POST"
   >
     <div>
-      <p>
+      <label
+        htmlFor="title"
+      >
         Title:
-      </p>
+      </label>
       <input
         defaultValue="None"
+        id="title"
         min="None"
         name="title"
         onChange={[Function]}
@@ -92,11 +102,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
       />
     </div>
     <div>
-      <p>
+      <label
+        htmlFor="description"
+      >
         Description:
-      </p>
+      </label>
       <input
         defaultValue="None"
+        id="description"
         min="None"
         name="description"
         onChange={[Function]}
@@ -105,11 +118,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
       />
     </div>
     <div>
-      <p>
+      <label
+        htmlFor="numRooms"
+      >
         Total number of rooms in apartment:
-      </p>
+      </label>
       <input
         defaultValue="0"
+        id="numRooms"
         min="0"
         name="numRooms"
         onChange={[Function]}
@@ -124,11 +140,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
       id="singleInfo"
     >
       <div>
-        <p>
+        <label
+          htmlFor="numSingles"
+        >
           Singles:
-        </p>
+        </label>
         <input
           defaultValue="0"
+          id="numSingles"
           min="0"
           name="numSingles"
           onChange={[Function]}
@@ -137,11 +156,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
         />
       </div>
       <div>
-        <p>
+        <label
+          htmlFor="singlePrice"
+        >
           Monthly Rent Per Single:
-        </p>
+        </label>
         <input
           defaultValue="0"
+          id="singlePrice"
           min="0"
           name="singlePrice"
           onChange={[Function]}
@@ -154,11 +176,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
       id="sharedInfo"
     >
       <div>
-        <p>
+        <label
+          htmlFor="numShared"
+        >
           Shared:
-        </p>
+        </label>
         <input
           defaultValue="0"
+          id="numShared"
           min="0"
           name="numShared"
           onChange={[Function]}
@@ -167,11 +192,14 @@ exports[`PostListingDisplay renders correctly 1`] = `
         />
       </div>
       <div>
-        <p>
+        <label
+          htmlFor="sharedPrice"
+        >
           Monthly Rent Per Shared Room:
-        </p>
+        </label>
         <input
           defaultValue="0"
+          id="sharedPrice"
           min="0"
           name="sharedPrice"
           onChange={[Function]}
@@ -180,17 +208,31 @@ exports[`PostListingDisplay renders correctly 1`] = `
         />
       </div>
     </div>
-    <input
-      name="listingPrice"
-      type="hidden"
-      value=""
-    />
     <div>
-      <p>
+      <label
+        htmlFor="listingPrice"
+      >
+        
+      </label>
+      <input
+        defaultValue="N/A"
+        id="listingPrice"
+        min="N/A"
+        name="listingPrice"
+        required={true}
+        type="hidden"
+        value=""
+      />
+    </div>
+    <div>
+      <label
+        htmlFor="numBathrooms"
+      >
         Number of bathrooms:
-      </p>
+      </label>
       <input
         defaultValue="0"
+        id="numBathrooms"
         min="0"
         name="numBathrooms"
         onChange={[Function]}
@@ -219,12 +261,15 @@ exports[`PostListingDisplay renders correctly 1`] = `
       </option>
     </select>
     <div>
-      <p>
+      <label
+        htmlFor="startDate"
+      >
         Lease Start Date:
-      </p>
+      </label>
       <input
-        defaultValue="2020-28-06"
-        min="2020-28-06"
+        defaultValue="2020-06-29"
+        id="startDate"
+        min="2020-06-29"
         name="startDate"
         onChange={[Function]}
         required={true}
@@ -232,12 +277,15 @@ exports[`PostListingDisplay renders correctly 1`] = `
       />
     </div>
     <div>
-      <p>
+      <label
+        htmlFor="endDate"
+      >
         Lease End Date:
-      </p>
+      </label>
       <input
-        defaultValue="2020-28-06"
-        min="2020-28-06"
+        defaultValue="2020-06-29"
+        id="endDate"
+        min="2020-06-29"
         name="endDate"
         onChange={[Function]}
         required={true}

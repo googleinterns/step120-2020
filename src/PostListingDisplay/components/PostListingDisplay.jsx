@@ -31,11 +31,9 @@ class PostListingDisplay extends Component {
     handleChange(event) {
         const value = event.target.value;
         const name = event.target.name;
-        this.setState({
-            [name]: value
-        })
-        this.calculateListingPrice();
-        console.log(this.state);
+        this.setState({ [name]: value },() => {
+            this.calculateListingPrice();
+        });
     }
 
     calculateListingPrice(){
@@ -62,7 +60,7 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form action="/listings" method="POST">
+                <form data-testid="form" action="/listings" method="POST">
                     <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
                     <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
@@ -77,7 +75,7 @@ class PostListingDisplay extends Component {
                         <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handleChange} />
                     </div>
 
-                    <input name="listingPrice" value={this.state.listingPrice} type="hidden"/>
+                    <InputField fieldHeader="" fieldName="listingPrice" fieldValue={this.state.listingPrice} fieldType="hidden"/>
 
                     <InputField fieldHeader="Number of bathrooms:" fieldName="numBathrooms" fieldType="number" onChange={this.handleChange} />
 
