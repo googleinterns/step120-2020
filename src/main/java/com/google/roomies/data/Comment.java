@@ -4,12 +4,18 @@ import static com.google.roomies.CommentRequestParameterNames.COMMENT;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
 import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
 
+import com.google.api.core.ApiFuture;
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Preconditions;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
+import com.google.roomies.database.DatabaseFactory;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpServletRequest;
  
 @AutoValue
@@ -19,25 +25,39 @@ public abstract class Comment implements Document {
   abstract String listingId();
   abstract String comment();
  
-  static Builder builder() {
+  public static Builder builder() {
     return new AutoValue_Comment.Builder();
   }
  
   @AutoValue.Builder
   public abstract static class Builder implements Serializable {
-    abstract Builder setTimestamp(Optional<Timestamp> timestamp);
-    abstract Builder setDocumentId(Optional<String> documentId);
-    abstract Builder setListingId(String listingId);
-    abstract Builder setComment(String comment);
+    public abstract Builder setTimestamp(Optional<Timestamp> timestamp);
+    public abstract Builder setDocumentId(Optional<String> documentId);
+    public abstract Builder setListingId(String listingId);
+    public abstract Builder setComment(String comment);
 
-    abstract Comment build();
+    abstract Comment autoBuild();
+
+    public Comment build() throws IOException, InterruptedException,
+        ExecutionException {
+      Comment comment = autoBuild();
+      String errorMessage = String.format("Listing with id %s does not exist in " +
+        "database. Comment with message %s cannot be created.", comment.listingId(),
+        comment.comment());
+      Preconditions.checkState(listingWithIdExists(comment.listingId()), errorMessage);
+      return comment;
+    }
   }
 
-   public static Comment fromServletRequest(HttpServletRequest request) {
+  public static Comment fromServletRequest(HttpServletRequest request) throws
+      IOException, InterruptedException, ExecutionException {
+    String listingId = request.getParameter(LISTING_ID);
+    String comment = request.getParameter(COMMENT);
+
     return Comment.builder()
-    .setListingId(request.getParameter(LISTING_ID))
-    .setComment(request.getParameter(COMMENT))
-    .build();
+      .setListingId(listingId)
+      .setComment(comment)
+      .build();
   }
 
   @Override
@@ -48,6 +68,13 @@ public abstract class Comment implements Document {
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
     return commentData;
+  }
+
+  private static boolean listingWithIdExists(String listingId) throws IOException,
+      InterruptedException, ExecutionException {
+    ApiFuture<DocumentSnapshot> listing = 
+      DatabaseFactory.getDatabase().getListing(listingId);
+    return listing.get().exists();
   }
 }
  
