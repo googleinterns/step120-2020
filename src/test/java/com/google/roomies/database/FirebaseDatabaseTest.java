@@ -69,7 +69,6 @@ public class FirebaseDatabaseTest {
   @Mock ApiFuture<DocumentReference> docReferenceFutureMock;
   @Mock ApiFuture<DocumentSnapshot> docSnapshotFutureMock;
   @Mock ApiFuture<QuerySnapshot> querySnapshotMock;
-  @Mock NoSQLDatabase databaseMock;
   private Listing listing;
   private Comment comment;
   private FirebaseDatabase database;
@@ -80,15 +79,16 @@ public class FirebaseDatabaseTest {
 
     database = new FirebaseDatabase();
     database.setDatabaseForTest(firestoreMock);
+    DatabaseFactory.setDatabaseForTest(database);
 
-    when(firestoreMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
-    when(firestoreMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
+    when(firestoreMock.collection(Mockito.anyString())).thenReturn(collectionMock);
+    when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
+    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
+    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
   }
 
   @Test
   public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
-    ImmutableList<String> commentIds = 
-      ImmutableList.of("commentId1", "commentId2"); 
     listing = Listing.builder()
       .setTitle("Test title")
       .setDescription("Test description")
@@ -102,7 +102,7 @@ public class FirebaseDatabaseTest {
       .setSharedPrice("100")
       .setSinglePrice("10")
       .setListingPrice("100")
-      .setCommentIds(commentIds)
+      .setCommentIds(ImmutableList.of("commentId1", "commentId2"))
       .build();
     ImmutableMap<String, Object> listingData = listing.toMap();
     
@@ -114,18 +114,12 @@ public class FirebaseDatabaseTest {
 
   @Test
   public void testAddCommentAsMap_addsSingleCommentToFirestore() throws Exception {
-    DatabaseFactory.setDatabaseForTest(databaseMock);
-    when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
-    when(databaseMock.getListing(Mockito.anyString())).thenReturn(docSnapshotFutureMock);
-    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
     when(docSnapshotMock.exists()).thenReturn(true);
-    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
     comment = Comment.builder()
       .setListingId("7YDcsjQOTzVoUxeXiysT")
       .setComment("Test comment")
       .build();
-    ImmutableMap<String, Object> commentData = comment.toMap();
-    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+    when(collectionMock.add(comment.toMap())).thenReturn(docReferenceFutureMock);
 
     ApiFuture<DocumentReference> docReferenceFuture = database.addCommentAsMap(comment);
 
