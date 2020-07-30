@@ -17,7 +17,8 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpServletRequest;
- 
+
+/** A comment made by a user under a listing. */
 @AutoValue
 public abstract class Comment {
   abstract Optional<String> documentId();
@@ -41,7 +42,7 @@ public abstract class Comment {
     /**
     * Builds Comment instance.
     * 
-    * Verifies that listing id for comment exists in database. If it does not,
+    * Verifies that listing id for the comment exists in database. If it does not,
     * Comment instance is not created and exception is thrown.
     */
     public Comment build() throws IOException, InterruptedException,
@@ -53,6 +54,18 @@ public abstract class Comment {
       Preconditions.checkState(listingWithIdExists(comment.listingId()), errorMessage);
       return comment;
     }
+
+    /**
+    * Checks if listing ID exists in database.
+    *
+    * @return true if ID exists, false otherwise
+    */
+    private boolean listingWithIdExists(String listingId) throws IOException,
+        InterruptedException, ExecutionException {
+      ApiFuture<DocumentSnapshot> listing = 
+        DatabaseFactory.getDatabase().getListing(listingId);
+      return listing.get().exists();
+    }
   }
 
   /**
@@ -60,12 +73,9 @@ public abstract class Comment {
   */
   public static Comment fromServletRequest(HttpServletRequest request) throws
       IOException, InterruptedException, ExecutionException {
-    String listingId = request.getParameter(LISTING_ID);
-    String comment = request.getParameter(COMMENT);
-
     return Comment.builder()
-      .setListingId(listingId)
-      .setComment(comment)
+      .setListingId(request.getParameter(LISTING_ID))
+      .setComment(request.getParameter(COMMENT))
       .build();
   }
 
@@ -73,28 +83,18 @@ public abstract class Comment {
   * Creates a map of <string key, value> of properties of a comment
   * that can be posted to the database.
   *
+  * Note: putting Comment class in the database was explored but wasn't done
+  * because database couldn't serialize timestamp/document IDs as optionals and 
+  * would require moving away from Autovalue/value class to get timestamp and
+  * document ID into the database.
+  *
   * @return map of <string key (database key), value>   
   */
   public ImmutableMap<String, Object> toMap() {
-    ImmutableMap<String, Object> commentData = ImmutableMap.<String, Object>builder()
+    return ImmutableMap.<String, Object>builder()
       .put(LISTING_ID, listingId())
       .put(COMMENT, comment())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
-    return commentData;
-  }
-
-  /**
-  * Checks if listing ID exists in database.
-  *
-  * @return true if ID exists, false otherwise
-  */
-  private static boolean listingWithIdExists(String listingId) throws IOException,
-      InterruptedException, ExecutionException {
-    ApiFuture<DocumentSnapshot> listing = 
-      DatabaseFactory.getDatabase().getListing(listingId);
-    return listing.get().exists();
   }
 }
- 
-
