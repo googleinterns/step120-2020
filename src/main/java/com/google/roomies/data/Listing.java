@@ -94,7 +94,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
-    abstract Builder setCommentIds(ImmutableList<String> commentIds);
+    public abstract Builder setCommentIds(ImmutableList<String> commentIds);
 
     abstract LeaseType leaseType();
     abstract int numRooms();
