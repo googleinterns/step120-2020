@@ -6,8 +6,18 @@ function InputField(props) {
     const defaultValue = setDefault(props.fieldType);
     return (
         <div>
-            <p>{props.fieldHeader}</p>
-            <input name={props.fieldName} type={props.fieldType} min={defaultValue} defaultValue={defaultValue} step={props.fieldStep} onChange={props.onChange} required/>
+            <label htmlFor={props.fieldName}>{props.fieldHeader}</label>
+            <input 
+                id={props.fieldName} 
+                name={props.fieldName} 
+                type={props.fieldType} 
+                min={defaultValue} 
+                defaultValue={defaultValue} 
+                value={props.fieldValue}
+                step={props.fieldStep} 
+                onChange={props.onChange} 
+                required
+            />
         </div>
     );
 }
@@ -27,9 +37,9 @@ function setDefault(type){
                 day = '0' + day;
             } 
             if(month < 10) {
-                month = '0' + month;
+                month = '0' + (month+1);
             } 
-            return year + '-' + day + '-' + month;
+            return year + '-' + month + '-' + day;
         default:
             return "N/A";
     }
