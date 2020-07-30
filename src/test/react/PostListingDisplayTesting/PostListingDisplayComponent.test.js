@@ -4,21 +4,7 @@ import PostListingDisplay from '../../../PostListingDisplay/components/PostListi
 import {render, fireEvent, cleanup} from '@testing-library/react';
 
 afterEach(cleanup)
-/**
-            title: '',
-            description: '',
-            numRooms: '',
-            numSingles: '',
-            singlePrice: '',
-            numShared: '',
-            sharedPrice: '',
-            numBathrooms: '',
-            leaseTypes: '',
-            startDate: '',
-            endDate: '',
-            listingPrice: '' */
 
-//testing a controlled component form.
 it('Inputing Title text updates the state', () => {
     const wrapper = render(<PostListingDisplay />);
     const titleInput = wrapper.getByLabelText('Title:');
@@ -82,8 +68,6 @@ it('Inputing 0 updates listingPrice', () => {
     const listingPriceValue = wrapper.getByLabelText('');
     const numSinglesInput = wrapper.getByLabelText('Singles:');
     const singlePriceInput = wrapper.getByLabelText('Monthly Rent Per Single:');
-    const numSharedInput = wrapper.getByLabelText('Shared:');
-    const sharedPriceInput = wrapper.getByLabelText('Monthly Rent Per Shared Room:');
     fireEvent.change(numSinglesInput, { target: { value: '0' } });
     fireEvent.change(singlePriceInput, { target: { value: '1000' } });
     expect(listingPriceValue.value).toEqual('0');
