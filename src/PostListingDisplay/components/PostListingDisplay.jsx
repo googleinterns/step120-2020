@@ -4,7 +4,7 @@ import InputField from './InputField';
 
 import '../styles/PostListingDisplay.css';
 
-/**Component class that displays the input fields for a user to post a listing */
+/** Component class that displays the input fields for a user to post a listing */
 class PostListingDisplay extends Component {
     constructor(props){
         super(props);
