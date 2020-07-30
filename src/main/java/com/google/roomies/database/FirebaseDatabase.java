@@ -22,7 +22,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.roomies.City;
 import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;

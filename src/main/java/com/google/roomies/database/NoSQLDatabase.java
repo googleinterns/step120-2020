@@ -8,7 +8,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.common.collect.ImmutableList;
-import com.google.roomies.City;
 import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
