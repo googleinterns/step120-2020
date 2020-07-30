@@ -1,6 +1,8 @@
 package com.google.roomies.database;
 
+import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingRequestParameterNames.COMMENT_IDS;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
@@ -33,7 +35,9 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.roomies.Comment;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,9 +65,13 @@ public class FirebaseDatabaseTest {
   @Mock CollectionReference collectionMock;
   @Mock Firestore firestoreMock;
   @Mock DocumentReference docReferenceMock;
-  @Mock ApiFuture<DocumentSnapshot> docSnapshotMock;
+  @Mock DocumentSnapshot docSnapshotMock;
+  @Mock ApiFuture<DocumentReference> docReferenceFutureMock;
+  @Mock ApiFuture<DocumentSnapshot> docSnapshotFutureMock;
   @Mock ApiFuture<QuerySnapshot> querySnapshotMock;
+  @Mock NoSQLDatabase databaseMock;
   private Listing listing;
+  private Comment comment;
   private FirebaseDatabase database;
   
   @Before
@@ -72,11 +80,15 @@ public class FirebaseDatabaseTest {
 
     database = new FirebaseDatabase();
     database.setDatabaseForTest(firestoreMock);
+
     when(firestoreMock.collection(LISTING_COLLECTION_NAME)).thenReturn(collectionMock);
+    when(firestoreMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
   }
 
   @Test
   public void testAddListingAsMap_addsSingleListingToFirestore() throws Exception {
+    ImmutableList<String> commentIds = 
+      ImmutableList.of("commentId1", "commentId2"); 
     listing = Listing.builder()
       .setTitle("Test title")
       .setDescription("Test description")
@@ -90,6 +102,7 @@ public class FirebaseDatabaseTest {
       .setSharedPrice("100")
       .setSinglePrice("10")
       .setListingPrice("100")
+      .setCommentIds(commentIds)
       .build();
     ImmutableMap<String, Object> listingData = listing.toMap();
     
@@ -97,6 +110,38 @@ public class FirebaseDatabaseTest {
 
     verify(firestoreMock, Mockito.times(1)).collection(LISTING_COLLECTION_NAME);
     verify(collectionMock, Mockito.times(1)).add(listingData);
+  }
+
+  @Test
+  public void testAddCommentAsMap_addsSingleCommentToFirestore() throws Exception {
+    DatabaseFactory.setDatabaseForTest(databaseMock);
+    when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
+    when(databaseMock.getListing(Mockito.anyString())).thenReturn(docSnapshotFutureMock);
+    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
+    when(docSnapshotMock.exists()).thenReturn(true);
+    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
+    comment = Comment.builder()
+      .setListingId("7YDcsjQOTzVoUxeXiysT")
+      .setComment("Test comment")
+      .build();
+    ImmutableMap<String, Object> commentData = comment.toMap();
+    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+
+    ApiFuture<DocumentReference> docReferenceFuture = database.addCommentAsMap(comment);
+
+    assertEquals(docReferenceFuture, docReferenceFutureMock);
+  }
+
+  @Test
+  public void testAddCommentIDtoListing_addsCommentIDToListingInFirestore() throws Exception {
+    String listingId = "7YDcsjQOTzVoUxeXiysT";
+    String commentId = "commentId";
+    when(collectionMock.document(listingId)).thenReturn(docReferenceMock);
+    
+    database.addCommentIdToListing(listingId, commentId);
+
+    verify(docReferenceMock, Mockito.times(1)).update(Mockito.eq(COMMENT_IDS), 
+      Mockito.any(FieldValue.class));
   }
 
   @Test
@@ -115,16 +160,15 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testGetDocument_getsSingleDocument() {
-    String documentId = "myDocument";
-    String collectionName = LISTING_COLLECTION_NAME;
-    when(docReferenceMock.get()).thenReturn(docSnapshotMock);
-    when(collectionMock.document(documentId)).thenReturn(docReferenceMock);
+  public void testGetListing_getsSingleDocument() {
+    String listingId = "myListing";
+    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
+    when(collectionMock.document(listingId)).thenReturn(docReferenceMock);
 
     ApiFuture<DocumentSnapshot> docSnapshot = 
-      database.getDocument(collectionName, documentId);
+      database.getListing(listingId);
 
-    assertEquals(docSnapshot, docSnapshotMock);
+    assertEquals(docSnapshot, docSnapshotFutureMock);
   }
 
   @Test

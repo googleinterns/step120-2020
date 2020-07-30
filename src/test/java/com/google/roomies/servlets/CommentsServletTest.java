@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,15 +49,11 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class CommentsServletTest {
-  @Mock Firestore dbMock;
-  @Mock CollectionReference collectionMock;
-  @Mock QueryDocumentSnapshot queryDocumentMock;
-  @Mock ApiFuture<QuerySnapshot> futureMock;
-  @Mock QuerySnapshot querySnapshotMock;
-  @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
-
-  @Mock NoSQLDatabase db;
-
+  @Mock NoSQLDatabase database;
+  @Mock ApiFuture<DocumentReference> docReferenceFutureMock;
+  @Mock DocumentReference docReferenceMock;
+  @Mock ApiFuture<DocumentSnapshot> docSnapshotFutureMock;
+  @Mock DocumentSnapshot docSnapshotMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
@@ -64,31 +61,52 @@ public class CommentsServletTest {
   private CommentsServlet commentsServlet;
 
   @Before
-  public void setUp() throws ServletException {    
+  public void setUp() throws ServletException, InterruptedException,
+      ExecutionException {    
     MockitoAnnotations.initMocks(this);
+    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
+    when(docReferenceFutureMock.get()).thenReturn(docReferenceMock);
+    when(database.addCommentAsMap(any(Comment.class))).thenReturn(docReferenceFutureMock);
 
     commentsServlet = new CommentsServlet();
     commentsServlet.init();
 
-    DatabaseFactory.setDatabaseForTest(db);
-    setRequestParameters();
+    DatabaseFactory.setDatabaseForTest(database);
   }
 
   @Test
-  public void testPost_postsSingleComment() {
+  public void testPost_postsSingleComment() throws IOException, InterruptedException,
+      ExecutionException {
+    String listingId = "7YDcsjQOTzVoUxeXiysT";
+    String commentId = "myId";
+    when(request.getParameter(LISTING_ID)).thenReturn(listingId);
+    when(request.getParameter(COMMENT)).thenReturn("Test comment");
+    when(database.getListing(listingId)).thenReturn(docSnapshotFutureMock);
+    when(docSnapshotMock.exists()).thenReturn(true);
+    when(docReferenceMock.getId()).thenReturn(commentId);
     comment = Comment.fromServletRequest(request);
     
     commentsServlet.doPost(request, response);
     
-    verify(db, Mockito.times(1)).addCommentAsMap(COMMENT_COLLECTION_NAME, comment);
+    verify(database, Mockito.times(1)).addCommentAsMap(comment);
+    verify(database, Mockito.times(1)).addCommentIdToListing(listingId, commentId);
   }
 
-  /**
-  * Sets mock HTTP request's parameters to corresponding input values.
-  */
-  private void setRequestParameters() {
-    when(request.getParameter(LISTING_ID)).thenReturn("7YDcsjQOTzVoUxeXiysT");
+  @Test
+  public void testPost_commentHasInvalidListingId_servletResponseIsSetToBadRequest() 
+      throws IOException, InterruptedException, ExecutionException {
+    String listingId = "invalidId";
+    when(request.getParameter(LISTING_ID)).thenReturn(listingId);
     when(request.getParameter(COMMENT)).thenReturn("Test comment");
+    when(database.getListing(listingId)).thenReturn(docSnapshotFutureMock);
+    when(docSnapshotMock.exists()).thenReturn(false);
+
+    commentsServlet.doPost(request, response);
+
+    verify(database, Mockito.times(0)).addCommentAsMap(any(Comment.class));
+    verify(database, Mockito.times(0)).addCommentIdToListing(eq(listingId),
+      anyString());
+    verify(response).setStatus(400);
   }
 }
 
