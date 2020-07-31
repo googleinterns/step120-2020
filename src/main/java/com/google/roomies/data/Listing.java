@@ -72,7 +72,6 @@ public abstract class Listing implements Document, Serializable {
   abstract Money sharedPrice();
   abstract Money singlePrice();
   abstract Money listingPrice();
-  abstract ImmutableList<String> commentIds();
 
   public static Builder builder() {
     return new AutoValue_Listing.Builder();
@@ -94,7 +93,6 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
-    public abstract Builder setCommentIds(ImmutableList<String> commentIds);
 
     abstract LeaseType leaseType();
     abstract int numRooms();
@@ -249,7 +247,6 @@ public abstract class Listing implements Document, Serializable {
       .put(SINGLE_ROOM_PRICE, singlePrice().toString())
       .put(LISTING_PRICE, listingPrice().toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
-      .put(COMMENT_IDS, commentIds())
       .build();
 
     return listingData;
@@ -281,7 +278,6 @@ public abstract class Listing implements Document, Serializable {
       .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
       .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
       .setListingPrice(listingData.get(LISTING_PRICE).toString())
-      .setCommentIds((ImmutableList<String>) listingData.get(COMMENT_IDS))
       .build());
   }
 
@@ -303,7 +299,6 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
-    .setCommentIds(ImmutableList.<String>of())
     .build();
   }
 }
