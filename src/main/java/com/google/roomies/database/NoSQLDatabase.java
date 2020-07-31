@@ -73,4 +73,6 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
+
+  public ApiFuture<QuerySnapshot> getAllCommentsInListing(String listingId);
 }
