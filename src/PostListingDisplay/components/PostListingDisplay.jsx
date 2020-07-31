@@ -35,6 +35,8 @@ class PostListingDisplay extends Component {
         const name = event.target.name;
         this.setState({
             [name]: value
+        }, () => {
+            console.log(this.state);
         });
     }
 
@@ -74,32 +76,32 @@ class PostListingDisplay extends Component {
                     <h1>Post a Listing</h1>
                 </div>
 
-                <form data-testid="form" action="/listings" method="POST">
-                    <InputField fieldHeader="Title:" fieldName="title" fieldType="text" onChange={this.handleChange} />
-                    <InputField fieldHeader="Description:" fieldName="description" fieldType="text" onChange={this.handleChange} />
-                    <InputField fieldHeader="Total number of rooms in apartment:" fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
+                <form action="/listings" method="POST">
+                    <InputField fieldHeader="Title: " fieldName="title" fieldType="text" onChange={this.handleChange} />
+                    <InputField fieldHeader="Description: " fieldName="description" fieldType="text" onChange={this.handleChange} />
+                    <InputField fieldHeader="Total number of rooms in apartment: " fieldName="numRooms" fieldType="number" onChange={this.handleChange} />
 
                     <p>Number of rooms for rent:</p>
                     <div id="singleInfo">
-                        <InputField fieldHeader="Singles:" fieldName="numSingles" fieldType="number" onChange={this.handlePriceChange} />
-                        <InputField fieldHeader="Monthly Rent Per Single:" fieldName="singlePrice" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Singles: " fieldName="numSingles" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Monthly Rent Per Single: " fieldName="singlePrice" fieldType="number" onChange={this.handlePriceChange} />
                     </div>
                     <div id="sharedInfo">
-                        <InputField fieldHeader="Shared:" fieldName="numShared" fieldType="number" onChange={this.handlePriceChange} />
-                        <InputField fieldHeader="Monthly Rent Per Shared Room:" fieldName="sharedPrice" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Shared: " fieldName="numShared" fieldType="number" onChange={this.handlePriceChange} />
+                        <InputField fieldHeader="Monthly Rent Per Shared Room: " fieldName="sharedPrice" fieldType="number" onChange={this.handlePriceChange} />
                     </div>
 
                     <InputField fieldHeader="" fieldName="listingPrice" fieldValue={this.state.listingPrice} fieldType="hidden"/>
 
-                    <InputField fieldHeader="Number of bathrooms:" fieldName="numBathrooms" fieldType="number" onChange={this.handleChange} />
+                    <InputField fieldHeader="Number of bathrooms: " fieldName="numBathrooms" fieldType="number" onChange={this.handleChange} />
 
                     <p>Lease type:</p>
                     <select name="leaseTypes" size="2" onChange={this.handleChange} required>
                         <option value="YEAR_LONG">Year-long</option>
                         <option value="MONTH_TO_MONTH">Month-to-Month</option>
                     </select>
-                    <InputField fieldHeader="Lease Start Date:" fieldName="startDate" fieldType="date" onChange={this.handleChange} />
-                    <InputField fieldHeader="Lease End Date:" fieldName="endDate" fieldType="date" onChange={this.handleChange} />
+                    <InputField fieldHeader="Lease Start Date: " fieldName="startDate" fieldType="date" onChange={this.handleChange} />
+                    <InputField fieldHeader="Lease End Date: " fieldName="endDate" fieldType="date" onChange={this.handleChange} />
                     <input id="post-listing-button" type="submit" value="Post Listing"/>
                 </form>
             </div>
