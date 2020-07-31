@@ -35,6 +35,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.roomies.database.NoSQLDatabase;
@@ -63,10 +64,14 @@ import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
 public class ListingsServletTest {
-  @Mock QueryDocumentSnapshot queryDocumentMock;
-  @Mock ApiFuture<QuerySnapshot> futureMock;
-  @Mock QuerySnapshot querySnapshotMock;
-  @Mock List<QueryDocumentSnapshot> queryDocumentsMock;
+  @Mock QueryDocumentSnapshot listingQueryDocumentMock;
+  @Mock ApiFuture<QuerySnapshot> listingFutureMock;
+  @Mock QuerySnapshot listingQuerySnapshotMock;
+  @Mock List<QueryDocumentSnapshot> listingQueryDocumentsMock;
+  @Mock QueryDocumentSnapshot commentQueryDocumentMock;
+  @Mock ApiFuture<QuerySnapshot> commentFutureMock;
+  @Mock QuerySnapshot commentQuerySnapshotMock;
+  @Mock List<QueryDocumentSnapshot> commentQueryDocumentsMock;
 
   @Mock NoSQLDatabase database;
 
@@ -86,12 +91,19 @@ public class ListingsServletTest {
 
     DatabaseFactory.setDatabaseForTest(database);
     
-    List<QueryDocumentSnapshot> queryDocumentList = List.of(queryDocumentMock);
-    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(futureMock);
-    when(futureMock.get()).thenReturn(querySnapshotMock);
-    when(querySnapshotMock.getDocuments()).thenReturn(queryDocumentsMock);
-    when(queryDocumentMock.getId()).thenReturn("documentID");
-    when(queryDocumentsMock.spliterator()).thenReturn(queryDocumentList.spliterator());
+    List<QueryDocumentSnapshot> listingQueryDocumentList = List.of(listingQueryDocumentMock);
+    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(listingFutureMock);
+    when(listingFutureMock.get()).thenReturn(listingQuerySnapshotMock);
+    when(listingQuerySnapshotMock.getDocuments()).thenReturn(listingQueryDocumentsMock);
+    when(listingQueryDocumentMock.getId()).thenReturn("documentID");
+    when(listingQueryDocumentsMock.spliterator()).thenReturn(listingQueryDocumentList.spliterator());
+
+    List<QueryDocumentSnapshot> commentQueryDocumentList = List.of(commentQueryDocumentMock);
+    when(database.getAllCommentsInListing(anyString())).thenReturn(commentFutureMock);
+    when(commentFutureMock.get()).thenReturn(commentQuerySnapshotMock);
+    when(commentQuerySnapshotMock.getDocuments()).thenReturn(commentQueryDocumentsMock);
+    when(commentQueryDocumentMock.getId()).thenReturn("commentID");
+    when(commentQueryDocumentsMock.spliterator()).thenReturn(commentQueryDocumentList.spliterator());
 
     stringWriter = new StringWriter();
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
@@ -111,8 +123,12 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
-    when(queryDocumentMock.getData()).thenReturn(listingData);
+    Map<String, Object> commentData = mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
+    when(listingQueryDocumentMock.getData()).thenReturn(listingData);
+    when(commentQueryDocumentMock.getData()).thenReturn(commentData);
+
  
     listingsServlet.doGet(request, response);
     String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
@@ -121,14 +137,15 @@ public class ListingsServletTest {
       " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
       "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
       "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
-      "\"USD 100\"}]";
+      "\"USD 100\",\"comments\":[{\"documentId\":{\"value\":\"commentID\"},\"timestamp\":"+
+      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"comment\":\"Test comment\"}]}]";
 
     assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
   }
 
   @Test
   public void testGet_returnsNoListingsWithNoneInDatabasae() throws Exception {
-    when(queryDocumentsMock.spliterator()).thenReturn(new ArrayList().spliterator());
+    when(listingQueryDocumentsMock.spliterator()).thenReturn(new ArrayList().spliterator());
 
     listingsServlet.doGet(request, response);
 
@@ -152,7 +169,7 @@ public class ListingsServletTest {
     when(request.getParameter(TITLE)).thenReturn("Test title");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     listingData.put(LEASE_TYPE, invalidLeaseType);
-    when(queryDocumentMock.getData()).thenReturn(listingData);
+    when(listingQueryDocumentMock.getData()).thenReturn(listingData);
 
     listingsServlet.doGet(request, response);
     
@@ -331,6 +348,14 @@ public class ListingsServletTest {
     listingData.put(NUM_SINGLES, ((Integer) 2).longValue());
     
     return listingData;
+  }
+
+  private Map<String, Object> mapOfCommentDataForGetTests(String commentText) {
+    Comment comment = Comment.builder().setComment(commentText).build();
+    Map<String, Object> commentData = Maps.newHashMap(comment.toMap());
+
+    commentData.put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"));
+    return commentData;
   }
 }
 
