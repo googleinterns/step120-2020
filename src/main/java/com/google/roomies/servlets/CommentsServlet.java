@@ -33,12 +33,8 @@ public class CommentsServlet extends HttpServlet {
       database = DatabaseFactory.getDatabase();
 
       Comment comment = Comment.fromServletRequest(request);
-      ApiFuture<DocumentReference> commentDocRef = 
-        database.addCommentAsMap(comment);
-
-      String listingID = request.getParameter(LISTING_ID);
-      String commentID = commentDocRef.get().getId();
-      database.addCommentIdToListing(listingID, commentID);
+      String listingId = request.getParameter(LISTING_ID);
+      database.addCommentAsMapToListing(comment, listingId);
 
       response.sendRedirect(INDEX_URL);
     } catch (IllegalStateException | IllegalArgumentException | InterruptedException
