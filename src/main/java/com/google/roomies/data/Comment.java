@@ -8,6 +8,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import com.google.roomies.database.DatabaseFactory;
@@ -63,5 +64,14 @@ public abstract class Comment {
       .put(COMMENT, comment())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
+  }
+
+  public static Optional<Comment> fromFirestore(QueryDocumentSnapshot document) {
+    ImmutableMap<String, Object> commentData = ImmutableMap.copyOf(document.getData());
+    return Optional.of(Comment.builder()
+      .setTimestamp(Optional.of((Timestamp) commentData.get(TIMESTAMP)))
+      .setDocumentId(Optional.of(document.getId()))
+      .setComment(commentData.get(COMMENT).toString())
+      .build());
   }
 }

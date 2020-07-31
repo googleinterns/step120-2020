@@ -1,5 +1,6 @@
 package com.google.roomies;
 
+import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
@@ -22,14 +23,24 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.flogger.FluentLogger;
+import com.google.roomies.database.DatabaseFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
@@ -41,6 +52,8 @@ import org.javamoney.moneta.Money;
 /** A listing made by a user. */
 @AutoValue
 public abstract class Listing implements Document, Serializable {
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
   /**
   * Describes the two different lease types for a listing.
   * If input is not one of these two options, servlet throws an error.
@@ -70,9 +83,11 @@ public abstract class Listing implements Document, Serializable {
   abstract Money sharedPrice();
   abstract Money singlePrice();
   abstract Money listingPrice();
+  abstract ImmutableList<Comment> comments();
 
   public static Builder builder() {
-    return new AutoValue_Listing.Builder();
+    return new AutoValue_Listing.Builder()
+      .setComments(ImmutableList.<Comment>of());
   }
 
   @AutoValue.Builder
@@ -91,7 +106,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
-
+    public abstract Builder setComments(ImmutableList<Comment> comments);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
@@ -257,8 +272,9 @@ public abstract class Listing implements Document, Serializable {
     * (and posted) from Firestore due to serialization problem with JavaMoney,
     * which Firestore was not able to serialize.
     */
-    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
-        MonetaryParseException, NumberFormatException, ParseException {
+    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws
+       UnknownCurrencyException, MonetaryParseException, NumberFormatException, 
+       ParseException, IOException, InterruptedException, ExecutionException {
       ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
       
       return Optional.of(Listing.builder()
@@ -276,8 +292,22 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
+        .setComments(getAllCommentsFromCollection(document.getId()))
         .build());
     }
+
+  private static ImmutableList<Comment> getAllCommentsFromCollection(String listingId) throws IOException, 
+      InterruptedException, ExecutionException {
+    List<QueryDocumentSnapshot> documents = 
+      DatabaseFactory.getDatabase().getAllCommentsInListing(listingId).get().getDocuments();
+
+    List<Comment> comments =
+      StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+      .map(document -> Comment.fromFirestore(document))
+      .flatMap(Optional::stream)
+      .collect(Collectors.toList());
+    return ImmutableList.copyOf(comments);
+  }
 
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
