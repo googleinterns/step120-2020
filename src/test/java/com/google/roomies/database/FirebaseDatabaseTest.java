@@ -2,7 +2,6 @@ package com.google.roomies.database;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
-import static com.google.roomies.ListingRequestParameterNames.COMMENT_IDS;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
