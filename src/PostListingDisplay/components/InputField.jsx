@@ -31,7 +31,7 @@ function setDefault(type){
         case "date":
             const today = new Date();
             let day = today.getDate();
-            let month = today.getMonth()+1;
+            let month = today.getMonth() + 1;
             const year = today.getFullYear();
             if(day < 10) {
                 day = '0' + day;
