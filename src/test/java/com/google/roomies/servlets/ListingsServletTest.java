@@ -121,7 +121,7 @@ public class ListingsServletTest {
       " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
       "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
       "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
-      "\"USD 100\",\"commentIds\":[]}]";
+      "\"USD 100\"}]";
 
     assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
   }
