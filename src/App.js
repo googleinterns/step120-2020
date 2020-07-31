@@ -2,7 +2,7 @@ import React from 'react';
 import { Router, Link } from '@reach/router';
 
 import Home from './Home/components/Home';
-import MakeListingDisplay from './MakeListingDisplay/components/MakeListingDisplay';
+import PostListingDisplay from './PostListingDisplay/components/PostListingDisplay';
 
 import './App.css';
 
@@ -11,23 +11,22 @@ function App(props) {
     return (
         <div>
             <h1>Roomies</h1>
-
             <nav>
                 <Link to="/">
                     <button type="button">
                         Home
                     </button>
                 </Link>
-                <Link to="/makeListing">
+                <Link to="/postListing">
                     <button type="button">
-                        Make a Listing
+                        Post a Listing
                     </button>
                 </Link>
             </nav>
 
             <Router>
                 <Home path="/" />
-                <MakeListingDisplay path="/makeListing" />
+                <PostListingDisplay path="/postListing" />
             </Router>
         </div>
     );
