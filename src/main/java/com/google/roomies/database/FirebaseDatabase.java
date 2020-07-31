@@ -69,24 +69,32 @@ public class FirebaseDatabase implements NoSQLDatabase {
   * Add a comment to a collection as a map.
   *
   * @param collectionName name of collection in database
-  * @param comment a Comment instance 
+  * @param comment a Comment instance
+  * @throws IllegalArgumentException if listing Id does not exist in database
   */
   @Override
-  public ApiFuture<DocumentReference> addCommentAsMap(Comment comment) {
-    Map<String, Object> data = comment.toMap();
-    return this.db.collection(COMMENT_COLLECTION_NAME).add(data);
+  public void addCommentAsMapToListing(Comment comment, String listingId) throws 
+      InterruptedException, ExecutionException {
+    if (!listingExists(listingId)) {
+        String errorMessage = String.format("Listing with id %s does not exist in " +
+        "database. Comment with message %s cannot be created.", listingId,
+        comment.comment());
+      throw new IllegalArgumentException(errorMessage);
+    }
+
+    Map<String, Object> commentData = comment.toMap();
+    this.db.collection(LISTING_COLLECTION_NAME)
+        .document(listingId)
+        .collection(COMMENT_COLLECTION_NAME)
+        .add(commentData);
   }
-  
+
   /**
-  * Add comment ID to listing document.
-  *
-  * @param documentID ID of document to update in Firestore
-  * @param commentId ID of comment to add under listing document 
+  * Checks if listing with input id exists in Firestore.
   */
-  @Override
-  public void addCommentIdToListing(String documentID, String commentId) {
-    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME).document(documentID);
-    docRef.update(COMMENT_IDS, FieldValue.arrayUnion(commentId));
+  public boolean listingExists(String listingId) throws InterruptedException,
+      ExecutionException {
+    return getListing(listingId).get().exists();
   }
 
   /**

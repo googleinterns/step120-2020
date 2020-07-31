@@ -34,15 +34,8 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   * @param comment a Comment instance 
   */
-  public ApiFuture<DocumentReference> addCommentAsMap(Comment comment);
-
-  /**
-  * Add comment ID to listing document.
-  *
-  * @param documentID ID of document to update in Firestore
-  * @param commentId ID of comment to add under listing document 
-  */
-  public void addCommentIdToListing(String documentID, String commentId);
+  public void addCommentAsMapToListing(Comment comment, String listingId) throws 
+      InterruptedException, ExecutionException;
 
   /**
   * Update a listing document with the specified input fields.
@@ -52,6 +45,12 @@ public interface NoSQLDatabase {
   */
   public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
 
+  /**
+  * Checks if listing with input id exists in database.
+  */
+  public boolean listingExists(String listingId) throws InterruptedException,
+      ExecutionException;
+      
   /**
   * Get a listing document from database in a map of <key, value>.
   *
