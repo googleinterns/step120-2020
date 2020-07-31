@@ -66,7 +66,6 @@ public class CommentsServletTest {
     MockitoAnnotations.initMocks(this);
     when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
     when(docReferenceFutureMock.get()).thenReturn(docReferenceMock);
-    when(database.addCommentAsMap(any(Comment.class))).thenReturn(docReferenceFutureMock);
 
     commentsServlet = new CommentsServlet();
     commentsServlet.init();
@@ -78,18 +77,13 @@ public class CommentsServletTest {
   public void testPost_postsSingleComment() throws IOException, InterruptedException,
       ExecutionException {
     String listingId = "7YDcsjQOTzVoUxeXiysT";
-    String commentId = "myId";
     when(request.getParameter(LISTING_ID)).thenReturn(listingId);
     when(request.getParameter(COMMENT)).thenReturn("Test comment");
-    when(database.getListing(listingId)).thenReturn(docSnapshotFutureMock);
-    when(docSnapshotMock.exists()).thenReturn(true);
-    when(docReferenceMock.getId()).thenReturn(commentId);
     comment = Comment.fromServletRequest(request);
     
     commentsServlet.doPost(request, response);
     
-    verify(database, Mockito.times(1)).addCommentAsMap(comment);
-    verify(database, Mockito.times(1)).addCommentIdToListing(listingId, commentId);
+    verify(database, Mockito.times(1)).addCommentAsMapToListing(comment, listingId);
   }
 
   @Test
@@ -98,14 +92,11 @@ public class CommentsServletTest {
     String listingId = "invalidId";
     when(request.getParameter(LISTING_ID)).thenReturn(listingId);
     when(request.getParameter(COMMENT)).thenReturn("Test comment");
-    when(database.getListing(listingId)).thenReturn(docSnapshotFutureMock);
-    when(docSnapshotMock.exists()).thenReturn(false);
+    doThrow(IllegalArgumentException.class).when(database)
+      .addCommentAsMapToListing(any(Comment.class), eq(listingId));
 
     commentsServlet.doPost(request, response);
 
-    verify(database, Mockito.times(0)).addCommentAsMap(any(Comment.class));
-    verify(database, Mockito.times(0)).addCommentIdToListing(eq(listingId),
-      anyString());
     verify(response).setStatus(400);
   }
 }
