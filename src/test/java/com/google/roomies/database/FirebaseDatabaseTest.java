@@ -59,6 +59,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(JUnit4.class)
 public class FirebaseDatabaseTest {
@@ -102,7 +103,6 @@ public class FirebaseDatabaseTest {
       .setSharedPrice("100")
       .setSinglePrice("10")
       .setListingPrice("100")
-      .setCommentIds(ImmutableList.of("commentId1", "commentId2"))
       .build();
     ImmutableMap<String, Object> listingData = listing.toMap();
     
@@ -113,29 +113,35 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testAddCommentAsMap_addsSingleCommentToFirestore() throws Exception {
+  public void testaddCommentAsMapToListing_addsSingleCommentToFirestore() throws Exception {
     when(docSnapshotMock.exists()).thenReturn(true);
+    String listingId = "7YDcsjQOTzVoUxeXiysT";
     comment = Comment.builder()
-      .setListingId("7YDcsjQOTzVoUxeXiysT")
       .setComment("Test comment")
       .build();
-    when(collectionMock.add(comment.toMap())).thenReturn(docReferenceFutureMock);
+    ImmutableMap<String, Object> commentData = comment.toMap();
+    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+    when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    ApiFuture<DocumentReference> docReferenceFuture = database.addCommentAsMap(comment);
+    database.addCommentAsMapToListing(comment, listingId);
 
-    assertEquals(docReferenceFuture, docReferenceFutureMock);
+    verify(collectionMock, Mockito.times(1)).add(commentData);
   }
 
-  @Test
-  public void testAddCommentIDtoListing_addsCommentIDToListingInFirestore() throws Exception {
+  @Test(expected = IllegalArgumentException.class)
+  public void testaddCommentAsMapToListing_listingIdIsInvalid_throwsIllegalArgumentException()
+      throws InterruptedException, ExecutionException {
+    when(docSnapshotMock.exists()).thenReturn(false);
     String listingId = "7YDcsjQOTzVoUxeXiysT";
-    String commentId = "commentId";
-    when(collectionMock.document(listingId)).thenReturn(docReferenceMock);
-    
-    database.addCommentIdToListing(listingId, commentId);
+    String commentText = "Test comment";
+    comment = Comment.builder()
+      .setComment(commentText)
+      .build();
+    ImmutableMap<String, Object> commentData = comment.toMap();
+    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+    when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    verify(docReferenceMock, Mockito.times(1)).update(Mockito.eq(COMMENT_IDS), 
-      Mockito.any(FieldValue.class));
+    database.addCommentAsMapToListing(comment, listingId);
   }
 
   @Test
