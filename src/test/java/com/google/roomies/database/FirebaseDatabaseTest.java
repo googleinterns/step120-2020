@@ -112,11 +112,11 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testaddCommentAsMapToListing_addsSingleCommentToFirestore() throws Exception {
+  public void testAddCommentAsMapToListing_addsSingleCommentToFirestore() throws Exception {
     when(docSnapshotMock.exists()).thenReturn(true);
-    String listingId = "7YDcsjQOTzVoUxeXiysT";
+    String listingId = "testId";
     comment = Comment.builder()
-      .setComment("Test comment")
+      .setCommentMessage("Test comment")
       .build();
     ImmutableMap<String, Object> commentData = comment.toMap();
     when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
@@ -128,13 +128,13 @@ public class FirebaseDatabaseTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testaddCommentAsMapToListing_listingIdIsInvalid_throwsIllegalArgumentException()
+  public void testAddCommentAsMapToListing_listingIdIsInvalid_throwsIllegalArgumentException()
       throws InterruptedException, ExecutionException {
     when(docSnapshotMock.exists()).thenReturn(false);
-    String listingId = "7YDcsjQOTzVoUxeXiysT";
+    String listingId = "testId";
     String commentText = "Test comment";
     comment = Comment.builder()
-      .setComment(commentText)
+      .setCommentMessage(commentText)
       .build();
     ImmutableMap<String, Object> commentData = comment.toMap();
     when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
@@ -164,10 +164,10 @@ public class FirebaseDatabaseTest {
     when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
     when(collectionMock.document(listingId)).thenReturn(docReferenceMock);
 
-    ApiFuture<DocumentSnapshot> docSnapshot = 
+    ApiFuture<DocumentSnapshot> actualDocSnapshot = 
       database.getListing(listingId);
 
-    assertEquals(docSnapshot, docSnapshotFutureMock);
+    assertEquals(actualDocSnapshot, docSnapshotFutureMock);
   }
 
   @Test
