@@ -1,6 +1,7 @@
 package com.google.roomies;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.CommentRequestParameterNames.COMMENT;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
 import static com.google.roomies.ProjectConstants.INDEX_URL;
 
@@ -39,7 +40,10 @@ public class CommentsServlet extends HttpServlet {
       response.sendRedirect(INDEX_URL);
     } catch (IllegalStateException | IllegalArgumentException | InterruptedException
          | ExecutionException e) {
-        logger.atInfo().withCause(e).log("Error posting comment: %s", e);
+        String errorMessage = String.format("Error posting comment given " +
+        "request parameters of listingId=%s and commentMessage=%s: %s",
+        request.getParameter(LISTING_ID), request.getParameter(COMMENT), e);
+        logger.atInfo().withCause(e).log(errorMessage);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }

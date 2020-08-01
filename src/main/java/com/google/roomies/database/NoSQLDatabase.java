@@ -29,10 +29,10 @@ public interface NoSQLDatabase {
   public void addListingAsMap(Listing listing);
 
   /**
-  * Add a comment to a collection as a map.
+  * Add a comment to a given listing.
   *
-  * @param collectionName name of collection in database
-  * @param comment a Comment instance 
+  * @param comment a Comment instance
+  * @param listingId ID of the listing in database
   */
   public void addCommentAsMapToListing(Comment comment, String listingId) throws 
       InterruptedException, ExecutionException;
@@ -44,12 +44,6 @@ public interface NoSQLDatabase {
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
-
-  /**
-  * Checks if listing with input id exists in database.
-  */
-  public boolean listingExists(String listingId) throws InterruptedException,
-      ExecutionException;
       
   /**
   * Get a listing document from database in a map of <key, value>.

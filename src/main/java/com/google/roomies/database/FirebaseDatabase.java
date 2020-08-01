@@ -48,36 +48,19 @@ public class FirebaseDatabase implements NoSQLDatabase {
     this.db = database;
   }
 
-  /**
-  * Add a listing to a collection using a map.
-  *
-  * Note: Listings include JavaMoney variables that are currently not serializable 
-  *       by Firestore. Adding listings as a custom class was explored and ultimately
-  *       not used because of this restriction with JavaMoney.
-  * 
-  * @param collectionName name of collection in Firestore
-  * @param listing an instance of Listing
-  */
   @Override
   public void addListingAsMap(Listing listing) {
     Map<String, Object> data = listing.toMap();
     this.db.collection(LISTING_COLLECTION_NAME).add(data);
   }
 
-  /**
-  * Add a comment to a collection as a map.
-  *
-  * @param collectionName name of collection in database
-  * @param comment a Comment instance
-  * @throws IllegalArgumentException if listing Id does not exist in database
-  */
   @Override
   public void addCommentAsMapToListing(Comment comment, String listingId) throws 
       InterruptedException, ExecutionException {
     if (!listingExists(listingId)) {
         String errorMessage = String.format("Listing with id %s does not exist in " +
         "database. Comment with message %s cannot be created.", listingId,
-        comment.comment());
+        comment.commentMessage());
       throw new IllegalArgumentException(errorMessage);
     }
 
@@ -87,21 +70,15 @@ public class FirebaseDatabase implements NoSQLDatabase {
         .collection(COMMENT_COLLECTION_NAME)
         .add(commentData);
   }
-
+  
   /**
-  * Checks if listing with input id exists in Firestore.
+  * Checks if listing with given listingId exists in Firestore.
   */
-  public boolean listingExists(String listingId) throws InterruptedException,
+  private boolean listingExists(String listingId) throws InterruptedException,
       ExecutionException {
     return getListing(listingId).get().exists();
   }
 
-  /**
-  * Update a listing document with the specified input fields.
-  *
-  * @param documentID ID of document to update in Firestore
-  * @param fieldsToUpdate a map of <document key to update, new document value>. 
-  */
   @Override
   public void updateListing(String documentID, Map<String, Object> fieldsToUpdate) {
     DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
@@ -110,11 +87,6 @@ public class FirebaseDatabase implements NoSQLDatabase {
         docRef.update(fieldName, fieldValue));
   }
 
-  /**
-  * Get a listing from Firestore in a map of <key, value>.
-  *
-  * @param documentID ID of document to get from Firestore
-  */
   @Override
   public ApiFuture<DocumentSnapshot> getListing(String documentID) {
     DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
@@ -122,13 +94,6 @@ public class FirebaseDatabase implements NoSQLDatabase {
     return docRef.get();
   }
 
-  /**
-  * Get all documents with the input field value.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param field document field to search
-  * @param fieldValue value of field
-  */
   @Override
   public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
       String collectionName, String field, Object fieldValue)  {
@@ -137,11 +102,6 @@ public class FirebaseDatabase implements NoSQLDatabase {
     return future;
   }
   
-  /**
-  * Get all documents in specified collection.
-  *
-  * @param collectionName name of collection in Firestore
-  */
   @Override
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
