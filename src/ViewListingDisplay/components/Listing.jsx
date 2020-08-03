@@ -6,17 +6,39 @@ import '../styles/Listing.css';
 
 /** Component class that displays the input fields for a user to post a listing */
 function Listing(props) {
-    const { title, description, listingPrice, numRooms, numSingles, numShared, singlePrice, sharedPrice } = props.listingInfo;
+    const { 
+        title, 
+        description, 
+        listingPrice, 
+        numRooms, 
+        numSingles, 
+        numShared, 
+        singlePrice, 
+        sharedPrice, 
+        leaseType, 
+        startDate, 
+        endDate, 
+        numBathrooms 
+    } = props.listingInfo;
+
     const roomInfo = getRoominfo(numSingles, numShared, singlePrice, sharedPrice);
+    const leaseTypeText = (leaseType === "YEAR_LONG") ? "Yearly" : "Monthly";
     return (
         <div className="listing-box">
             <h1 className="title">{title}</h1>
             <p className="description">{description}</p>
             <p className="listingPrice">Listing Price: {listingPrice}</p>
-            <div className="rooms-info">
-                <h2>Rooms Information:</h2>
-                <p>Total number of rooms: {numRooms}</p>
+            <p className="leaseType">Lease Type: {leaseTypeText} Lease</p>
+            <div className="avaiability-container">
+                <h3>Availability</h3>
+                <p>Start: {startDate}</p>
+                <p>End: {endDate}</p>
+            </div>
+            <div className="rooms-info-containter">
+                <h3>Room(s) Information:</h3>
+                <p>Total number of room(s): {numRooms}</p>
                 { roomInfo }
+                <p>Total number of bathroom(s): {numBathrooms}</p>
             </div>
             <PostCommentsDisplay/>
         </div>
@@ -39,18 +61,3 @@ function getRoominfo(numSingles, numShared, singlePrice, sharedPrice){
 }
 
 export default Listing;
-
-/*
-            title: '',
-            description: '',
-            numRooms: '',
-            numSingles: '',
-            singlePrice: '',
-            numShared: '',
-            sharedPrice: '',
-            numBathrooms: '',
-            leaseTypes: '',
-            startDate: '',
-            endDate: '',
-            listingPrice: ''
-*/

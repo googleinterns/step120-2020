@@ -5,8 +5,8 @@
     padding: 1em;
 }
 
-.rooms-info {
+.rooms-info-containter, .avaiability-container {
     border-style: solid;
     border-width: thin;
-    padding: 5px;
+    padding: 0.5em;
 }
