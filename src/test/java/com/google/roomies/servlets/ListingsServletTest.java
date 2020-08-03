@@ -350,6 +350,12 @@ public class ListingsServletTest {
     return listingData;
   }
 
+  /**
+  * Creates and returns a map representation of a comment.
+  * 
+  * Note: Differs from Comment class's toMap() because getter tests expect
+  * a timestamp instead of a FieldValue used in toMap().
+  */
   private Map<String, Object> mapOfCommentDataForGetTests(String commentText) {
     Comment comment = Comment.builder().setComment(commentText).build();
     Map<String, Object> commentData = Maps.newHashMap(comment.toMap());

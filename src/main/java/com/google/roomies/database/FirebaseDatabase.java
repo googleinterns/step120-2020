@@ -2,8 +2,8 @@ package com.google.roomies.database;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
+import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
-import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 
 import com.google.api.core.ApiFuture;
@@ -154,7 +154,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
     return db.collection(LISTING_COLLECTION_NAME)
       .document(listingId)
       .collection(COMMENT_COLLECTION_NAME)
-      .orderBy("timestamp", Direction.ASCENDING)
+      .orderBy(TIMESTAMP, Direction.ASCENDING)
       .get();
   }
   

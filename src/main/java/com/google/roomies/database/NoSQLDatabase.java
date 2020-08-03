@@ -74,5 +74,10 @@ public interface NoSQLDatabase {
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
 
+  /**
+  * Get all comments from a given listing.
+  *
+  * @param listingId ID of the listing in database
+  */
   public ApiFuture<QuerySnapshot> getAllCommentsInListing(String listingId);
 }
