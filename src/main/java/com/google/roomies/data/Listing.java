@@ -85,6 +85,11 @@ public abstract class Listing implements Document, Serializable {
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
 
+  /**
+  * Returns Builder for Listing with the default
+  * value of the comments list set as an empty
+  * list. 
+  */
   public static Builder builder() {
     return new AutoValue_Listing.Builder()
       .setComments(ImmutableList.<Comment>of());
@@ -106,7 +111,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
-    public abstract Builder setComments(ImmutableList<Comment> comments);
+    abstract Builder setComments(ImmutableList<Comment> comments);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
@@ -296,8 +301,13 @@ public abstract class Listing implements Document, Serializable {
         .build());
     }
 
-  private static ImmutableList<Comment> getAllCommentsFromCollection(String listingId) throws IOException, 
-      InterruptedException, ExecutionException {
+  /**
+  * Gets all comments from a given listing.
+  * 
+  * @return list of comment instances
+  */
+  private static ImmutableList<Comment> getAllCommentsFromCollection(String listingId)
+      throws IOException, InterruptedException, ExecutionException {
     List<QueryDocumentSnapshot> documents = 
       DatabaseFactory.getDatabase().getAllCommentsInListing(listingId).get().getDocuments();
 
@@ -306,6 +316,7 @@ public abstract class Listing implements Document, Serializable {
       .map(document -> Comment.fromFirestore(document))
       .flatMap(Optional::stream)
       .collect(Collectors.toList());
+
     return ImmutableList.copyOf(comments);
   }
 

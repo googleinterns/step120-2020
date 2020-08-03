@@ -71,6 +71,7 @@ public interface NoSQLDatabase {
   /**
   * Get all comments from a given listing.
   *
+  * Comments are ordered by timestamp from oldest to newest.
   * @param listingId ID of the listing in database
   */
   public ApiFuture<QuerySnapshot> getAllCommentsInListing(String listingId);
