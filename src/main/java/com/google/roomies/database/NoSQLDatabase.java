@@ -34,7 +34,7 @@ public interface NoSQLDatabase {
   * @param comment a Comment instance
   * @param listingId ID of the listing in database
   */
-  public void addCommentAsMapToListing(Comment comment, String listingId) throws 
+  public void addCommentToListing(Comment comment, String listingId) throws 
       InterruptedException, ExecutionException;
 
   /**

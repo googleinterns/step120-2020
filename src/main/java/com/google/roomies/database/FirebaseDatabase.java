@@ -55,7 +55,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   }
 
   @Override
-  public void addCommentAsMapToListing(Comment comment, String listingId) throws 
+  public void addCommentToListing(Comment comment, String listingId) throws 
       InterruptedException, ExecutionException {
     if (!listingExists(listingId)) {
         String errorMessage = String.format("Listing with id %s does not exist in " +

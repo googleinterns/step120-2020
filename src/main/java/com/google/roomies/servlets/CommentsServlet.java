@@ -30,21 +30,19 @@ public class CommentsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
       IOException {
+    database = DatabaseFactory.getDatabase();
+    String listingId = request.getParameter(LISTING_ID);
+    Comment comment = Comment.fromServletRequest(request);
     try {
-      database = DatabaseFactory.getDatabase();
-
-      Comment comment = Comment.fromServletRequest(request);
-      String listingId = request.getParameter(LISTING_ID);
-      database.addCommentAsMapToListing(comment, listingId);
-
+      database.addCommentToListing(comment, listingId);
       response.sendRedirect(INDEX_URL);
-    } catch (IllegalStateException | IllegalArgumentException | InterruptedException
-         | ExecutionException e) {
-        String errorMessage = String.format("Error posting comment given " +
-        "request parameters of listingId=%s and commentMessage=%s: %s",
-        request.getParameter(LISTING_ID), request.getParameter(COMMENT), e);
-        logger.atInfo().withCause(e).log(errorMessage);
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    } catch (InterruptedException | ExecutionException | 
+          IllegalStateException | IllegalArgumentException e) {
+      String errorMessage = String.format("Error posting comment to database given " +
+      "request parameters of listingId=%s and commentMessage=%s.",
+        listingId, request.getParameter(COMMENT));
+      logger.atInfo().withCause(e).log(errorMessage);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
 }
