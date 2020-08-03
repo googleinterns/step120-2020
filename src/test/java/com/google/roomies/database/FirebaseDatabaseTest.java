@@ -85,8 +85,10 @@ public class FirebaseDatabaseTest {
 
     when(firestoreMock.collection(Mockito.anyString())).thenReturn(collectionMock);
     when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
-    docSnapshotFuture.set(docSnapshotMock);
     when(docReferenceMock.get()).thenReturn(docSnapshotFuture);
+    when(collectionMock.get()).thenReturn(querySnapshotFuture);
+    docSnapshotFuture.set(docSnapshotMock);
+    querySnapshotFuture.set(querySnapshotMock);
   }
 
   @Test
@@ -187,8 +189,6 @@ public class FirebaseDatabaseTest {
   public void testGetAllDocumentsInCollection_getsAllDocuments() throws 
       InterruptedException, ExecutionException{
     String collectionName = LISTING_COLLECTION_NAME;
-    when(collectionMock.get()).thenReturn(querySnapshotFuture);
-    querySnapshotFuture.set(querySnapshotMock);
 
     ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getAllDocumentsInCollection(collectionName);
@@ -197,15 +197,15 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testGetAllCommentsInListing_getsAllComments() {
-    String listingId = "testListingId";
+  public void testGetAllCommentsInListing_getsAllComments() throws 
+      InterruptedException, ExecutionException {
+    String listingId = "myListing";
     when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
     when(collectionMock.orderBy(TIMESTAMP, Direction.ASCENDING)).thenReturn(collectionMock);
-    when(collectionMock.get()).thenReturn(querySnapshotMock);
 
-    ApiFuture<QuerySnapshot> actualQuerySnapshot = 
+    ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getAllCommentsInListing(listingId);
 
-    assertEquals(actualQuerySnapshot, querySnapshotMock);
+    assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
 }

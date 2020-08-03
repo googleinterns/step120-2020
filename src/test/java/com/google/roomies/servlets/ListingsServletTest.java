@@ -137,8 +137,8 @@ public class ListingsServletTest {
       " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
       "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
       "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
-      "\"USD 100\",\"comments\":[{\"documentId\":{\"value\":\"commentID\"},\"timestamp\":"+
-      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"comment\":\"Test comment\"}]}]";
+      "\"USD 100\",\"comments\":[{\"commentId\":{\"value\":\"commentID\"},\"timestamp\":"+
+      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"commentMessage\":\"Test comment\"}]}]";
 
     assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
   }
@@ -357,7 +357,7 @@ public class ListingsServletTest {
   * a timestamp instead of a FieldValue used in toMap().
   */
   private Map<String, Object> mapOfCommentDataForGetTests(String commentText) {
-    Comment comment = Comment.builder().setComment(commentText).build();
+    Comment comment = Comment.builder().setCommentMessage(commentText).build();
     Map<String, Object> commentData = Maps.newHashMap(comment.toMap());
 
     commentData.put(TIMESTAMP, Timestamp.parseTimestamp("2016-09-18T00:00:00Z"));
