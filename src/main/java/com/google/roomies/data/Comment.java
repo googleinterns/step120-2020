@@ -65,6 +65,9 @@ public abstract class Comment {
       .build();
   }
 
+  /**
+  * Creates an instance of a Comment given a document from the database.
+  */
   public static Optional<Comment> fromFirestore(QueryDocumentSnapshot document) {
     ImmutableMap<String, Object> commentData = ImmutableMap.copyOf(document.getData());
     return Optional.of(Comment.builder()

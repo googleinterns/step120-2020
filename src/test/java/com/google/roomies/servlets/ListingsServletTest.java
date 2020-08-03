@@ -96,19 +96,25 @@ public class ListingsServletTest {
     listingQueryFutureMock = SettableApiFuture.create();
     commentQueryFutureMock = SettableApiFuture.create();
     
-    List<QueryDocumentSnapshot> listingQueryDocumentList = List.of(listingQueryDocumentMock);
-    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(listingQueryFutureMock);
+    List<QueryDocumentSnapshot> listingQueryDocumentList = 
+      List.of(listingQueryDocumentMock);
+    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME))
+      .thenReturn(listingQueryFutureMock);
     listingQueryFutureMock.set(listingQuerySnapshotMock);
     when(listingQuerySnapshotMock.getDocuments()).thenReturn(listingQueryDocumentsMock);
     when(listingQueryDocumentMock.getId()).thenReturn("documentID");
-    when(listingQueryDocumentsMock.spliterator()).thenReturn(listingQueryDocumentList.spliterator());
+    when(listingQueryDocumentsMock.spliterator())
+      .thenReturn(listingQueryDocumentList.spliterator());
 
-    List<QueryDocumentSnapshot> commentQueryDocumentList = List.of(commentQueryDocumentMock);
-    when(database.getAllCommentsInListing(anyString())).thenReturn(commentQueryFutureMock);
+    List<QueryDocumentSnapshot> commentQueryDocumentList = 
+      List.of(commentQueryDocumentMock);
+    when(database.getAllCommentsInListing(anyString()))
+      .thenReturn(commentQueryFutureMock);
     commentQueryFutureMock.set(commentQuerySnapshotMock);
     when(commentQuerySnapshotMock.getDocuments()).thenReturn(commentQueryDocumentsMock);
     when(commentQueryDocumentMock.getId()).thenReturn("commentID");
-    when(commentQueryDocumentsMock.spliterator()).thenReturn(commentQueryDocumentList.spliterator());
+    when(commentQueryDocumentsMock.spliterator())
+      .thenReturn(commentQueryDocumentList.spliterator());
 
     stringWriter = new StringWriter();
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
@@ -128,9 +134,9 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
-    Map<String, Object> commentData = mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
+    Map<String, Object> commentData = 
+      mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
     when(listingQueryDocumentMock.getData()).thenReturn(listingData);
     when(commentQueryDocumentMock.getData()).thenReturn(commentData);
  

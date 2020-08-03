@@ -26,7 +26,6 @@ import com.google.cloud.Timestamp;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.flogger.FluentLogger;
 import com.google.roomies.database.DatabaseFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,8 +51,6 @@ import org.javamoney.moneta.Money;
 /** A listing made by a user. */
 @AutoValue
 public abstract class Listing implements Document, Serializable {
-  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
   /**
   * Describes the two different lease types for a listing.
   * If input is not one of these two options, servlet throws an error.
