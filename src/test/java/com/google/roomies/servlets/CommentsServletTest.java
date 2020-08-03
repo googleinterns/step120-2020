@@ -52,10 +52,6 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public class CommentsServletTest {
   @Mock NoSQLDatabase database;
-  @Mock ApiFuture<DocumentReference> docReferenceFutureMock;
-  @Mock DocumentReference docReferenceMock;
-  @Mock ApiFuture<DocumentSnapshot> docSnapshotFutureMock;
-  @Mock DocumentSnapshot docSnapshotMock;
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
@@ -66,8 +62,6 @@ public class CommentsServletTest {
   public void setUp() throws ServletException, InterruptedException,
       ExecutionException {    
     MockitoAnnotations.initMocks(this);
-    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
-    when(docReferenceFutureMock.get()).thenReturn(docReferenceMock);
 
     commentsServlet = new CommentsServlet();
     commentsServlet.init();
@@ -78,14 +72,14 @@ public class CommentsServletTest {
   @Test
   public void testPost_postsSingleComment() throws IOException, InterruptedException,
       ExecutionException {
-    String listingId = "7YDcsjQOTzVoUxeXiysT";
+    String listingId = "testListingId";
     when(request.getParameter(LISTING_ID)).thenReturn(listingId);
     when(request.getParameter(COMMENT)).thenReturn("Test comment");
     comment = Comment.fromServletRequest(request);
     
     commentsServlet.doPost(request, response);
     
-    verify(database, Mockito.times(1)).addCommentAsMapToListing(comment, listingId);
+    verify(database, Mockito.times(1)).addCommentToListing(comment, listingId);
   }
 
   @Test
@@ -95,7 +89,7 @@ public class CommentsServletTest {
     when(request.getParameter(LISTING_ID)).thenReturn(listingId);
     when(request.getParameter(COMMENT)).thenReturn("Test comment");
     doThrow(IllegalArgumentException.class).when(database)
-      .addCommentAsMapToListing(any(Comment.class), eq(listingId));
+      .addCommentToListing(any(Comment.class), eq(listingId));
 
     commentsServlet.doPost(request, response);
 
