@@ -1,0 +1,12 @@
+.listing-box {
+    border-style: solid;
+    border-width: medium;
+    margin: 1em;
+    padding: 1em;
+}
+
+.rooms-info {
+    border-style: solid;
+    border-width: thin;
+    padding: 5px;
+}
