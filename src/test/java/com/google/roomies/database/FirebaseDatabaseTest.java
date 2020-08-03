@@ -199,7 +199,7 @@ public class FirebaseDatabaseTest {
   @Test
   public void testGetAllCommentsInListing_getsAllComments() throws 
       InterruptedException, ExecutionException {
-    String listingId = "myListing";
+    String listingId = "testId";
     when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
     when(collectionMock.orderBy(TIMESTAMP, Direction.ASCENDING)).thenReturn(collectionMock);
 

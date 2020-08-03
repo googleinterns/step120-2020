@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -65,11 +66,9 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public class ListingsServletTest {
   @Mock QueryDocumentSnapshot listingQueryDocumentMock;
-  @Mock ApiFuture<QuerySnapshot> listingFutureMock;
   @Mock QuerySnapshot listingQuerySnapshotMock;
   @Mock List<QueryDocumentSnapshot> listingQueryDocumentsMock;
   @Mock QueryDocumentSnapshot commentQueryDocumentMock;
-  @Mock ApiFuture<QuerySnapshot> commentFutureMock;
   @Mock QuerySnapshot commentQuerySnapshotMock;
   @Mock List<QueryDocumentSnapshot> commentQueryDocumentsMock;
 
@@ -77,6 +76,9 @@ public class ListingsServletTest {
 
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
+
+  private SettableApiFuture<QuerySnapshot> listingQueryFutureMock;
+  private SettableApiFuture<QuerySnapshot> commentQueryFutureMock;
 
   private Listing listing;
   private ListingsServlet listingsServlet;
@@ -90,17 +92,20 @@ public class ListingsServletTest {
     listingsServlet.init();
 
     DatabaseFactory.setDatabaseForTest(database);
+
+    listingQueryFutureMock = SettableApiFuture.create();
+    commentQueryFutureMock = SettableApiFuture.create();
     
     List<QueryDocumentSnapshot> listingQueryDocumentList = List.of(listingQueryDocumentMock);
-    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(listingFutureMock);
-    when(listingFutureMock.get()).thenReturn(listingQuerySnapshotMock);
+    when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME)).thenReturn(listingQueryFutureMock);
+    listingQueryFutureMock.set(listingQuerySnapshotMock);
     when(listingQuerySnapshotMock.getDocuments()).thenReturn(listingQueryDocumentsMock);
     when(listingQueryDocumentMock.getId()).thenReturn("documentID");
     when(listingQueryDocumentsMock.spliterator()).thenReturn(listingQueryDocumentList.spliterator());
 
     List<QueryDocumentSnapshot> commentQueryDocumentList = List.of(commentQueryDocumentMock);
-    when(database.getAllCommentsInListing(anyString())).thenReturn(commentFutureMock);
-    when(commentFutureMock.get()).thenReturn(commentQuerySnapshotMock);
+    when(database.getAllCommentsInListing(anyString())).thenReturn(commentQueryFutureMock);
+    commentQueryFutureMock.set(commentQuerySnapshotMock);
     when(commentQuerySnapshotMock.getDocuments()).thenReturn(commentQueryDocumentsMock);
     when(commentQueryDocumentMock.getId()).thenReturn("commentID");
     when(commentQueryDocumentsMock.spliterator()).thenReturn(commentQueryDocumentList.spliterator());
@@ -128,7 +133,6 @@ public class ListingsServletTest {
     Map<String, Object> commentData = mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
     when(listingQueryDocumentMock.getData()).thenReturn(listingData);
     when(commentQueryDocumentMock.getData()).thenReturn(commentData);
-
  
     listingsServlet.doGet(request, response);
     String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
@@ -354,7 +358,7 @@ public class ListingsServletTest {
   * Creates and returns a map representation of a comment.
   * 
   * Note: Differs from Comment class's toMap() because getter tests expect
-  * a timestamp instead of a FieldValue used in toMap().
+  * a timestamp instead of the FieldValue used in toMap().
   */
   private Map<String, Object> mapOfCommentDataForGetTests(String commentText) {
     Comment comment = Comment.builder().setCommentMessage(commentText).build();
@@ -364,4 +368,3 @@ public class ListingsServletTest {
     return commentData;
   }
 }
-
