@@ -96,10 +96,6 @@ public class FirebaseDatabaseTest {
     when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
     docSnapshotFuture.set(docSnapshotMock);
     when(docReferenceMock.get()).thenReturn(docSnapshotFuture);
-
-    // comment = Comment.builder()
-    //   .setCommentMessage(commentText)
-    //   .build();
   }
 
   @Test
