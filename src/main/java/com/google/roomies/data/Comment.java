@@ -69,8 +69,8 @@ public abstract class Comment {
     ImmutableMap<String, Object> commentData = ImmutableMap.copyOf(document.getData());
     return Optional.of(Comment.builder()
       .setTimestamp(Optional.of((Timestamp) commentData.get(TIMESTAMP)))
-      .setDocumentId(Optional.of(document.getId()))
-      .setComment(commentData.get(COMMENT).toString())
+      .setCommentId(Optional.of(document.getId()))
+      .setCommentMessage(commentData.get(COMMENT).toString())
       .build());
   }
 }
