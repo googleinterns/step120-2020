@@ -1,6 +1,7 @@
 package com.google.roomies;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.CommentRequestParameterNames.COMMENT;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
 import static com.google.roomies.ProjectConstants.INDEX_URL;
 
@@ -29,18 +30,19 @@ public class CommentsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
       IOException {
+    database = DatabaseFactory.getDatabase();
+    String listingId = request.getParameter(LISTING_ID);
+    Comment comment = Comment.fromServletRequest(request);
     try {
-      database = DatabaseFactory.getDatabase();
-
-      Comment comment = Comment.fromServletRequest(request);
-      String listingId = request.getParameter(LISTING_ID);
-      database.addCommentAsMapToListing(comment, listingId);
-
+      database.addCommentToListing(comment, listingId);
       response.sendRedirect(INDEX_URL);
-    } catch (IllegalStateException | IllegalArgumentException | InterruptedException
-         | ExecutionException e) {
-        logger.atInfo().withCause(e).log("Error posting comment: %s", e);
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    } catch (InterruptedException | ExecutionException | 
+          IllegalStateException | IllegalArgumentException e) {
+      String errorMessage = String.format("Error posting comment to database given " +
+      "request parameters of listingId=%s and commentMessage=%s.",
+        listingId, request.getParameter(COMMENT));
+      logger.atInfo().withCause(e).log(errorMessage);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
 }

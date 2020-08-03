@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -37,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,13 +59,18 @@ public class FirebaseDatabaseTest {
   @Mock Firestore firestoreMock;
   @Mock DocumentReference docReferenceMock;
   @Mock DocumentSnapshot docSnapshotMock;
-  @Mock ApiFuture<DocumentReference> docReferenceFutureMock;
-  @Mock ApiFuture<DocumentSnapshot> docSnapshotFutureMock;
-  @Mock ApiFuture<QuerySnapshot> querySnapshotMock;
+  @Mock QuerySnapshot querySnapshotMock;
   private Listing listing;
-  private Comment comment;
   private FirebaseDatabase database;
-  
+  private SettableApiFuture<DocumentReference> docReferenceFuture;
+  private SettableApiFuture<DocumentSnapshot> docSnapshotFuture;
+  private SettableApiFuture<QuerySnapshot> querySnapshotFuture;
+  private static final String listingId = "testId";
+  private static final String commentText = "test comment";
+  private static final Comment comment = Comment.builder()
+    .setCommentMessage(commentText)
+    .build();
+
   @Before
   public void setUp() throws Exception {    
     MockitoAnnotations.initMocks(this);
@@ -72,10 +79,14 @@ public class FirebaseDatabaseTest {
     database.setDatabaseForTest(firestoreMock);
     DatabaseFactory.setDatabaseForTest(database);
 
+    docReferenceFuture = SettableApiFuture.create();
+    docSnapshotFuture = SettableApiFuture.create();
+    querySnapshotFuture = SettableApiFuture.create();
+
     when(firestoreMock.collection(Mockito.anyString())).thenReturn(collectionMock);
     when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
-    when(docSnapshotFutureMock.get()).thenReturn(docSnapshotMock);
-    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
+    docSnapshotFuture.set(docSnapshotMock);
+    when(docReferenceMock.get()).thenReturn(docSnapshotFuture);
   }
 
   @Test
@@ -103,35 +114,27 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testaddCommentAsMapToListing_addsSingleCommentToFirestore() throws Exception {
+  public void testAddCommentToListing_addsSingleCommentToFirestore() throws Exception {
     when(docSnapshotMock.exists()).thenReturn(true);
-    String listingId = "7YDcsjQOTzVoUxeXiysT";
-    comment = Comment.builder()
-      .setComment("Test comment")
-      .build();
     ImmutableMap<String, Object> commentData = comment.toMap();
-    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+    when(collectionMock.add(commentData)).thenReturn(docReferenceFuture);
     when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    database.addCommentAsMapToListing(comment, listingId);
+    database.addCommentToListing(comment, listingId);
 
     verify(collectionMock, Mockito.times(1)).add(commentData);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testaddCommentAsMapToListing_listingIdIsInvalid_throwsIllegalArgumentException()
+  public void testAddCommentToListing_listingIdIsInvalid_throwsIllegalArgumentException()
       throws InterruptedException, ExecutionException {
     when(docSnapshotMock.exists()).thenReturn(false);
-    String listingId = "7YDcsjQOTzVoUxeXiysT";
-    String commentText = "Test comment";
-    comment = Comment.builder()
-      .setComment(commentText)
-      .build();
     ImmutableMap<String, Object> commentData = comment.toMap();
-    when(collectionMock.add(commentData)).thenReturn(docReferenceFutureMock);
+    when(collectionMock.add(commentData)).thenReturn(docReferenceFuture);
+
     when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
 
-    database.addCommentAsMapToListing(comment, listingId);
+    database.addCommentToListing(comment, listingId);
   }
 
   @Test
@@ -150,42 +153,47 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testGetListing_getsSingleDocument() {
+  public void testGetListing_getsSingleDocument() throws InterruptedException, 
+      ExecutionException {
     String listingId = "myListing";
-    when(docReferenceMock.get()).thenReturn(docSnapshotFutureMock);
     when(collectionMock.document(listingId)).thenReturn(docReferenceMock);
+    docSnapshotFuture.set(docSnapshotMock);
 
-    ApiFuture<DocumentSnapshot> docSnapshot = 
+    ApiFuture<DocumentSnapshot> actualDocSnapshotFuture = 
       database.getListing(listingId);
 
-    assertEquals(docSnapshot, docSnapshotFutureMock);
+    assertEquals(actualDocSnapshotFuture.get(), docSnapshotMock);
   }
 
   @Test
-  public void testGetDocumentWithFieldValue_getsDocumentsWithSpecifiedFieldValue() {
+  public void testGetDocumentWithFieldValue_getsDocumentsWithSpecifiedFieldValue() 
+      throws InterruptedException, ExecutionException {
     String collectionName = LISTING_COLLECTION_NAME;
     String field = TITLE;
     String fieldValue = "Test title";
     when(collectionMock.whereEqualTo(field, fieldValue))
       .thenReturn(collectionMock);
     when(collectionMock.whereEqualTo(field, fieldValue).get())
-      .thenReturn(querySnapshotMock);
+      .thenReturn(querySnapshotFuture);
+    querySnapshotFuture.set(querySnapshotMock);
     
-    ApiFuture<QuerySnapshot> querySnapshot = 
+    ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getDocumentsWithFieldValue(collectionName, field, fieldValue);
 
-    assertEquals(querySnapshot, querySnapshotMock);
+    assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
 
   @Test
-  public void testGetAllDocumentsInCollection_getsAllDocuments() {
+  public void testGetAllDocumentsInCollection_getsAllDocuments() throws 
+      InterruptedException, ExecutionException{
     String collectionName = LISTING_COLLECTION_NAME;
-    when(collectionMock.get()).thenReturn(querySnapshotMock);
+    when(collectionMock.get()).thenReturn(querySnapshotFuture);
+    querySnapshotFuture.set(querySnapshotMock);
 
-    ApiFuture<QuerySnapshot> querySnapshot = 
+    ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getAllDocumentsInCollection(collectionName);
 
-    assertEquals(querySnapshot, querySnapshotMock);
+    assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
 
   @Test

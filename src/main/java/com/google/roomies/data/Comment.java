@@ -21,9 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 /** A comment made by a user under a listing. */
 @AutoValue
 public abstract class Comment {
-  abstract Optional<String> documentId();
+  abstract Optional<String> commentId();
   abstract Optional<Timestamp> timestamp();
-  public abstract String comment();
+  public abstract String commentMessage();
  
   public static Builder builder() {
     return new AutoValue_Comment.Builder();
@@ -32,8 +32,8 @@ public abstract class Comment {
   @AutoValue.Builder
   public abstract static class Builder implements Serializable {
     public abstract Builder setTimestamp(Optional<Timestamp> timestamp);
-    public abstract Builder setDocumentId(Optional<String> documentId);
-    public abstract Builder setComment(String comment);
+    public abstract Builder setCommentId(Optional<String> commentId);
+    public abstract Builder setCommentMessage(String commentMessage);
 
     public abstract Comment build();
   }
@@ -41,10 +41,9 @@ public abstract class Comment {
   /**
   * Sets all comment values to the corresponding HTTP Servlet request parameter.
   */
-  public static Comment fromServletRequest(HttpServletRequest request) throws
-      IOException, InterruptedException, ExecutionException {
+  public static Comment fromServletRequest(HttpServletRequest request) {
     return Comment.builder()
-      .setComment(request.getParameter(COMMENT))
+      .setCommentMessage(request.getParameter(COMMENT))
       .build();
   }
 
@@ -61,7 +60,7 @@ public abstract class Comment {
   */
   public ImmutableMap<String, Object> toMap() {
     return ImmutableMap.<String, Object>builder()
-      .put(COMMENT, comment())
+      .put(COMMENT, commentMessage())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
   }
