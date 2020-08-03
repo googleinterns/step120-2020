@@ -72,6 +72,8 @@ public class RentPostsServlet extends HttpServlet {
       .setRoomType(request.getParameter(REQUEST_ROOM_TYPE))
       .setStartDate(request.getParameter(REQUEST_START_DATE))
       .setTitle(request.getParameter(REQUEST_TITLE))
+      .setMilesToSchool(request.getParameter(REQUEST_LAT),
+                  request.getParameter(REQUEST_LNG))
       .build();
 
     database.addPost(post);

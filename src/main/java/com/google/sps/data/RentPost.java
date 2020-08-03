@@ -21,6 +21,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.GeoPoint;
+import java.lang.Math;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,6 +54,7 @@ public abstract class RentPost {
   public abstract RoomType roomType();
   @Nullable public abstract Date startDate();
   public abstract String title();
+  public abstract Double milesToSchool();
 
   public static Builder builder() {
     return new AutoValue_RentPost.Builder();
@@ -69,6 +71,7 @@ public abstract class RentPost {
     abstract Builder setRoomType(RoomType roomType);
     abstract Builder setStartDate(Date startDate);
     abstract Builder setTitle(String title);
+    abstract Builder setMilesToSchool(Double milesToSchool);
 
     abstract RentPost build();
     
@@ -107,6 +110,12 @@ public abstract class RentPost {
       return this;
     }
 
+    public Builder setMilesToSchool(String lat, String lng) {
+      setMilesToSchool(distanceFromLatLngToBerkeley(Double.parseDouble(lat),
+        Double.parseDouble(lng)));
+      return this;
+    }
+
     /**
     * Converts a string to a Date in the format "yyyy-MM-dd."
     * Returns null if string is not parseable.
@@ -139,6 +148,19 @@ public abstract class RentPost {
     private GeoPoint latLngToGeoPoint(String lat, String lng) {
       return new GeoPoint(Double.parseDouble(lat), Double.parseDouble(lng));
     }
+
+    private Double distanceFromLatLngToBerkeley(Double lat, Double lng) {
+      Double berkeleyLat = 37.8719;
+      Double berkeleyLng = -122.2585;
+      Double earthRadiusInMiles = 3958.8;
+      Double latInRadians = lat * (Math.PI/180); // Convert degrees to radians
+      Double berkeleyLatInRadians = berkeleyLat * (Math.PI/180); // Convert degrees to radians
+      Double diffLat = berkeleyLatInRadians-latInRadians; // Radian difference (latitudes)
+      Double diffLon = (berkeleyLng - lng) * (Math.PI/180); // Radian difference (longitudes)
+
+      return 2 * earthRadiusInMiles * Math.asin(Math.sqrt(Math.sin(diffLat/2)*Math.sin(diffLat/2) + 
+        Math.cos(latInRadians)*Math.cos(berkeleyLatInRadians)*Math.sin(diffLon/2)*Math.sin(diffLon/2)));
+    }
   }
 
   /**
@@ -158,7 +180,7 @@ public abstract class RentPost {
     rentData.put(REQUEST_START_DATE, startDate());
     rentData.put(REQUEST_TIMESTAMP, FieldValue.serverTimestamp());
     rentData.put(REQUEST_TITLE, title());
-
+    rentData.put("Miles to campus", milesToSchool());
     return rentData;
   }
 }

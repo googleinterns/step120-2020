@@ -165,6 +165,7 @@ public class RentPostsServletTest {
       .setRoomType(roomType)
       .setStartDate(startDate)
       .setTitle(title)
+      .setMilesToSchool(lat, lng)
       .build();
     return post.toMap();
   }
