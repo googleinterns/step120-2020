@@ -7,6 +7,8 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.common.collect.ImmutableList;
+import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
@@ -27,20 +29,28 @@ public interface NoSQLDatabase {
   public void addListingAsMap(Listing listing);
 
   /**
+  * Add a comment to a given listing.
+  *
+  * @param comment a Comment instance
+  * @param listingId ID of the listing in database
+  */
+  public void addCommentToListing(Comment comment, String listingId) throws 
+      InterruptedException, ExecutionException;
+
+  /**
   * Update a listing document with the specified input fields.
   *
   * @param documentID ID of document to update in database
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
   public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
-
+      
   /**
-  * Get a document from database in a map of <key, value>.
+  * Get a listing document from database in a map of <key, value>.
   *
-  * @param collectionName name of collection in database
   * @param documentID ID of document to get from database
   */
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID);
+  public ApiFuture<DocumentSnapshot> getListing(String documentID);
 
   /**
   * Get all documents with the input field value.
