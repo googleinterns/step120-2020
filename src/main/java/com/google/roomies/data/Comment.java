@@ -40,8 +40,7 @@ public abstract class Comment {
   /**
   * Sets all comment values to the corresponding HTTP Servlet request parameter.
   */
-  public static Comment fromServletRequest(HttpServletRequest request) throws
-      IOException, InterruptedException, ExecutionException {
+  public static Comment fromServletRequest(HttpServletRequest request) {
     return Comment.builder()
       .setCommentMessage(request.getParameter(COMMENT))
       .build();
