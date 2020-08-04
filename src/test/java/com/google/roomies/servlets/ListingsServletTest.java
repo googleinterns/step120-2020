@@ -7,6 +7,7 @@ import static com.google.roomies.ListingRequestParameterNames.LAT;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
 import static com.google.roomies.ListingRequestParameterNames.LNG;
+import static com.google.roomies.ListingRequestParameterNames.MAX_DISTANCE;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -102,6 +103,8 @@ public class ListingsServletTest {
       List.of(listingQueryDocumentMock);
     when(database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME))
       .thenReturn(listingQueryFutureMock);
+    when(database.getAllListingsUnderMaxDistance(anyDouble()))
+      .thenReturn(listingQueryFutureMock);
     listingQueryFutureMock.set(listingQuerySnapshotMock);
     when(listingQuerySnapshotMock.getDocuments()).thenReturn(listingQueryDocumentsMock);
     when(listingQueryDocumentMock.getId()).thenReturn("documentID");
@@ -138,6 +141,7 @@ public class ListingsServletTest {
     when(request.getParameter(TITLE)).thenReturn("Test title");
     when(request.getParameter(LAT)).thenReturn("32");
     when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(MAX_DISTANCE)).thenReturn("100");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     Map<String, Object> commentData = 
       mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
@@ -160,6 +164,7 @@ public class ListingsServletTest {
 
   @Test
   public void testGet_returnsNoListingsWithNoneInDatabasae() throws Exception {
+    when(request.getParameter(MAX_DISTANCE)).thenReturn("100");
     when(listingQueryDocumentsMock.spliterator()).thenReturn(new ArrayList().spliterator());
 
     listingsServlet.doGet(request, response);
@@ -184,6 +189,7 @@ public class ListingsServletTest {
     when(request.getParameter(TITLE)).thenReturn("Test title");
     when(request.getParameter(LAT)).thenReturn("32");
     when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(MAX_DISTANCE)).thenReturn("100");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     listingData.put(LEASE_TYPE, invalidLeaseType);
     when(listingQueryDocumentMock.getData()).thenReturn(listingData);
@@ -337,7 +343,7 @@ public class ListingsServletTest {
     verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
-  
+
   /**
   * Creates and returns a map representation of a listing.
   * 
