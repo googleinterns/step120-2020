@@ -118,6 +118,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
       .get();
   }
   
+  // public ApiFuture<QuerySnapshot> getAllListingsWithinNumMilesToCampus()
   /**
   * Initializes database with the app's google credentials and project ID.
   *

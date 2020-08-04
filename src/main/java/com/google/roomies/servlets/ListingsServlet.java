@@ -94,6 +94,7 @@ public class ListingsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
+  //  Double maxDistance = Double.parseDouble(request.getParameter(MAX_DISTANCE));
     database = DatabaseFactory.getDatabase();
     try {
       List<Listing> listings = getAllListingsFromCollection();
@@ -149,7 +150,6 @@ public class ListingsServlet extends HttpServlet {
       return Optional.<Listing>empty();
     }
   }
-
 
   private String mapToString(Map<String, Object> map) {
     return Joiner.on(",").withKeyValueSeparator("=").join(map);
