@@ -20,6 +20,7 @@ import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.MAX_DISTANCE;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -97,7 +98,13 @@ public class ListingsServlet extends HttpServlet {
   //  Double maxDistance = Double.parseDouble(request.getParameter(MAX_DISTANCE));
     database = DatabaseFactory.getDatabase();
     try {
-      List<Listing> listings = getAllListingsFromCollection();
+      List<Listing> listings;
+      if (request.getParameter(MAX_DISTANCE) == "" || request.getParameter(MAX_DISTANCE) == null) {
+        listings = getAllListingsFromCollection();
+      } else {
+        Double maxDistance = Double.parseDouble(request.getParameter(MAX_DISTANCE));
+        listings = getAllListingsUnderMaxDistance(maxDistance);
+      }
 
       response.setContentType(RESPONSE_CONTENT_TYPE);
       response.getWriter().println(convertToJsonUsingGson(listings));
@@ -125,6 +132,22 @@ public class ListingsServlet extends HttpServlet {
     List<QueryDocumentSnapshot> documents = 
       database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
+    return documentsToListings(documents);
+  }
+
+  /**
+  * Gets all listings under given max distance.
+  * 
+  * @return list of Listing instances
+  */
+  private List<Listing> getAllListingsUnderMaxDistance(Double maxDistance) throws InterruptedException, ExecutionException {
+    List<QueryDocumentSnapshot> documents = 
+      database.getAllListingsUnderMaxDistance(maxDistance).get().getDocuments();
+
+    return documentsToListings(documents);
+  }
+
+  private List<Listing> documentsToListings(List<QueryDocumentSnapshot> documents) {
     return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
       .map(this::getListingFromDocument)
       .flatMap(Optional::stream)

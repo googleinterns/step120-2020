@@ -1,8 +1,11 @@
 package com.google.roomies;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
+import static com.google.roomies.ListingConstants.DEGREE_TO_RADIAN_RATIO;
+import static com.google.roomies.ListingConstants.EARTH_RADIUS;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
@@ -21,6 +24,10 @@ import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
+import static java.lang.Math.asin;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
@@ -31,6 +38,7 @@ import com.google.cloud.Timestamp;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.ImmutableDoubleArray;
 import com.google.roomies.database.DatabaseFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -248,14 +256,11 @@ public abstract class Listing implements Document, Serializable {
       return this;
     }
 
-    public Builder setLocation(String lat, String lng) {
-      setLocation(latLngToGeoPoint(lat, lng));
-      return this;
-    }
-
-    public Builder setMilesToCampus(String lat, String lng) {
-      setMilesToCampus(distanceFromLatLngToBerkeley(Double.parseDouble(lat),
-        Double.parseDouble(lng)));
+    public Builder setLocationAndDistance(String lat, String lng) {
+      Double latitude = Double.parseDouble(lat);
+      Double longitude = Double.parseDouble(lng);
+      setLocation(new GeoPoint(latitude, longitude));
+      setMilesToCampus(distanceToCampus(latitude, longitude, BERKELEY_LOCATION));
       return this;
     }
 
@@ -278,23 +283,31 @@ public abstract class Listing implements Document, Serializable {
       return convertedDate;
     }
 
-    private GeoPoint latLngToGeoPoint(String lat, String lng) {
-      return new GeoPoint(Double.parseDouble(lat), Double.parseDouble(lng));
-    }
+    /**
+    * Calculates the straight-line distance from given latitude and longitude to
+    * the campus latitude and longitude.
+    *
+    * Calculation uses the Haversine distance (angular distance between two points
+    * on the surface of a sphere).
+    *
+    * Note: straight-line distance is a quick way to calculate distance without an API. 
+    * Driving/walking distance was not implemented at this point in time because using
+    * the Google Places API
+    * requires displaying the results on a Google Map, which is out of scope for our MVP.
+    * 
+    * @param lat listing's latitude
+    * @param lng listing's longitude
+    * @param campusLocation a array of [latitude, longitude] representing campus location
+    */
+    private Double distanceToCampus(Double lat, Double lng, ImmutableDoubleArray campusLocation) {
+      Double latInRadians = lat * DEGREE_TO_RADIAN_RATIO; 
+      Double campusLatInRadians = campusLocation.get(0) * DEGREE_TO_RADIAN_RATIO; 
+      Double latDifference = campusLatInRadians - latInRadians;
+      Double longitudeDifference = (campusLocation.get(1) - lng) * DEGREE_TO_RADIAN_RATIO;
 
-    private Double distanceFromLatLngToBerkeley(Double lat, Double lng) {
-      Double berkeleyLat = 37.8719;
-      Double berkeleyLng = -122.2585;
-      Double earthRadiusInMiles = 3958.8;
-      Double latInRadians = lat * (Math.PI/180); 
-      Double berkeleyLatInRadians = berkeleyLat * (Math.PI/180); 
-      Double diffLat = berkeleyLatInRadians-latInRadians;
-      Double diffLon = (berkeleyLng - lng) * (Math.PI/180);
-
-      return 2 * earthRadiusInMiles * Math.asin(Math.sqrt(Math.sin(diffLat/2)*Math.sin(diffLat/2) + 
-        Math.cos(latInRadians)*Math.cos(berkeleyLatInRadians)*Math.sin(diffLon/2)*Math.sin(diffLon/2)));
+      return 2 * EARTH_RADIUS * asin(sqrt(sin(latDifference/2) * sin(latDifference/2) + 
+        cos(latInRadians) * cos(campusLatInRadians) * sin(longitudeDifference/2) * sin(longitudeDifference/2)));
     }
- 
   }
 
   /**
@@ -395,8 +408,8 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
-    .setLocation(request.getParameter(LAT), request.getParameter(LNG))
-    .setMilesToCampus(request.getParameter(LAT), request.getParameter(LNG))
+    .setLocationAndDistance(request.getParameter(LAT), request.getParameter(LNG))
+ //   .setMilesToCampus(request.getParameter(LAT), request.getParameter(LNG))
     .build();
   }
 }
