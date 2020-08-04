@@ -4,8 +4,9 @@ import PostCommentsDisplay from '../../PostCommentsDisplay/components/PostCommen
 
 import '../styles/Listing.css';
 
-/** Functional Component that creates a listing. Takes in listingInfo as a prop 
-(which holds the title, description, listingPrice, etc.) to fill in the listing */
+/** Functional component that creates a listing. Takes in listingInfo as a prop 
+ * (which holds the title, description, listingPrice, etc.) to fill in the listing
+ */
 function Listing(props) {
     const { 
         title, 

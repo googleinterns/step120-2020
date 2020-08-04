@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import '../styles/Home.css'
 
-/** Functional Component that displays the home screen of Roomies. Tells the user to visit one of the other pages */
+/** Functional component that displays the home screen of Roomies. Tells the user to visit one of the other pages */
 function Home() {
     return (
         <div className="home-body">
