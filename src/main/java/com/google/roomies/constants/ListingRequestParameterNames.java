@@ -4,6 +4,8 @@ public final class ListingRequestParameterNames {
   private ListingRequestParameterNames() {}
   public static final String DESCRIPTION = "description";
   public static final String END_DATE = "endDate";
+  public static final String LAT = "lat";
+  public static final String LNG = "lng";
   public static final String LEASE_TYPE = "leaseTypes";
   public static final String NUM_BATHROOMS = "numBathrooms";
   public static final String NUM_ROOMS = "numRooms";
