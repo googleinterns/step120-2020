@@ -25,6 +25,7 @@ import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.GeoPoint;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.base.Joiner;
@@ -353,7 +354,7 @@ public abstract class Listing implements Document, Serializable {
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
         .setComments(getAllCommentsFromCollection(document.getId()))
         .setLocation((GeoPoint) listingData.get(GEOPOINT))
-        .setMilesToCampus(listingData.get(MILES_TO_CAMPUS))
+        .setMilesToCampus((Double) listingData.get(MILES_TO_CAMPUS))
         .build());
     }
 
