@@ -6,7 +6,11 @@ import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
+import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
+import static com.google.roomies.ListingRequestParameterNames.LAT;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.LNG;
+import static com.google.roomies.ListingRequestParameterNames.MILES_TO_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -272,6 +276,23 @@ public abstract class Listing implements Document, Serializable {
       }
       return convertedDate;
     }
+
+    private GeoPoint latLngToGeoPoint(String lat, String lng) {
+      return new GeoPoint(Double.parseDouble(lat), Double.parseDouble(lng));
+    }
+
+    private Double distanceFromLatLngToBerkeley(Double lat, Double lng) {
+      Double berkeleyLat = 37.8719;
+      Double berkeleyLng = -122.2585;
+      Double earthRadiusInMiles = 3958.8;
+      Double latInRadians = lat * (Math.PI/180); 
+      Double berkeleyLatInRadians = berkeleyLat * (Math.PI/180); 
+      Double diffLat = berkeleyLatInRadians-latInRadians;
+      Double diffLon = (berkeleyLng - lng) * (Math.PI/180);
+
+      return 2 * earthRadiusInMiles * Math.asin(Math.sqrt(Math.sin(diffLat/2)*Math.sin(diffLat/2) + 
+        Math.cos(latInRadians)*Math.cos(berkeleyLatInRadians)*Math.sin(diffLon/2)*Math.sin(diffLon/2)));
+    }
  
   }
 
@@ -296,6 +317,8 @@ public abstract class Listing implements Document, Serializable {
       .put(SINGLE_ROOM_PRICE, singlePrice().toString())
       .put(LISTING_PRICE, listingPrice().toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
+      .put(GEOPOINT, location())
+      .put(MILES_TO_CAMPUS, milesToCampus())
       .build();
 
     return listingData;
@@ -329,6 +352,8 @@ public abstract class Listing implements Document, Serializable {
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
         .setComments(getAllCommentsFromCollection(document.getId()))
+        .setLocation((GeoPoint) listingData.get(GEOPOINT))
+        .setMilesToCampus(listingData.get(MILES_TO_CAMPUS))
         .build());
     }
 
@@ -369,6 +394,8 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
+    .setLocation(request.getParameter(LAT), request.getParameter(LNG))
+    .setMilesToCampus(request.getParameter(LAT), request.getParameter(LNG))
     .build();
   }
 }
