@@ -4,7 +4,8 @@ import PostCommentsDisplay from '../../PostCommentsDisplay/components/PostCommen
 
 import '../styles/Listing.css';
 
-/** Component class that displays the input fields for a user to post a listing */
+/** Functional Component that creates a listing. Takes in listingInfo as a prop 
+(which holds the title, description, listingPrice, etc.) to fill in the listing */
 function Listing(props) {
     const { 
         title, 

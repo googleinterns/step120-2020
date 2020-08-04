@@ -4,7 +4,8 @@ import Listing from './Listing.jsx';
 
 //import '../styles/ViewListingDisplay.css';
 
-/** Component class that displays the input fields for a user to post a listing */
+/** Component class that displays the listings found in the datastore. 
+This class utilizes a helper component called "Listing" that renders each individual listing */
 class ViewListingDisplay extends Component {
     constructor(props){
         super(props);
