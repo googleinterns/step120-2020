@@ -47,7 +47,7 @@ function Listing(props) {
 }
 
 function getRoominfo(numSingles, numShared, singlePrice, sharedPrice){
-    if((numSingles === '0' || numShared === 'USD 0') && (singlePrice === '0' || sharedPrice === 'USD 0')){
+    if((numSingles === '0' || singlePrice === 'USD 0') && (numShared === '0' || sharedPrice === 'USD 0')){
         return "No rooms available";
     }
     else if(numSingles === '0' || singlePrice === 'USD 0'){
