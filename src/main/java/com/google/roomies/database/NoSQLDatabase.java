@@ -67,7 +67,8 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
-
+  
+  public ApiFuture<QuerySnapshot> getAllListingsUnderMaxDistance(Double maxDistance);
   /**
   * Get all comments from a given listing.
   *
