@@ -337,25 +337,7 @@ public class ListingsServletTest {
     verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
     verify(response).setStatus(400);
   }
-
-  /**
-  * Sets mock HTTP request's parameters to corresponding input values.
-  */
-  private void setRequestParameters() {
-    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
-    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
-    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
-    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
-    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
-    when(request.getParameter(NUM_SHARED)).thenReturn("1");
-    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
-    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
-    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
-    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
-    when(request.getParameter(TITLE)).thenReturn("Test title");
-  }
-
+  
   /**
   * Creates and returns a map representation of a listing.
   * 
