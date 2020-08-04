@@ -3,8 +3,10 @@ package com.google.roomies;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
+import static com.google.roomies.ListingRequestParameterNames.LAT;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.LNG;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -134,6 +136,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     Map<String, Object> commentData = 
       mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
@@ -148,7 +152,8 @@ public class ListingsServletTest {
       "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
       "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
       "\"USD 100\",\"comments\":[{\"commentId\":{\"value\":\"commentID\"},\"timestamp\":"+
-      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"commentMessage\":\"Test comment\"}]}]";
+      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"commentMessage\":\"Test comment\"}]," + 
+      "\"location\":{\"latitude\":32.0,\"longitude\":-102.0},\"milesToCampus\":1214.0765251676996}]";
 
     assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
   }
@@ -177,6 +182,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     listingData.put(LEASE_TYPE, invalidLeaseType);
     when(listingQueryDocumentMock.getData()).thenReturn(listingData);
@@ -200,6 +207,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
     listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
     
@@ -224,6 +233,8 @@ public class ListingsServletTest {
     when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -246,7 +257,9 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
+
     listingsServlet.doPost(request, response);
 
     verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
@@ -268,7 +281,9 @@ public class ListingsServletTest {
     when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
- 
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
+
     listingsServlet.doPost(request, response);
 
     verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
@@ -290,6 +305,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -312,7 +329,9 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-  
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
+
     listingsServlet.doPost(request, response);
 
     verify(database, Mockito.times(0)).addListingAsMap(any(Listing.class));
