@@ -81,6 +81,8 @@ public abstract class Listing implements Document, Serializable {
   abstract Money singlePrice();
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
+  abstract GeoPoint location();
+  abstract Double milesToCampus();
 
   /**
   * Returns Builder for Listing with the default
@@ -109,6 +111,8 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
     abstract Builder setComments(ImmutableList<Comment> comments);
+    abstract Builder setLocation(GeoPoint location);
+    abstract Builder setMilesToCampus(Double milesToCampus);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
@@ -237,6 +241,36 @@ public abstract class Listing implements Document, Serializable {
         MonetaryParseException, NumberFormatException {
       setListingPrice(StringConverter.stringToNonNegativeMoney(listingPrice));
       return this;
+    }
+
+    public Builder setLocation(String lat, String lng) {
+      setLocation(latLngToGeoPoint(lat, lng));
+      return this;
+    }
+
+    public Builder setMilesToCampus(String lat, String lng) {
+      setMilesToCampus(distanceFromLatLngToBerkeley(Double.parseDouble(lat),
+        Double.parseDouble(lng)));
+      return this;
+    }
+
+    /**
+    * Converts a string to a Date in the format "yyyy-MM-dd."
+    * Returns null if string is not parseable.
+    * @param date string date
+    * @return a Date in the format "yyyy-MM-dd" or null if parsing
+    *         the string fails. 
+    */
+    private Date stringToDate(String date) {
+      SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+      Date convertedDate;
+      try {
+        convertedDate = format.parse(date);
+      } catch(ParseException e) {
+        e.printStackTrace();
+        convertedDate = null;
+      }
+      return convertedDate;
     }
  
   }
