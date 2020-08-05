@@ -1,7 +1,8 @@
 import React from 'react';
 
 /** Functional Component that creates an input field. Takes in a fieldName and fieldType as props
-to fill in the name and type attributes of the input element, respectively */
+ * to fill in the name and type attributes of the input element, respectively 
+ */
 function InputField(props) {
     const defaultValue = setDefault(props.fieldType);
     return (

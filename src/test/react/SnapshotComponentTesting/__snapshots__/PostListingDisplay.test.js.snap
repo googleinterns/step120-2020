@@ -4,8 +4,6 @@ exports[`Blank InputField renders correctly 1`] = `
 <div>
   <label />
   <input
-    defaultValue="N/A"
-    min="N/A"
     required={true}
   />
 </div>
@@ -35,8 +33,6 @@ exports[`InputField with just one of each prop renders correctly 1`] = `
     Header
   </label>
   <input
-    defaultValue="N/A"
-    min="N/A"
     required={true}
   />
 </div>
@@ -48,9 +44,7 @@ exports[`InputField with just one of each prop renders correctly 2`] = `
     htmlFor="name"
   />
   <input
-    defaultValue="N/A"
     id="name"
-    min="N/A"
     name="name"
     required={true}
   />
@@ -82,14 +76,13 @@ exports[`PostListingDisplay renders correctly 1`] = `
   </div>
   <form
     action="/listings"
-    data-testid="form"
     method="POST"
   >
     <div>
       <label
         htmlFor="title"
       >
-        Title:
+        Title: 
       </label>
       <input
         defaultValue="None"
@@ -105,7 +98,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
       <label
         htmlFor="description"
       >
-        Description:
+        Description: 
       </label>
       <input
         defaultValue="None"
@@ -121,7 +114,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
       <label
         htmlFor="numRooms"
       >
-        Total number of rooms in apartment:
+        Total number of rooms in apartment: 
       </label>
       <input
         defaultValue="0"
@@ -143,7 +136,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
         <label
           htmlFor="numSingles"
         >
-          Singles:
+          Singles: 
         </label>
         <input
           defaultValue="0"
@@ -159,7 +152,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
         <label
           htmlFor="singlePrice"
         >
-          Monthly Rent Per Single:
+          Monthly Rent Per Single: 
         </label>
         <input
           defaultValue="0"
@@ -179,7 +172,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
         <label
           htmlFor="numShared"
         >
-          Shared:
+          Shared: 
         </label>
         <input
           defaultValue="0"
@@ -195,7 +188,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
         <label
           htmlFor="sharedPrice"
         >
-          Monthly Rent Per Shared Room:
+          Monthly Rent Per Shared Room: 
         </label>
         <input
           defaultValue="0"
@@ -215,9 +208,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
         
       </label>
       <input
-        defaultValue="N/A"
         id="listingPrice"
-        min="N/A"
         name="listingPrice"
         required={true}
         type="hidden"
@@ -228,7 +219,7 @@ exports[`PostListingDisplay renders correctly 1`] = `
       <label
         htmlFor="numBathrooms"
       >
-        Number of bathrooms:
+        Number of bathrooms: 
       </label>
       <input
         defaultValue="0"
@@ -264,12 +255,12 @@ exports[`PostListingDisplay renders correctly 1`] = `
       <label
         htmlFor="startDate"
       >
-        Lease Start Date:
+        Lease Start Date: 
       </label>
       <input
-        defaultValue="2020-07-30"
+        defaultValue="2020-08-05"
         id="startDate"
-        min="2020-07-30"
+        min="2020-08-05"
         name="startDate"
         onChange={[Function]}
         required={true}
@@ -280,12 +271,12 @@ exports[`PostListingDisplay renders correctly 1`] = `
       <label
         htmlFor="endDate"
       >
-        Lease End Date:
+        Lease End Date: 
       </label>
       <input
-        defaultValue="2020-07-30"
+        defaultValue="2020-08-05"
         id="endDate"
-        min="2020-07-30"
+        min="2020-08-05"
         name="endDate"
         onChange={[Function]}
         required={true}
