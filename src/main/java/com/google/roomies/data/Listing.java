@@ -256,6 +256,13 @@ public abstract class Listing implements Document, Serializable {
       return this;
     }
 
+    /**
+    * Sets the listing location (of type Geopoint) and distance to campus (of type double,
+    * in miles) given a string representation of latitude and longitude.
+    *
+    * Input should be number corresponding to a valid latitude/longitude (ex. 32.13, -102.12).
+    * Note: Campus is set to Berkeley for the MVP.
+    */
     public Builder setLocationAndDistance(String lat, String lng) {
       Double latitude = Double.parseDouble(lat);
       Double longitude = Double.parseDouble(lng);
@@ -265,35 +272,16 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Converts a string to a Date in the format "yyyy-MM-dd."
-    * Returns null if string is not parseable.
-    * @param date string date
-    * @return a Date in the format "yyyy-MM-dd" or null if parsing
-    *         the string fails. 
-    */
-    private Date stringToDate(String date) {
-      SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-      Date convertedDate;
-      try {
-        convertedDate = format.parse(date);
-      } catch(ParseException e) {
-        e.printStackTrace();
-        convertedDate = null;
-      }
-      return convertedDate;
-    }
-
-    /**
     * Calculates the straight-line distance from given latitude and longitude to
     * the campus latitude and longitude.
     *
     * Calculation uses the Haversine distance (angular distance between two points
     * on the surface of a sphere).
     *
-    * Note: straight-line distance is a quick way to calculate distance without an API. 
+    * Note: straight-line distance is a way to calculate distance without an API. 
     * Driving/walking distance was not implemented at this point in time because using
-    * the Google Places API
-    * requires displaying the results on a Google Map, which is out of scope for our MVP.
+    * the Google Places API requires displaying the results on a Google Map, which is 
+    * out of scope for our MVP.
     * 
     * @param lat listing's latitude
     * @param lng listing's longitude
@@ -409,7 +397,6 @@ public abstract class Listing implements Document, Serializable {
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
     .setLocationAndDistance(request.getParameter(LAT), request.getParameter(LNG))
- //   .setMilesToCampus(request.getParameter(LAT), request.getParameter(LNG))
     .build();
   }
 }

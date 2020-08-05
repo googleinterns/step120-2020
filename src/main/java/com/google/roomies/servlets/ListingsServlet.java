@@ -95,7 +95,6 @@ public class ListingsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-  //  Double maxDistance = Double.parseDouble(request.getParameter(MAX_DISTANCE));
     database = DatabaseFactory.getDatabase();
     try {
       List<Listing> listings;
