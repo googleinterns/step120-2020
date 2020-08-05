@@ -108,7 +108,7 @@ public class ListingsServletTest {
 
     List<QueryDocumentSnapshot> commentQueryDocumentList = 
       List.of(commentQueryDocumentMock);
-    when(database.getAllCommentsInListing(anyString()))
+    when(database.getAllCommentDocumentsForListing(anyString()))
       .thenReturn(commentQueryFutureMock);
     commentQueryFutureMock.set(commentQuerySnapshotMock);
     when(commentQuerySnapshotMock.getDocuments()).thenReturn(commentQueryDocumentsMock);
