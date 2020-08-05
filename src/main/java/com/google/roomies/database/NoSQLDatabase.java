@@ -67,8 +67,14 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
-  
-  public ApiFuture<QuerySnapshot> getAllListingsUnderMaxDistance(Double maxDistance);
+
+  /**
+  * Get all listings under given maximum distance.
+  *
+  * @param maxDistance the max distance from campus (in miles)
+  */
+  public ApiFuture<QuerySnapshot> getAllListingsUnderMaxDistance(double maxDistance);
+
   /**
   * Get all comments from a given listing.
   *

@@ -111,7 +111,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   }
 
   @Override
-  public ApiFuture<QuerySnapshot> getAllListingsUnderMaxDistance(Double maxDistance) { 
+  public ApiFuture<QuerySnapshot> getAllListingsUnderMaxDistance(double maxDistance) { 
     return db.collection(LISTING_COLLECTION_NAME)
       .whereLessThanOrEqualTo(MILES_TO_CAMPUS, maxDistance)
       .get();
