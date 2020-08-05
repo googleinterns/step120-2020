@@ -118,7 +118,7 @@ it('Providing not enough room info produces correct output', () => {
 it('Providing not enough room info produces correct output', () => {
     const testListing = {
         numSingles: "0", 
-        numShared: "0", 
+        numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
     }
@@ -129,7 +129,7 @@ it('Providing not enough room info produces correct output', () => {
 
 it('Providing not enough room info produces correct output', () => {
     const testListing = {
-        numSingles: "0", 
+        numSingles: "1", 
         numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
