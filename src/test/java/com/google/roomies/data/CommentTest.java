@@ -73,8 +73,7 @@ public class CommentTest {
     when(queryDocumentSnapshotMock.getId()).thenReturn(commentId);
 
     Optional<Comment> actualComment = Comment.fromFirestore(queryDocumentSnapshotMock);
-    Optional<Comment> expectedComment = Optional.of(Comment.builder()
-      .setCommentMessage(commentMessage)
+    Optional<Comment> expectedComment = Optional.of(comment.toBuilder()
       .setCommentId(Optional.of(commentId))
       .setTimestamp(Optional.of(timestamp))
       .build());

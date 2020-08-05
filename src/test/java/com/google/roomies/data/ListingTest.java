@@ -60,7 +60,6 @@ public class ListingTest {
   private static final String listingPrice = "1100";
   private static final String startDate = "2020-07-10";
   private static final String title = "Test title";
-
   private static Listing listing;
 
   @Before
@@ -203,19 +202,7 @@ public class ListingTest {
     when(queryDocumentSnapshotMock.getId()).thenReturn(documentId);
 
     Optional<Listing> actualListing = Listing.fromFirestore(queryDocumentSnapshotMock);
-    Optional<Listing> expectedListing = Optional.of(Listing.builder()
-      .setDescription(description)
-      .setEndDate(endDate)
-      .setLeaseType(leaseType)
-      .setNumBathrooms(numBathrooms)
-      .setNumRooms(numRooms)
-      .setNumShared(numShared)
-      .setNumSingles(numSingles)
-      .setSharedPrice(sharedPrice)
-      .setSinglePrice(singlePrice)
-      .setListingPrice(listingPrice)
-      .setStartDate(startDate)
-      .setTitle(title)
+    Optional<Listing> expectedListing = Optional.of(listing.toBuilder()
       .setDocumentId(Optional.of(documentId))
       .setTimestamp(Optional.of(timestamp))
       .build());
