@@ -35,8 +35,6 @@ class PostListingDisplay extends Component {
         const name = event.target.name;
         this.setState({
             [name]: value
-        }, () => {
-            console.log(this.state);
         });
     }
 

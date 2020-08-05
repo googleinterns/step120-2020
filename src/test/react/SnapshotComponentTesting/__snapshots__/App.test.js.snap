@@ -2,7 +2,9 @@
 
 exports[`renders correctly 1`] = `
 <div>
-  <h1>
+  <h1
+    className="site-header"
+  >
     Roomies
   </h1>
   <nav>
@@ -12,9 +14,21 @@ exports[`renders correctly 1`] = `
       onClick={[Function]}
     >
       <button
+        className="nav-button"
         type="button"
       >
         Home
+      </button>
+    </a>
+    <a
+      href="/viewListing"
+      onClick={[Function]}
+    >
+      <button
+        className="nav-button"
+        type="button"
+      >
+        View a Listing
       </button>
     </a>
     <a
@@ -22,6 +36,7 @@ exports[`renders correctly 1`] = `
       onClick={[Function]}
     >
       <button
+        className="nav-button"
         type="button"
       >
         Post a Listing
@@ -36,8 +51,23 @@ exports[`renders correctly 1`] = `
     }
     tabIndex="-1"
   >
-    <div>
-      Hello Home!
+    <div
+      className="home-body"
+    >
+      <h2>
+        Welcome to Roomies!
+      </h2>
+      <p>
+        To continue: 
+      </p>
+      <ul>
+        <li>
+          press the "View a Listing" button to find listings made by other users
+        </li>
+        <li>
+          press the "Post a Listing" button to fill out a form to make your own listing
+        </li>
+      </ul>
     </div>
   </div>
 </div>
