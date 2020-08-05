@@ -53,6 +53,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.money.UnknownCurrencyException;
+import javax.money.format.MonetaryParseException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -150,6 +152,43 @@ public class ListingsServletTest {
  
     listingsServlet.doGet(request, response);
     String expectedWriterOutput =  "[{\"documentId\":{\"value\":\"documentID\"}," + 
+      "\"timestamp\":{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"title\":"+
+      "\"Test title\",\"description\":\"Test description\",\"startDate\":\"Jul 10," + 
+      " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
+      "\"YEAR_LONG\",\"numRooms\":2,\"numBathrooms\":2,\"numShared\":2,\"numSingles"+
+      "\":2,\"sharedPrice\":\"USD 100\",\"singlePrice\":\"USD 0\",\"listingPrice\":"+
+      "\"USD 100\",\"comments\":[{\"commentId\":{\"value\":\"commentID\"},\"timestamp\":"+
+      "{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"commentMessage\":\"Test comment\"}]," + 
+      "\"location\":{\"latitude\":32.0,\"longitude\":-102.0},\"milesToCampus\":1214.0765251676996}]";
+
+    assertEquals(stringWriter.getBuffer().toString().trim(), expectedWriterOutput);
+  }
+
+  @Test
+  public void testGet_noMaxDistanceSet_returnsAllListings() throws UnknownCurrencyException, 
+      MonetaryParseException, NumberFormatException, ParseException, IOException {
+    when(request.getParameter(DESCRIPTION)).thenReturn("Test description");
+    when(request.getParameter(END_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(LEASE_TYPE)).thenReturn("YEAR_LONG");
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn("3");
+    when(request.getParameter(NUM_ROOMS)).thenReturn("2");
+    when(request.getParameter(NUM_SHARED)).thenReturn("1");
+    when(request.getParameter(NUM_SINGLES)).thenReturn("0");
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn("100");
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
+    when(request.getParameter(LISTING_PRICE)).thenReturn("100");
+    when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
+    when(request.getParameter(TITLE)).thenReturn("Test title");
+    when(request.getParameter(LAT)).thenReturn("32");
+    when(request.getParameter(LNG)).thenReturn("-102");
+    Map<String, Object> commentData = 
+      mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
+    Map<String, Object> listingData = mapOfListingDataForGetTests(request);
+    when(listingQueryDocumentMock.getData()).thenReturn(listingData);
+    when(commentQueryDocumentMock.getData()).thenReturn(commentData);
+
+    listingsServlet.doGet(request, response);
+    String expectedWriterOutput = "[{\"documentId\":{\"value\":\"documentID\"}," + 
       "\"timestamp\":{\"value\":{\"seconds\":1474156800,\"nanos\":0}},\"title\":"+
       "\"Test title\",\"description\":\"Test description\",\"startDate\":\"Jul 10," + 
       " 2020, 12:00:00 AM\",\"endDate\":\"Jul 10, 2020, 12:00:00 AM\",\"leaseType\":"+
@@ -352,7 +391,8 @@ public class ListingsServletTest {
   * of a FieldValue used in toMap(), expects certain date and number formats due to
   * Firestore's serialization process).
   */
-  private Map<String, Object> mapOfListingDataForGetTests(HttpServletRequest request) throws Exception {
+  private Map<String, Object> mapOfListingDataForGetTests(HttpServletRequest request) 
+      throws UnknownCurrencyException, MonetaryParseException, NumberFormatException, ParseException {
     Listing listing = Listing.fromServletRequest(request);
     Map<String, Object> listingData = Maps.newHashMap(listing.toMap());
 
