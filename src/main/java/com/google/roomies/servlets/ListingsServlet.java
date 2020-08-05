@@ -150,7 +150,6 @@ public class ListingsServlet extends HttpServlet {
     }
   }
 
-
   private String mapToString(Map<String, Object> map) {
     return Joiner.on(",").withKeyValueSeparator("=").join(map);
   }

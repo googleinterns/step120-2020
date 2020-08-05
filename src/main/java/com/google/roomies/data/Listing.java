@@ -82,6 +82,8 @@ public abstract class Listing implements Document, Serializable {
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
 
+  abstract Builder toBuilder();
+
   /**
   * Returns Builder for Listing with the default
   * value of the comments list set as an empty
