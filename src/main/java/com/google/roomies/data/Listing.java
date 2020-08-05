@@ -294,7 +294,7 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
-        .setComments(getAllCommentsFromCollection(document.getId()))
+        .setComments(getAllCommentsForListing(document.getId()))
         .build());
     }
 
@@ -303,18 +303,16 @@ public abstract class Listing implements Document, Serializable {
   * 
   * @return list of comment instances
   */
-  private static ImmutableList<Comment> getAllCommentsFromCollection(String listingId)
+  private static ImmutableList<Comment> getAllCommentsForListing(String listingId)
       throws IOException, InterruptedException, ExecutionException {
     List<QueryDocumentSnapshot> documents = 
-      DatabaseFactory.getDatabase().getAllCommentsInListing(listingId).get().getDocuments();
+      DatabaseFactory.getDatabase().getAllCommentDocumentsForListing(listingId)
+      .get().getDocuments();
 
-    List<Comment> comments =
-      StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+    return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
       .map(document -> Comment.fromFirestore(document))
       .flatMap(Optional::stream)
-      .collect(Collectors.toList());
-
-    return ImmutableList.copyOf(comments);
+      .collect(ImmutableList.toImmutableList());
   }
 
   /**
