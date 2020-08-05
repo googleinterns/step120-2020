@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 
 import Listing from './Listing.jsx';
 
-//import '../styles/ViewListingDisplay.css';
-
 /** Component class that displays the listings found in the datastore. 
  * This class utilizes a helper component called "Listing" that renders each individual listing 
  */
@@ -41,7 +39,7 @@ class ViewListingDisplay extends Component {
 
     render(){
         return (
-            <div onLoad={() => this.fetchListings()}>
+            <div>
                 { 
                     this.state.listings.map((listing, i) => {
                         return (

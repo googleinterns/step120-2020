@@ -39,7 +39,7 @@ function Listing(props) {
             <div className="rooms-info-containter">
                 <h3>Room(s) Information:</h3>
                 <p>Total number of room(s): {numRooms}</p>
-                { roomInfo }
+                <p role="roomInfo">{ roomInfo }</p>
                 <p>Total number of bathroom(s): {numBathrooms}</p>
             </div>
             <PostCommentsDisplay/>
@@ -47,6 +47,9 @@ function Listing(props) {
     );
 }
 
+/** Function that, given the number of single and shared rooms and the price of each, determines
+ * what the user seems in the Room Information box
+ */
 function getRoominfo(numSingles, numShared, singlePrice, sharedPrice){
     if((numSingles === '0' || singlePrice === 'USD 0') && (numShared === '0' || sharedPrice === 'USD 0')){
         return "No rooms available";
@@ -58,7 +61,7 @@ function getRoominfo(numSingles, numShared, singlePrice, sharedPrice){
         return numSingles + " single room(s) for " + singlePrice;
     }
     else {
-        return numSingles + " single room(s) for " + singlePrice + " and " + numShared + " shared room(s) for " + sharedPrice;;
+        return numSingles + " single room(s) for " + singlePrice + " and " + numShared + " shared room(s) for " + sharedPrice;
     }
 }
 
