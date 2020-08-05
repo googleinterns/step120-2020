@@ -168,9 +168,12 @@ public class ListingTest {
       .put(NUM_BATHROOMS, Integer.parseInt(numBathrooms))
       .put(NUM_SHARED, Integer.parseInt(numShared))
       .put(NUM_SINGLES, Integer.parseInt(numSingles))
-      .put(SHARED_ROOM_PRICE, StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
-      .put(SINGLE_ROOM_PRICE,  StringConverter.stringToNonNegativeMoney(singlePrice).toString())
-      .put(LISTING_PRICE,  StringConverter.stringToNonNegativeMoney(listingPrice).toString())
+      .put(SHARED_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
+      .put(SINGLE_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(singlePrice).toString())
+      .put(LISTING_PRICE, 
+        StringConverter.stringToNonNegativeMoney(listingPrice).toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
 
@@ -193,9 +196,12 @@ public class ListingTest {
       .put(NUM_BATHROOMS, Long.parseLong(numBathrooms))
       .put(NUM_SHARED, Long.parseLong(numShared))
       .put(NUM_SINGLES, Long.parseLong(numSingles))
-      .put(SHARED_ROOM_PRICE, StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
-      .put(SINGLE_ROOM_PRICE,  StringConverter.stringToNonNegativeMoney(singlePrice).toString())
-      .put(LISTING_PRICE,  StringConverter.stringToNonNegativeMoney(listingPrice).toString())
+      .put(SHARED_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
+      .put(SINGLE_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(singlePrice).toString())
+      .put(LISTING_PRICE, 
+        StringConverter.stringToNonNegativeMoney(listingPrice).toString())
       .put(TIMESTAMP, timestamp)
       .build();
     when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);
