@@ -8,6 +8,8 @@ import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -193,6 +195,19 @@ public class FirebaseDatabaseTest {
 
     ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getAllDocumentsInCollection(collectionName);
+
+    assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
+  }
+
+  @Test
+  public void testGetAllListingsUnderMaxDistance() throws InterruptedException,
+      ExecutionException {
+    double maxDistance = 1;
+    when(collectionMock.whereLessThanOrEqualTo(anyString(), anyDouble()))
+      .thenReturn(collectionMock);
+
+    ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
+      database.getAllListingsUnderMaxDistance(maxDistance);
 
     assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
