@@ -2,8 +2,12 @@ package com.google.roomies;
 
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
-import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
+import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
+import static com.google.roomies.ListingRequestParameterNames.LAT;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
+import static com.google.roomies.ListingRequestParameterNames.LNG;
+import static com.google.roomies.ListingRequestParameterNames.MILES_TO_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -18,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.GeoPoint;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
@@ -60,6 +65,11 @@ public class ListingTest {
   private static final String TEST_LISTING_PRICE = "1100";
   private static final String TEST_START_DATE = "2020-07-10";
   private static final String TEST_TITLE = "Test title";
+  private static final String TEST_LAT = "32.21";
+  private static final String TEST_LNG = "-102.12";
+  private static final Double TEST_MILES_TO_CAMPUS = 1201.6042324995394;
+  private static final GeoPoint TEST_GEOPOINT = 
+    new GeoPoint(Double.parseDouble(TEST_LAT), Double.parseDouble(TEST_LNG));
   private static Listing listing;
 
   @Before
@@ -79,6 +89,7 @@ public class ListingTest {
     .setListingPrice(TEST_LISTING_PRICE)
     .setStartDate(TEST_START_DATE)
     .setTitle(TEST_TITLE)
+    .setLocationAndDistance(TEST_LAT, TEST_LNG)
     .build();
   }
 
@@ -134,10 +145,22 @@ public class ListingTest {
     Listing.builder().setListingPrice("-300");
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testSetLocationAndDistance_latitudeIsInvalid_throwsIllegalArgumentException() {
+    Listing.builder().setLocationAndDistance("100", TEST_LNG);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testSetLocationAndDistance_longitudeIsInvalid_throwsIllegalArgumentException() {
+    Listing.builder().setLocationAndDistance(TEST_LAT, "-200");
+  }
+
   @Test
   public void testFromServletRequest_returnsListingWithAllValuesSet() throws ParseException {
     when(request.getParameter(DESCRIPTION)).thenReturn(TEST_DESCRIPTION);
     when(request.getParameter(END_DATE)).thenReturn(TEST_END_DATE);
+    when(request.getParameter(LAT)).thenReturn(TEST_LAT);
+    when(request.getParameter(LNG)).thenReturn(TEST_LNG);
     when(request.getParameter(LEASE_TYPE)).thenReturn(TEST_LEASE_TYPE);
     when(request.getParameter(NUM_BATHROOMS)).thenReturn(TEST_NUM_BATHROOMS);
     when(request.getParameter(NUM_ROOMS)).thenReturn(TEST_NUM_ROOMS);
@@ -175,6 +198,8 @@ public class ListingTest {
       .put(LISTING_PRICE, 
         StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
+      .put(GEOPOINT, TEST_GEOPOINT)
+      .put(MILES_TO_CAMPUS, TEST_MILES_TO_CAMPUS)
       .build();
 
     assertEquals(actualData, expectedData);
@@ -203,6 +228,8 @@ public class ListingTest {
       .put(LISTING_PRICE, 
         StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
       .put(TIMESTAMP, timestamp)
+      .put(GEOPOINT, TEST_GEOPOINT)
+      .put(MILES_TO_CAMPUS, TEST_MILES_TO_CAMPUS)
       .build();
     when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);
     when(queryDocumentSnapshotMock.getId()).thenReturn(documentId);
