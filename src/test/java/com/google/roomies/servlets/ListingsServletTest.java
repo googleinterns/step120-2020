@@ -3,10 +3,10 @@ package com.google.roomies;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
-import static com.google.roomies.ListingRequestParameterNames.LAT;
+import static com.google.roomies.ListingRequestParameterNames.LATITUDE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
-import static com.google.roomies.ListingRequestParameterNames.LNG;
+import static com.google.roomies.ListingRequestParameterNames.LONGITUDE;
 import static com.google.roomies.ListingRequestParameterNames.MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
@@ -141,8 +141,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
     when(request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS)).thenReturn("100");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     Map<String, Object> commentData = 
@@ -179,8 +179,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
     Map<String, Object> commentData = 
       mapOfCommentDataForGetTests(/* commentText = */ "Test comment");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
@@ -226,8 +226,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
     when(request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS)).thenReturn("100");
     Map<String, Object> listingData = mapOfListingDataForGetTests(request);
     listingData.put(LEASE_TYPE, invalidLeaseType);
@@ -252,8 +252,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
     listing = Listing.fromServletRequest(request);
     Map<String, Object> expectedData = listing.toMap();
     
@@ -278,8 +278,8 @@ public class ListingsServletTest {
     when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -302,8 +302,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -326,8 +326,8 @@ public class ListingsServletTest {
     when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn("0");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -350,8 +350,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 
@@ -374,8 +374,8 @@ public class ListingsServletTest {
     when(request.getParameter(LISTING_PRICE)).thenReturn("100");
     when(request.getParameter(START_DATE)).thenReturn("2020-07-10");
     when(request.getParameter(TITLE)).thenReturn("Test title");
-    when(request.getParameter(LAT)).thenReturn("32");
-    when(request.getParameter(LNG)).thenReturn("-102");
+    when(request.getParameter(LATITUDE)).thenReturn("32");
+    when(request.getParameter(LONGITUDE)).thenReturn("-102");
 
     listingsServlet.doPost(request, response);
 

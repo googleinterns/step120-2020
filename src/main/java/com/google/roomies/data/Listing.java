@@ -10,9 +10,9 @@ import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
-import static com.google.roomies.ListingRequestParameterNames.LAT;
+import static com.google.roomies.ListingRequestParameterNames.LATITUDE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
-import static com.google.roomies.ListingRequestParameterNames.LNG;
+import static com.google.roomies.ListingRequestParameterNames.LONGITUDE;
 import static com.google.roomies.ListingRequestParameterNames.MILES_TO_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
@@ -287,20 +287,20 @@ public abstract class Listing implements Document, Serializable {
     * the Google Places API requires displaying the results on a Google Map, which is 
     * out of scope for our MVP.
     * 
-    * @param lat listing's latitude
-    * @param lng listing's longitude
     * @param campusLocation a array of [latitude, longitude] representing campus location
     */
-    private Double distanceToCampus(Double lat, Double lng, 
+    private Double distanceToCampus(Double listingLatitude, Double listingLongitude, 
         ImmutableDoubleArray campusLocation) {
-      Double latInRadians = lat * DEGREE_TO_RADIAN_RATIO; 
-      Double campusLatInRadians = campusLocation.get(0) * DEGREE_TO_RADIAN_RATIO; 
-      Double latDifference = campusLatInRadians - latInRadians;
-      Double lngDifference = (campusLocation.get(1) - lng) * DEGREE_TO_RADIAN_RATIO;
+      Double campusLatitude = campusLocation.get(0);
+      Double campusLongitude = campusLocation.get(1);
+      Double listingLatitudeInRadians = listingLatitude * DEGREE_TO_RADIAN_RATIO; 
+      Double campusLatitudeInRadians = campusLatitude* DEGREE_TO_RADIAN_RATIO; 
+      Double latitudeDifference = campusLatitudeInRadians - listingLatitudeInRadians;
+      Double longitudeDifference = (campusLongitude - listingLongitude) * DEGREE_TO_RADIAN_RATIO;
 
-      return 2 * EARTH_RADIUS * asin(sqrt(sin(latDifference/2) * sin(latDifference/2) + 
-        cos(latInRadians) * cos(campusLatInRadians) * sin(lngDifference/2) * 
-        sin(lngDifference/2)));
+      return 2 * EARTH_RADIUS * asin(sqrt(sin(latitudeDifference/2) * sin(latitudeDifference/2) + 
+        cos(listingLatitudeInRadians) * cos(campusLatitudeInRadians) * sin(longitudeDifference/2) * 
+        sin(longitudeDifference/2)));
     }
   }
 
@@ -401,8 +401,8 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
-    .setLocationAndDistance(request.getParameter(LAT),
-      request.getParameter(LNG), BERKELEY_LOCATION)
+    .setLocationAndDistance(request.getParameter(LATITUDE),
+      request.getParameter(LONGITUDE), BERKELEY_LOCATION)
     .build();
   }
 }
