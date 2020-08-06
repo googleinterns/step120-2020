@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SignInPage /> Snapshot Test renders a snapshot of Component 1`] = `
+<div
+  className="SignIn"
+>
+  <h1
+    className="Title"
+  >
+    Sign In 
+  </h1>
+  <div
+    className="SignIn-Area"
+  >
+    <form
+      className="SignIn-form"
+    >
+      <label
+        className="block"
+        htmlFor="userEmail"
+      >
+        Your Email:
+      </label>
+      <input
+        className="userEmail"
+        id="userEmail"
+        name="userEmail"
+        onChange={[Function]}
+        placeholder="E.x: JohnAppleseed@gmail.com"
+        type="userEmail"
+        value=""
+      />
+      <label
+        className="block"
+        htmlFor="userPassword"
+      >
+        Your Password:
+      </label>
+      <input
+        className="userPassword"
+        name="userPassword"
+        onChange={[Function]}
+        placeholder="Your Password Here"
+        type="password"
+        value=""
+      />
+      <button
+        className="signInButton"
+        onClick={[Function]}
+      >
+        Click to Sign in
+      </button>
+    </form>
+    <p
+      className=""
+    >
+      or
+    </p>
+    <button>
+       Sign in with Google 
+    </button>
+    <p
+      className=""
+    >
+      Don't have an account 
+       
+      <a
+        className="signup-link"
+        href="/signUp"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+       
+      <br />
+       
+       
+      <p>
+        Forgot your password? 
+         
+        <a
+          className="password-reset-link"
+          href="/passwordReset"
+          onClick={[Function]}
+        >
+          Reset 
+           
+        </a>
+        it here!
+      </p>
+    </p>
+  </div>
+</div>
+`;

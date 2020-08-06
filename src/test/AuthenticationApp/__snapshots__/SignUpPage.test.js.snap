@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SignUpPage /> Snapshot Test renders a snapshot of Component 1`] = `
+<div
+  className="SignUp"
+>
+  <h1
+    className="Title"
+  >
+    Sign Up 
+  </h1>
+  <div
+    className="SignUp-Area"
+  >
+    <form
+      className="SignUp-form"
+    >
+      <label
+        className="block"
+        htmlFor="displayName"
+      >
+        Choose your Display Name:
+      </label>
+      <input
+        className="displayName"
+        id="displayName"
+        name="displayName"
+        onChange={[Function]}
+        placeholder="E.x: AwesomeDude123"
+        type="text"
+        value=""
+      />
+      <label
+        className="block"
+        htmlFor="userEmail"
+      >
+        Enter Your .edu Email:
+      </label>
+      <input
+        className="userEmail"
+        id="userEmail"
+        name="userEmail"
+        onChange={[Function]}
+        placeholder="E.x: JohnAppleseed@gmail.edu"
+        type="userEmail"
+        value=""
+      />
+      <label
+        className="block"
+        htmlFor="userPassword"
+      >
+        Make a Strong Password:
+      </label>
+      <input
+        className="userPassword"
+        name="userPassword"
+        onChange={[Function]}
+        placeholder="Your Password Here"
+        type="password"
+        value=""
+      />
+      <label
+        className="block"
+        htmlFor="retypedPassword"
+      >
+        Retype your Password:
+      </label>
+      <input
+        className="retypedPassword"
+        name="retypedPassword"
+        onChange={[Function]}
+        placeholder="Type your password again"
+        type="password"
+        value=""
+      />
+      <button
+        className="signUpButton"
+        onClick={[Function]}
+      >
+        Click to Sign Up
+      </button>
+    </form>
+    <p
+      className=""
+    >
+      or
+    </p>
+    <button>
+       Sign in with Google 
+    </button>
+    <p
+      className=""
+    >
+      Already have an Account? Sign In! 
+       
+      <a
+        className="signin-link"
+        href="/signIn"
+        onClick={[Function]}
+      >
+        Sign In
+      </a>
+    </p>
+  </div>
+</div>
+`;

@@ -1,4 +1,6 @@
 # Ignore generated Maven build files
 target/
 node_modules/
-src/AuthenticationApp/APIkey.js
+package-lock.json
+src/AuthenticationApp/APIKey.js
+yarn.lock

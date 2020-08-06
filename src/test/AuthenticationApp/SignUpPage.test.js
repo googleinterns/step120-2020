@@ -1,67 +1,68 @@
-import React from "react";
+import * as firebase from 'firebase';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SignUpPage from '../../AuthenticationApp/MainComponents/SignUpPage';
 import { shallow } from "enzyme";
-import SignUpPage from "../AuthenticationApp/MainComponents/SignUpPage";
-import { userEmail, displayName } from "../AuthenticationApp/MainComponents/SignUpPage";
-import { userPassword, retypedPassword } from "../AuthenticationApp/MainComponents/SignUpPage";
-import { error } from "../AuthenticationApp/MainComponents/SignUpPage";
+import { mount } from "enzyme";
+import { create } from "react-test-renderer";
+import renderer from 'react-test-renderer'
 
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 
-const EMAIL = 'Example@edu.com';
-const PASSWORD = '123Password';
-const DISPLAY_NAME = 'Name';
-const RETYPEDPASSWORD_CORRECT = '123Password';
-const RETYPEDPASSWORD_WRONG = 'Password';
 
-// jest.mock('firebaes/app', () => {
-//     return {
-//         auth: jest.fn().mockReturnThis(),
-//         createUserWithEmailAndPassword: jest.fn(),
-//     };
-// });
-
-// describe('Creates user', () => {
-//     afterAll() => {
-//         jest.resetAllMocks();
-//     });
-//     it('should pass without throwing error', async () => {
-//         const actual = SignUpPage.createUser()
-//     }
-// }
-
-describe("SignUp"), () => {
+describe('<SignUpPage />', () => {
     let wrapper;
-    let mockSignUp;
+    const setState = jest.fn();
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementation((init) => [init, setState]);
 
-    beforeEach(() => {
-        mockSignUp = jest.fn();
-        wrapper = shallow( <SignUpPage />);
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    //Snapshot test
-    it("should match with react snapshot", () => {
-        expect(wrapper).toMatchSnapshot();
-    });
+    describe("Snapshot Test" , () => {
+        it("should render without crashing", () => {
+            const domDiv = document.createElement('div');
+            ReactDOM.render(<SignUpPage />, domDiv);
+        });
 
-    describe("handlePasswordChange", () => {
-        it("should call setPassword", () => {
-            const mockEvent = {
-                target: {
-                    name: "userPassword",
-                    value: "test"
-                }
-            };
-
-            const expected = {
-                userPassword: "test"
-            };
-
-            wrappper.instance().onUserPasswordChangeHandler(mockEvent);
-
-            expect(wrapper.userPassword).toEqual(expected);
-            
+        it("renders a snapshot of Component", () => {
+            const snapshot = renderer.create(<SignUpPage />).toJSON();
+            expect(snapshot).toMatchSnapshot();
         })
+
     })
-}
+
+    it("should update userPassword state", () => {
+        wrapper = mount(<SignUpPage onUserPasswordChangeHandler={setState} />);
+        
+        wrapper.find('.userPassword').simulate('change');
+        expect(setState).toBeTruthy();
+    });
+
+    it("should update userEmail state", () => {
+        wrapper = mount(<SignUpPage onUserEmailChangeHandler={setState} />);
+        
+        wrapper.find('.userEmail').simulate('change');
+        expect(setState).toBeTruthy();
+    });
+
+    it("should update displayName state", () => {
+        wrapper = mount(<SignUpPage onDisplayNameChangeHandler={setState} />);
+        
+        wrapper.find('.displayName').simulate('change');
+        expect(setState).toBeTruthy();
+    });
+
+    it("should update retypedPassword state", () => {
+        wrapper = mount(<SignUpPage onRetypedPasswordChangeHandler={setState} />);
+        
+        wrapper.find('.retypedPassword').simulate('change');
+        expect(setState).toBeTruthy();
+    });
+    
+});
+    
+
