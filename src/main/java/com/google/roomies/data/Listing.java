@@ -262,15 +262,16 @@ public abstract class Listing implements Document, Serializable {
     * Sets the listing location (of type Geopoint) and distance to campus (of type double,
     * in miles) given a string representation of latitude and longitude.
     *
-    * Input should be number corresponding to a valid latitude/longitude. Latitude must be in
-    * the range [-90, 90] and longitude in the range [-180, 180] (ex. lat="32.13", lng="-102.12"). 
-    * Note: Campus is set to Berkeley for the MVP.
+    * Input should be number corresponding to a valid latitude/longitude. Latitude must be
+    * in the range [-90, 90] and longitude in the range [-180, 180] 
+    * (ex. lat="32.13", lng="-102.12"). 
     */
-    public Builder setLocationAndDistance(String lat, String lng) {
+    public Builder setLocationAndDistance(String lat, String lng, 
+        ImmutableDoubleArray campusLocation) {
       Double latitude = Double.parseDouble(lat);
       Double longitude = Double.parseDouble(lng);
       setLocation(new GeoPoint(latitude, longitude));
-      setMilesToCampus(distanceToCampus(latitude, longitude, BERKELEY_LOCATION));
+      setMilesToCampus(distanceToCampus(latitude, longitude, campusLocation));
       return this;
     }
 
@@ -290,14 +291,16 @@ public abstract class Listing implements Document, Serializable {
     * @param lng listing's longitude
     * @param campusLocation a array of [latitude, longitude] representing campus location
     */
-    private Double distanceToCampus(Double lat, Double lng, ImmutableDoubleArray campusLocation) {
+    private Double distanceToCampus(Double lat, Double lng, 
+        ImmutableDoubleArray campusLocation) {
       Double latInRadians = lat * DEGREE_TO_RADIAN_RATIO; 
       Double campusLatInRadians = campusLocation.get(0) * DEGREE_TO_RADIAN_RATIO; 
       Double latDifference = campusLatInRadians - latInRadians;
-      Double longitudeDifference = (campusLocation.get(1) - lng) * DEGREE_TO_RADIAN_RATIO;
+      Double lngDifference = (campusLocation.get(1) - lng) * DEGREE_TO_RADIAN_RATIO;
 
       return 2 * EARTH_RADIUS * asin(sqrt(sin(latDifference/2) * sin(latDifference/2) + 
-        cos(latInRadians) * cos(campusLatInRadians) * sin(longitudeDifference/2) * sin(longitudeDifference/2)));
+        cos(latInRadians) * cos(campusLatInRadians) * sin(lngDifference/2) * 
+        sin(lngDifference/2)));
     }
   }
 
@@ -381,6 +384,7 @@ public abstract class Listing implements Document, Serializable {
 
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
+  * Note: Campus is set to Berkeley for the MVP.
   */
   public static Listing fromServletRequest(HttpServletRequest request) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException, ParseException {
@@ -397,7 +401,8 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
-    .setLocationAndDistance(request.getParameter(LAT), request.getParameter(LNG))
+    .setLocationAndDistance(request.getParameter(LAT),
+      request.getParameter(LNG), BERKELEY_LOCATION)
     .build();
   }
 }
