@@ -262,7 +262,8 @@ public abstract class Listing implements Document, Serializable {
     * Sets the listing location (of type Geopoint) and distance to campus (of type double,
     * in miles) given a string representation of latitude and longitude.
     *
-    * Input should be number corresponding to a valid latitude/longitude (ex. 32.13, -102.12).
+    * Input should be number corresponding to a valid latitude/longitude. Latitude must be in
+    * the range [-90, 90] and longitude in the range [-180, 180] (ex. lat="32.13", lng="-102.12"). 
     * Note: Campus is set to Berkeley for the MVP.
     */
     public Builder setLocationAndDistance(String lat, String lng) {
@@ -355,7 +356,6 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
-        .setComments(getAllCommentsFromCollection(document.getId()))
         .setLocation((GeoPoint) listingData.get(GEOPOINT))
         .setMilesToCampus((Double) listingData.get(MILES_TO_CAMPUS))
         .setComments(getAllCommentsForListing(document.getId()))
