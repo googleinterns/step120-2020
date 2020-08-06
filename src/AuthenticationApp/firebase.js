@@ -16,7 +16,7 @@ const firebaseConfig = {
   };
  
   firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
+  //firebase.analytics();
  
   export const generateUserDocument = async (user, furtherData) => {
       if(!user) return;

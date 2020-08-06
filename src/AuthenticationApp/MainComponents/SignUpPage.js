@@ -20,7 +20,7 @@ const SignUpPage = () => {
             
             try {
                 var index = userEmail.lastIndexOf('@');
-                if (index <= -1 || userEmail.slice(index + 1) !== "edu.com") {
+                if (index <= -1 || !(userEmail.slice(index + 1).includes(".edu"))) {
                     throw new SyntaxError("Your email is not a .edu address");
                 } 
                 else if (retypedPassword !== userPassword) {
@@ -78,7 +78,7 @@ const SignUpPage = () => {
             </label>
             <input
               type="text"
-              className=""
+              className="displayName"
               name="displayName"
               value={displayName}
               placeholder= "E.x: AwesomeDude123"
@@ -90,7 +90,7 @@ const SignUpPage = () => {
             </label>
             <input
               type="userEmail"
-              className=""
+              className="userEmail"
               name="userEmail"
               value= {userEmail}
               placeholder= "E.x: JohnAppleseed@gmail.edu"
@@ -102,7 +102,7 @@ const SignUpPage = () => {
             </label>
             <input
               type="password"
-              className=""
+              className="userPassword"
               name="userPassword"
               value= {userPassword}
               placeholder="Your Password Here"
@@ -113,14 +113,14 @@ const SignUpPage = () => {
             </label>
             <input
               type="password"
-              className=""
+              className="retypedPassword"
               name="retypedPassword"
               value= {retypedPassword}
               placeholder="Type your password again"
               onChange = {(event) => onRetypedPasswordChangeHandler(event)}
             />
             <button 
-              className="signUpbutton"
+              className="signUpButton"
               onClick= { event => {createUser(
                   event, 
                   userEmail, 

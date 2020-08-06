@@ -38,7 +38,7 @@ const SignInPage = () => {
             </label>
             <input
               type="userEmail"
-              className=""
+              className="userEmail"
               name="userEmail"
               value= {userEmail}
               placeholder= "E.x: JohnAppleseed@gmail.com"
@@ -50,14 +50,14 @@ const SignInPage = () => {
             </label>
             <input
               type="password"
-              className=""
+              className="userPassword"
               name="userPassword"
               value= {userPassword}
               placeholder="Your Password Here"
               onChange = {(event) => onUserPasswordChangeHandler(event)}
             />
             <button 
-              className="SignInButton"
+              className="signInButton"
               onClick= {(event) => {signInHandler(event, userEmail, userPassword)}}>
               Click to Sign in
             </button>
