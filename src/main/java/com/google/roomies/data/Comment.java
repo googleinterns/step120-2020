@@ -24,7 +24,8 @@ public abstract class Comment {
   abstract Optional<String> commentId();
   abstract Optional<Timestamp> timestamp();
   public abstract String commentMessage();
- 
+  abstract Builder toBuilder();
+
   public static Builder builder() {
     return new AutoValue_Comment.Builder();
   }

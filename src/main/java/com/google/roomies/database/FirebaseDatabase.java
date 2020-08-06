@@ -118,7 +118,7 @@ public class FirebaseDatabase implements NoSQLDatabase {
   }
 
   @Override
-  public ApiFuture<QuerySnapshot> getAllCommentsInListing(String listingId) {
+  public ApiFuture<QuerySnapshot> getAllCommentDocumentsForListing(String listingId) {
     return db.collection(LISTING_COLLECTION_NAME)
       .document(listingId)
       .collection(COMMENT_COLLECTION_NAME)

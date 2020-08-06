@@ -213,14 +213,14 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testGetAllCommentsInListing_getsAllComments() throws 
+  public void testGetAllCommentDocumentsForListing_getsAllComments() throws 
       InterruptedException, ExecutionException {
     String listingId = "testId";
     when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
     when(collectionMock.orderBy(TIMESTAMP, Direction.ASCENDING)).thenReturn(collectionMock);
 
     ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
-      database.getAllCommentsInListing(listingId);
+      database.getAllCommentDocumentsForListing(listingId);
 
     assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
