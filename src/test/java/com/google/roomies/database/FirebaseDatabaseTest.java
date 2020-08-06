@@ -1,19 +1,9 @@
 package com.google.roomies.database;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
-import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
-import static com.google.roomies.ListingRequestParameterNames.END_DATE;
-import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
-import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
-import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
-import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
-import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
-import static com.google.roomies.ListingRequestParameterNames.NUM_SINGLES;
-import static com.google.roomies.ListingRequestParameterNames.SHARED_ROOM_PRICE;
-import static com.google.roomies.ListingRequestParameterNames.SINGLE_ROOM_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
-import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 import static org.junit.Assert.assertEquals;
@@ -31,6 +21,7 @@ import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions.Builder;
 import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.Query.Direction;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -94,8 +85,10 @@ public class FirebaseDatabaseTest {
 
     when(firestoreMock.collection(Mockito.anyString())).thenReturn(collectionMock);
     when(collectionMock.document(Mockito.anyString())).thenReturn(docReferenceMock);
-    docSnapshotFuture.set(docSnapshotMock);
     when(docReferenceMock.get()).thenReturn(docSnapshotFuture);
+    when(collectionMock.get()).thenReturn(querySnapshotFuture);
+    docSnapshotFuture.set(docSnapshotMock);
+    querySnapshotFuture.set(querySnapshotMock);
   }
 
   @Test
@@ -196,11 +189,22 @@ public class FirebaseDatabaseTest {
   public void testGetAllDocumentsInCollection_getsAllDocuments() throws 
       InterruptedException, ExecutionException{
     String collectionName = LISTING_COLLECTION_NAME;
-    when(collectionMock.get()).thenReturn(querySnapshotFuture);
-    querySnapshotFuture.set(querySnapshotMock);
 
     ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
       database.getAllDocumentsInCollection(collectionName);
+
+    assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
+  }
+
+  @Test
+  public void testGetAllCommentDocumentsForListing_getsAllComments() throws 
+      InterruptedException, ExecutionException {
+    String listingId = "testId";
+    when(docReferenceMock.collection(COMMENT_COLLECTION_NAME)).thenReturn(collectionMock);
+    when(collectionMock.orderBy(TIMESTAMP, Direction.ASCENDING)).thenReturn(collectionMock);
+
+    ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
+      database.getAllCommentDocumentsForListing(listingId);
 
     assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }

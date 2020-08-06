@@ -2,8 +2,8 @@ package com.google.roomies.database;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
+import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
-import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 
 import com.google.api.core.ApiFuture;
@@ -14,6 +14,8 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.Query.Direction;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -105,6 +107,15 @@ public class FirebaseDatabase implements NoSQLDatabase {
   @Override
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
+  }
+
+  @Override
+  public ApiFuture<QuerySnapshot> getAllCommentDocumentsForListing(String listingId) {
+    return db.collection(LISTING_COLLECTION_NAME)
+      .document(listingId)
+      .collection(COMMENT_COLLECTION_NAME)
+      .orderBy(TIMESTAMP, Direction.ASCENDING)
+      .get();
   }
   
   /**

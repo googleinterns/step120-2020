@@ -142,7 +142,7 @@ public class ListingsServlet extends HttpServlet {
     try {
       return Listing.fromFirestore(document);
     } catch (UnknownCurrencyException | MonetaryParseException | IllegalArgumentException
-       | ParseException e) {
+       | ParseException | IOException | InterruptedException | ExecutionException e) {
       String errorMessage = String.format("Error fetching listing %s with exception: %s",
           mapToString(document.getData()), e);
       logger.atInfo().withCause(e).log(errorMessage);

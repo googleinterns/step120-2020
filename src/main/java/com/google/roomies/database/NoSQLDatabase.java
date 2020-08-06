@@ -67,4 +67,12 @@ public interface NoSQLDatabase {
   * @param collectionName name of collection in database
   */
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
+
+  /**
+  * Get all comment documents for a given listing.
+  *
+  * Comment documents are ordered by timestamp from oldest to newest.
+  * @param listingId ID of the listing in database
+  */
+  public ApiFuture<QuerySnapshot> getAllCommentDocumentsForListing(String listingId);
 }

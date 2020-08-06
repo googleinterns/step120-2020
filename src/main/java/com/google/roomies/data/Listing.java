@@ -1,5 +1,6 @@
 package com.google.roomies;
 
+import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
@@ -22,14 +23,23 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.roomies.database.DatabaseFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
@@ -70,9 +80,18 @@ public abstract class Listing implements Document, Serializable {
   abstract Money sharedPrice();
   abstract Money singlePrice();
   abstract Money listingPrice();
+  abstract ImmutableList<Comment> comments();
 
+  abstract Builder toBuilder();
+
+  /**
+  * Returns Builder for Listing with the default
+  * value of the comments list set as an empty
+  * list. 
+  */
   public static Builder builder() {
-    return new AutoValue_Listing.Builder();
+    return new AutoValue_Listing.Builder()
+      .setComments(ImmutableList.<Comment>of());
   }
 
   @AutoValue.Builder
@@ -91,7 +110,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSharedPrice(Money sharedPrice);
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
-
+    abstract Builder setComments(ImmutableList<Comment> comments);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
@@ -257,8 +276,9 @@ public abstract class Listing implements Document, Serializable {
     * (and posted) from Firestore due to serialization problem with JavaMoney,
     * which Firestore was not able to serialize.
     */
-    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws UnknownCurrencyException,
-        MonetaryParseException, NumberFormatException, ParseException {
+    public static Optional<Listing> fromFirestore(QueryDocumentSnapshot document) throws
+       UnknownCurrencyException, MonetaryParseException, NumberFormatException, 
+       ParseException, IOException, InterruptedException, ExecutionException {
       ImmutableMap<String, Object> listingData = ImmutableMap.copyOf(document.getData());
       
       return Optional.of(Listing.builder()
@@ -276,8 +296,26 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
+        .setComments(getAllCommentsForListing(document.getId()))
         .build());
     }
+
+  /**
+  * Gets all comments from a given listing.
+  * 
+  * @return list of comment instances
+  */
+  private static ImmutableList<Comment> getAllCommentsForListing(String listingId)
+      throws IOException, InterruptedException, ExecutionException {
+    List<QueryDocumentSnapshot> documents = 
+      DatabaseFactory.getDatabase().getAllCommentDocumentsForListing(listingId)
+      .get().getDocuments();
+
+    return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
+      .map(document -> Comment.fromFirestore(document))
+      .flatMap(Optional::stream)
+      .collect(ImmutableList.toImmutableList());
+  }
 
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.

@@ -8,6 +8,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import com.google.roomies.database.DatabaseFactory;
@@ -23,7 +24,8 @@ public abstract class Comment {
   abstract Optional<String> commentId();
   abstract Optional<Timestamp> timestamp();
   public abstract String commentMessage();
- 
+  abstract Builder toBuilder();
+
   public static Builder builder() {
     return new AutoValue_Comment.Builder();
   }
@@ -62,5 +64,17 @@ public abstract class Comment {
       .put(COMMENT, commentMessage())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
+  }
+
+  /**
+  * Creates an instance of a Comment given a document from the database.
+  */
+  public static Optional<Comment> fromFirestore(QueryDocumentSnapshot document) {
+    ImmutableMap<String, Object> commentData = ImmutableMap.copyOf(document.getData());
+    return Optional.of(Comment.builder()
+      .setTimestamp(Optional.of((Timestamp) commentData.get(TIMESTAMP)))
+      .setCommentId(Optional.of(document.getId()))
+      .setCommentMessage(commentData.get(COMMENT).toString())
+      .build());
   }
 }
