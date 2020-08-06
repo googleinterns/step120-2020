@@ -48,18 +48,18 @@ public class ListingTest {
   @Mock HttpServletRequest request;
   @Mock QueryDocumentSnapshot queryDocumentSnapshotMock;
 
-  private static final String description = "Test description";
-  private static final String endDate = "2020-07-10";
-  private static final String leaseType = "YEAR_LONG";
-  private static final String numBathrooms = "3";
-  private static final String numRooms = "2";
-  private static final String numShared = "1";
-  private static final String numSingles = "1";
-  private static final String sharedPrice = "100";
-  private static final String singlePrice = "1000";
-  private static final String listingPrice = "1100";
-  private static final String startDate = "2020-07-10";
-  private static final String title = "Test title";
+  private static final String TEST_DESCRIPTION = "Test description";
+  private static final String TEST_END_DATE = "2020-07-10";
+  private static final String TEST_LEASE_TYPE = "YEAR_LONG";
+  private static final String TEST_NUM_BATHROOMS = "3";
+  private static final String TEST_NUM_ROOMS = "2";
+  private static final String TEST_NUM_SHARED = "1";
+  private static final String TEST_NUM_SINGLES = "1";
+  private static final String TEST_SHARED_PRICE = "100";
+  private static final String TEST_SINGLE_PRICE = "1000";
+  private static final String TEST_LISTING_PRICE = "1100";
+  private static final String TEST_START_DATE = "2020-07-10";
+  private static final String TEST_TITLE = "Test title";
   private static Listing listing;
 
   @Before
@@ -67,18 +67,18 @@ public class ListingTest {
     MockitoAnnotations.initMocks(this);
 
     listing = Listing.builder()
-    .setDescription(description)
-    .setEndDate(endDate)
-    .setLeaseType(leaseType)
-    .setNumBathrooms(numBathrooms)
-    .setNumRooms(numRooms)
-    .setNumShared(numShared)
-    .setNumSingles(numSingles)
-    .setSharedPrice(sharedPrice)
-    .setSinglePrice(singlePrice)
-    .setListingPrice(listingPrice)
-    .setStartDate(startDate)
-    .setTitle(title)
+    .setDescription(TEST_DESCRIPTION)
+    .setEndDate(TEST_END_DATE)
+    .setLeaseType(TEST_LEASE_TYPE)
+    .setNumBathrooms(TEST_NUM_BATHROOMS)
+    .setNumRooms(TEST_NUM_ROOMS)
+    .setNumShared(TEST_NUM_SHARED)
+    .setNumSingles(TEST_NUM_SINGLES)
+    .setSharedPrice(TEST_SHARED_PRICE)
+    .setSinglePrice(TEST_SINGLE_PRICE)
+    .setListingPrice(TEST_LISTING_PRICE)
+    .setStartDate(TEST_START_DATE)
+    .setTitle(TEST_TITLE)
     .build();
   }
 
@@ -136,18 +136,18 @@ public class ListingTest {
 
   @Test
   public void testFromServletRequest_returnsListingWithAllValuesSet() throws ParseException {
-    when(request.getParameter(DESCRIPTION)).thenReturn(description);
-    when(request.getParameter(END_DATE)).thenReturn(endDate);
-    when(request.getParameter(LEASE_TYPE)).thenReturn(leaseType);
-    when(request.getParameter(NUM_BATHROOMS)).thenReturn(numBathrooms);
-    when(request.getParameter(NUM_ROOMS)).thenReturn(numRooms);
-    when(request.getParameter(NUM_SHARED)).thenReturn(numShared);
-    when(request.getParameter(NUM_SINGLES)).thenReturn(numSingles);
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(sharedPrice);
-    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(singlePrice);
-    when(request.getParameter(LISTING_PRICE)).thenReturn(listingPrice);
-    when(request.getParameter(START_DATE)).thenReturn(startDate);
-    when(request.getParameter(TITLE)).thenReturn(title);
+    when(request.getParameter(DESCRIPTION)).thenReturn(TEST_DESCRIPTION);
+    when(request.getParameter(END_DATE)).thenReturn(TEST_END_DATE);
+    when(request.getParameter(LEASE_TYPE)).thenReturn(TEST_LEASE_TYPE);
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn(TEST_NUM_BATHROOMS);
+    when(request.getParameter(NUM_ROOMS)).thenReturn(TEST_NUM_ROOMS);
+    when(request.getParameter(NUM_SHARED)).thenReturn(TEST_NUM_SHARED);
+    when(request.getParameter(NUM_SINGLES)).thenReturn(TEST_NUM_SINGLES);
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(TEST_SHARED_PRICE);
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(TEST_SINGLE_PRICE);
+    when(request.getParameter(LISTING_PRICE)).thenReturn(TEST_LISTING_PRICE);
+    when(request.getParameter(START_DATE)).thenReturn(TEST_START_DATE);
+    when(request.getParameter(TITLE)).thenReturn(TEST_TITLE);
 
     Listing actualListing = Listing.fromServletRequest(request);
     Listing expectedListing = listing;
@@ -159,21 +159,21 @@ public class ListingTest {
   public void testToMap_returnsMapOfListingData() throws ParseException {
     Map<String, Object> actualData = listing.toMap();
     Map<String, Object> expectedData = ImmutableMap.<String, Object>builder()
-      .put(TITLE, title)
-      .put(DESCRIPTION, description)
-      .put(START_DATE, StringConverter.stringToDate(startDate))
-      .put(END_DATE, StringConverter.stringToDate(endDate))
-      .put(LEASE_TYPE, leaseType)
-      .put(NUM_ROOMS, Integer.parseInt(numRooms))
-      .put(NUM_BATHROOMS, Integer.parseInt(numBathrooms))
-      .put(NUM_SHARED, Integer.parseInt(numShared))
-      .put(NUM_SINGLES, Integer.parseInt(numSingles))
+      .put(TITLE, TEST_TITLE)
+      .put(DESCRIPTION, TEST_DESCRIPTION)
+      .put(START_DATE, StringConverter.stringToDate(TEST_START_DATE))
+      .put(END_DATE, StringConverter.stringToDate(TEST_END_DATE))
+      .put(LEASE_TYPE, TEST_LEASE_TYPE)
+      .put(NUM_ROOMS, Integer.parseInt(TEST_NUM_ROOMS))
+      .put(NUM_BATHROOMS, Integer.parseInt(TEST_NUM_BATHROOMS))
+      .put(NUM_SHARED, Integer.parseInt(TEST_NUM_SHARED))
+      .put(NUM_SINGLES, Integer.parseInt(TEST_NUM_SINGLES))
       .put(SHARED_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_SHARED_PRICE).toString())
       .put(SINGLE_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(singlePrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_SINGLE_PRICE).toString())
       .put(LISTING_PRICE, 
-        StringConverter.stringToNonNegativeMoney(listingPrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
 
@@ -187,21 +187,21 @@ public class ListingTest {
     String documentId = "documentId";
     Timestamp timestamp = Timestamp.parseTimestamp("2016-09-18T00:00:00Z");
     Map<String, Object> listingData = ImmutableMap.<String, Object>builder()
-      .put(TITLE, title)
-      .put(DESCRIPTION, description)
-      .put(START_DATE, startDate)
-      .put(END_DATE, endDate)
-      .put(LEASE_TYPE, leaseType)
-      .put(NUM_ROOMS, Long.parseLong(numRooms))
-      .put(NUM_BATHROOMS, Long.parseLong(numBathrooms))
-      .put(NUM_SHARED, Long.parseLong(numShared))
-      .put(NUM_SINGLES, Long.parseLong(numSingles))
+      .put(TITLE, TEST_TITLE)
+      .put(DESCRIPTION, TEST_DESCRIPTION)
+      .put(START_DATE, TEST_START_DATE)
+      .put(END_DATE, TEST_END_DATE)
+      .put(LEASE_TYPE, TEST_LEASE_TYPE)
+      .put(NUM_ROOMS, Long.parseLong(TEST_NUM_ROOMS))
+      .put(NUM_BATHROOMS, Long.parseLong(TEST_NUM_BATHROOMS))
+      .put(NUM_SHARED, Long.parseLong(TEST_NUM_SHARED))
+      .put(NUM_SINGLES, Long.parseLong(TEST_NUM_SINGLES))
       .put(SHARED_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(sharedPrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_SHARED_PRICE).toString())
       .put(SINGLE_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(singlePrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_SINGLE_PRICE).toString())
       .put(LISTING_PRICE, 
-        StringConverter.stringToNonNegativeMoney(listingPrice).toString())
+        StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
       .put(TIMESTAMP, timestamp)
       .build();
     when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);

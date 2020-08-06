@@ -30,9 +30,9 @@ public class CommentTest {
   @Mock HttpServletRequest request;
   @Mock QueryDocumentSnapshot queryDocumentSnapshotMock;
 
-  private static final String commentMessage = "Test message";
-  private static final Comment comment = Comment.builder()
-    .setCommentMessage(commentMessage)
+  private static final String COMMENT_MESSAGE = "Test message";
+  private static final Comment TEST_COMMENT = Comment.builder()
+    .setCommentMessage(COMMENT_MESSAGE)
     .build();
 
   @Before
@@ -42,19 +42,19 @@ public class CommentTest {
 
   @Test
   public void testFromServletRequest_returnsCommentWithAllValuesSet() {
-    when(request.getParameter(COMMENT)).thenReturn(commentMessage);
+    when(request.getParameter(COMMENT)).thenReturn(COMMENT_MESSAGE);
 
-    Comment actualComment = Comment.fromServletRequest(request);
-    Comment expectedComment = comment;
+    Comment actualComment = TEST_COMMENT.fromServletRequest(request);
+    Comment expectedComment = TEST_COMMENT;
 
     assertEquals(actualComment, expectedComment);
   }
 
   @Test
   public void testToMap_returnsMapOfCommentData() {
-    Map<String, Object> actualData = comment.toMap();
+    Map<String, Object> actualData = TEST_COMMENT.toMap();
     Map<String, Object> expectedData = ImmutableMap.<String, Object>builder()
-      .put(COMMENT, commentMessage)
+      .put(COMMENT, COMMENT_MESSAGE)
       .put(TIMESTAMP, FieldValue.serverTimestamp())
       .build();
 
@@ -66,14 +66,14 @@ public class CommentTest {
     String commentId = "commentId";
     Timestamp timestamp = Timestamp.parseTimestamp("2016-09-18T00:00:00Z");
     Map<String, Object> commentData = ImmutableMap.<String, Object>builder()
-      .put(COMMENT, commentMessage)
+      .put(COMMENT, COMMENT_MESSAGE)
       .put(TIMESTAMP, timestamp)
       .build();
     when(queryDocumentSnapshotMock.getData()).thenReturn(commentData);
     when(queryDocumentSnapshotMock.getId()).thenReturn(commentId);
 
-    Optional<Comment> actualComment = Comment.fromFirestore(queryDocumentSnapshotMock);
-    Optional<Comment> expectedComment = Optional.of(comment.toBuilder()
+    Optional<Comment> actualComment = TEST_COMMENT.fromFirestore(queryDocumentSnapshotMock);
+    Optional<Comment> expectedComment = Optional.of(TEST_COMMENT.toBuilder()
       .setCommentId(Optional.of(commentId))
       .setTimestamp(Optional.of(timestamp))
       .build());
