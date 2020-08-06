@@ -1,5 +1,6 @@
 package com.google.roomies;
 
+import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
@@ -89,7 +90,7 @@ public class ListingTest {
     .setListingPrice(TEST_LISTING_PRICE)
     .setStartDate(TEST_START_DATE)
     .setTitle(TEST_TITLE)
-    .setLocationAndDistance(TEST_LAT, TEST_LNG)
+    .setLocationAndDistance(TEST_LAT, TEST_LNG, BERKELEY_LOCATION)
     .build();
   }
 
@@ -147,12 +148,12 @@ public class ListingTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testSetLocationAndDistance_latitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistance("100", TEST_LNG);
+    Listing.builder().setLocationAndDistance("100", TEST_LNG, BERKELEY_LOCATION);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testSetLocationAndDistance_longitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistance(TEST_LAT, "-200");
+    Listing.builder().setLocationAndDistance(TEST_LAT, "-200", BERKELEY_LOCATION);
   }
 
   @Test

@@ -2,6 +2,7 @@ package com.google.roomies.database;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
+import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
@@ -108,7 +109,7 @@ public class FirebaseDatabaseTest {
       .setSharedPrice("100")
       .setSinglePrice("10")
       .setListingPrice("100")
-      .setLocationAndDistance("37.3861", "-122.0839")
+      .setLocationAndDistance("37.3861", "-122.0839", BERKELEY_LOCATION)
       .build();
     ImmutableMap<String, Object> listingData = listing.toMap();
     
@@ -200,14 +201,14 @@ public class FirebaseDatabaseTest {
   }
 
   @Test
-  public void testGetAllListingsUnderMaxDistance() throws InterruptedException,
+  public void testGetAllListingDocumentsUnderMaximumDistanceFromCampus() throws InterruptedException,
       ExecutionException {
     double maxDistance = 1;
     when(collectionMock.whereLessThanOrEqualTo(anyString(), anyDouble()))
       .thenReturn(collectionMock);
 
     ApiFuture<QuerySnapshot> actualQuerySnapshotFuture = 
-      database.getAllListingsUnderMaxDistance(maxDistance);
+      database.getAllListingDocumentsUnderMaximumDistanceFromCampus(maxDistance);
 
     assertEquals(actualQuerySnapshotFuture.get(), querySnapshotMock);
   }
