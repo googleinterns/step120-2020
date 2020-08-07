@@ -20,7 +20,9 @@ function Listing(props) {
         leaseType, 
         startDate, 
         endDate, 
-        numBathrooms 
+        numBathrooms,
+        comments,
+        documentId
     } = props.listingInfo;
 
     const roomInfo = getRoominfo(numSingles, numShared, singlePrice, sharedPrice);
@@ -42,7 +44,7 @@ function Listing(props) {
                 <p role="roomInfo">{ roomInfo }</p>
                 <p>Total number of bathroom(s): {numBathrooms}</p>
             </div>
-            <PostCommentsDisplay/>
+            <PostCommentsDisplay comments={comments} listingId={documentId.value}/>
         </div>
     );
 }

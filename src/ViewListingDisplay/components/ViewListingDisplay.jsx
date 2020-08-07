@@ -22,6 +22,7 @@ class ViewListingDisplay extends Component {
             .then(response => response.json())
             .then((userListings) => {
                 userListings.forEach((userListing) => {
+                    console.log(userListing);
                     this.addListing(userListing);
                 });
             });

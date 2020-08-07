@@ -258,9 +258,9 @@ exports[`PostListingDisplay renders correctly 1`] = `
         Lease Start Date: 
       </label>
       <input
-        defaultValue="2020-08-05"
+        defaultValue="2020-08-07"
         id="startDate"
-        min="2020-08-05"
+        min="2020-08-07"
         name="startDate"
         onChange={[Function]}
         required={true}
@@ -274,9 +274,9 @@ exports[`PostListingDisplay renders correctly 1`] = `
         Lease End Date: 
       </label>
       <input
-        defaultValue="2020-08-05"
+        defaultValue="2020-08-07"
         id="endDate"
-        min="2020-08-05"
+        min="2020-08-07"
         name="endDate"
         onChange={[Function]}
         required={true}

@@ -13,6 +13,8 @@ it('Providing all room info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -25,6 +27,8 @@ it('Providing just single room info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -37,6 +41,8 @@ it('Providing no numShared info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -49,6 +55,8 @@ it('Providing no sharedPrice info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -61,6 +69,8 @@ it('Providing just shared room info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -73,6 +83,8 @@ it('Providing no numSingles info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -85,6 +97,8 @@ it('Providing no singlePrice info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -97,6 +111,8 @@ it('Providing no room info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -109,6 +125,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -121,6 +139,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -133,6 +153,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -145,6 +167,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -157,6 +181,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "1", 
         singlePrice: "USD 1000", 
         sharedPrice: "USD 0", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');
@@ -169,6 +195,8 @@ it('Providing not enough room info produces correct output', () => {
         numShared: "0", 
         singlePrice: "USD 0", 
         sharedPrice: "USD 1000", 
+        comments: [], 
+        documentId: "1",
     }
     const wrapper = render(<Listing listingInfo={testListing}/>);
     const roomInfo = wrapper.getByRole('roomInfo');

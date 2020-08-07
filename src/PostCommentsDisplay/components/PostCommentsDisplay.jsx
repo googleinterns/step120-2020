@@ -14,11 +14,22 @@ class PostCommentsDisplay extends Component {
         this.state = {
             comments: [],
         }
+
+        const listingId = (props.comments.length !== 0) ? props.comments[0].listingId : '';
+
     }
 
     addComment(newCommentBody){
         const newState = Object.assign({}, this.state);
         newState.comments.push(newCommentBody);
+        this.setState(newState);
+    }
+
+    componentDidMount() {
+        const newState = Object.assign({}, this.state);
+        for(const comment of this.props.comments){
+            newState.comments.push(comment.commentMessage);
+        }
         this.setState(newState);
     }
 
@@ -32,7 +43,7 @@ class PostCommentsDisplay extends Component {
                         )
                     })
                 }
-                <CommentEditor addComment={this.addComment} />
+                <CommentEditor addComment={this.addComment} listingId={this.props.listingId}/>
             </div>
         )
     }
