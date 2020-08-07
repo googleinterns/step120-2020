@@ -1,4 +1,4 @@
-button {
+.nav-button {
   color: rgb(33, 54, 53); /* Dark gray green */
   font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
   font-size: 24px;
@@ -19,4 +19,8 @@ nav {
   overflow: hidden;
   padding-left: 0px;
   width: 100%;
+}
+
+.site-header {
+    margin: 1em;
 }

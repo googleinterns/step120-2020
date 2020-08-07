@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <h1
+    className="site-header"
+  >
+    Roomies
+  </h1>
+  <nav>
+    <a
+      aria-current="page"
+      href="/"
+      onClick={[Function]}
+    >
+      <button
+        className="nav-button"
+        type="button"
+      >
+        Home
+      </button>
+    </a>
+    <a
+      href="/viewListing"
+      onClick={[Function]}
+    >
+      <button
+        className="nav-button"
+        type="button"
+      >
+        View a Listing
+      </button>
+    </a>
+    <a
+      href="/postListing"
+      onClick={[Function]}
+    >
+      <button
+        className="nav-button"
+        type="button"
+      >
+        Post a Listing
+      </button>
+    </a>
+  </nav>
+  <div
+    style={
+      Object {
+        "outline": "none",
+      }
+    }
+    tabIndex="-1"
+  >
+    <div
+      className="home-body"
+    >
+      <h2>
+        Welcome to Roomies!
+      </h2>
+      <p>
+        To continue: 
+      </p>
+      <ul>
+        <li>
+          press the "View a Listing" button to find listings made by other users
+        </li>
+        <li>
+          press the "Post a Listing" button to fill out a form to make your own listing
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

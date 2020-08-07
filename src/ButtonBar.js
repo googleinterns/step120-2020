@@ -4,23 +4,22 @@ import { Link } from "@reach/router";
 const ButtonBar = () => {
     return (
         <div>
-            <h1>Roomies</h1>
-
+            <h1 className="site-header" >Roomies</h1>
             <nav>
-                <Link to="home">
-                <button type="button">
-                    Home
-                </button>
+                <Link to="/">
+                    <button className="nav-button" type="button">
+                        Home
+                    </button>
                 </Link>
-                <Link to="makeListing">
-                <button type="button">
-                    Make a Listing
-                </button>
+                <Link to="viewListing">
+                    <button className="nav-button" type="button">
+                        View a Listing
+                    </button>
                 </Link>
-                <Link to="postComment" >
-                <button type="button">
-                    Post a comment
-                </button>
+                <Link to="postListing">
+                    <button className="nav-button" type="button">
+                        Post a Listing
+                    </button>
                 </Link>
             </nav>
         </div>
