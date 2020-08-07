@@ -34,8 +34,11 @@ class CommentEditor extends Component {
     render(){
         return (
             <div className="comment-editor">
-                <textarea className="comment-input" value={this.state.newCommentBody} onChange={this.handleCommentEditorChange}/>
-                <button className="post-button" onClick={this.createComment}>Post</button>
+                <form action="/comments" method="POST">
+                    <input name="listingId" type="hidden" value={this.props.listingId}/>
+                    <input className="comment-input" name="comment" type="text" />
+                    <input className="post-button" type="submit" value="Post" />
+                </form>
             </div>
         )
     }

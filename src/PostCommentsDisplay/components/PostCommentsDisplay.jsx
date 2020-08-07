@@ -22,6 +22,14 @@ class PostCommentsDisplay extends Component {
         this.setState(newState);
     }
 
+    componentDidMount() {
+        const newState = Object.assign({}, this.state);
+        for(const comment of this.props.comments){
+            newState.comments.push(comment.commentMessage);
+        }
+        this.setState(newState);
+    }
+
     render(){
         return (
             <div>
@@ -32,7 +40,7 @@ class PostCommentsDisplay extends Component {
                         )
                     })
                 }
-                <CommentEditor addComment={this.addComment} />
+                <CommentEditor addComment={this.addComment} listingId={this.props.listingId}/>
             </div>
         )
     }
