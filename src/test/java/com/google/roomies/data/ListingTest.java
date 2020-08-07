@@ -179,7 +179,7 @@ public class ListingTest {
 
     assertEquals(actualData, expectedData);
   }
-/*
+
   @Test
   public void testFromFirestore_returnsOptionalContainingListing() throws 
       UnknownCurrencyException, MonetaryParseException, NumberFormatException, 
@@ -215,5 +215,4 @@ public class ListingTest {
 
     assertEquals(actualListing, expectedListing);
   }
-*/
 }
