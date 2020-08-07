@@ -109,7 +109,7 @@ public class FirebaseDatabaseTest {
       .setSharedPrice("100")
       .setSinglePrice("10")
       .setListingPrice("100")
-      .setLocationAndDistance("37.3861", "-122.0839", BERKELEY_LOCATION)
+      .setLocationAndDistanceToCampus("37.3861", "-122.0839", BERKELEY_LOCATION)
       .build();
     ImmutableMap<String, Object> listingData = listing.toMap();
     

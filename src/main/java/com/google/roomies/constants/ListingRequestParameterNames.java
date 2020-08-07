@@ -8,7 +8,8 @@ public final class ListingRequestParameterNames {
   public static final String LATITUDE = "lat";
   public static final String LEASE_TYPE = "leaseTypes";
   public static final String LONGITUDE = "lng";
-  public static final String MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS = "maximumDistanceFromCampus";
+  public static final String MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS =
+   "maximumDistanceFromCampus";
   public static final String MILES_TO_CAMPUS = "milesToCampus";
   public static final String NUM_BATHROOMS = "numBathrooms";
   public static final String NUM_ROOMS = "numRooms";

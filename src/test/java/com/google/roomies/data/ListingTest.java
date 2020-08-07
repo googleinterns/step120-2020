@@ -54,23 +54,23 @@ public class ListingTest {
   @Mock HttpServletRequest request;
   @Mock QueryDocumentSnapshot queryDocumentSnapshotMock;
 
-  private static final String TEST_DESCRIPTION = "Test description";
-  private static final String TEST_END_DATE = "2020-07-10";
-  private static final String TEST_LEASE_TYPE = "YEAR_LONG";
-  private static final String TEST_NUM_BATHROOMS = "3";
-  private static final String TEST_NUM_ROOMS = "2";
-  private static final String TEST_NUM_SHARED = "1";
-  private static final String TEST_NUM_SINGLES = "1";
-  private static final String TEST_SHARED_PRICE = "100";
-  private static final String TEST_SINGLE_PRICE = "1000";
-  private static final String TEST_LISTING_PRICE = "1100";
-  private static final String TEST_START_DATE = "2020-07-10";
-  private static final String TEST_TITLE = "Test title";
-  private static final String TEST_LATITUDE = "32.21";
-  private static final String TEST_LONGITUDE = "-102.12";
-  private static final Double TEST_MILES_TO_CAMPUS = 1201.6042324995394;
-  private static final GeoPoint TEST_GEOPOINT = 
-    new GeoPoint(Double.parseDouble(TEST_LATITUDE), Double.parseDouble(TEST_LONGITUDE));
+  private static final String LISTING_DESCRIPTION = "Test description";
+  private static final String LISTING_END_DATE = "2020-07-10";
+  private static final String LISTING_LEASE_TYPE = "YEAR_LONG";
+  private static final String LISTING_NUM_BATHROOMS = "3";
+  private static final String LISTING_NUM_ROOMS = "2";
+  private static final String LISTING_NUM_SHARED = "1";
+  private static final String LISTING_NUM_SINGLES = "1";
+  private static final String LISTING_SHARED_PRICE = "100";
+  private static final String LISTING_SINGLE_PRICE = "1000";
+  private static final String LISTING_LISTING_PRICE = "1100";
+  private static final String LISTING_START_DATE = "2020-07-10";
+  private static final String LISTING_TITLE = "Test title";
+  private static final String LISTING_LATITUDE = "32.21";
+  private static final String LISTING_LONGITUDE = "-102.12";
+  private static final Double LISTING_MILES_TO_CAMPUS = 1201.6042324995394;
+  private static final GeoPoint LISTING_GEOPOINT = 
+    new GeoPoint(Double.parseDouble(LISTING_LATITUDE), Double.parseDouble(LISTING_LONGITUDE));
   private static Listing listing;
 
   @Before
@@ -78,19 +78,19 @@ public class ListingTest {
     MockitoAnnotations.initMocks(this);
 
     listing = Listing.builder()
-    .setDescription(TEST_DESCRIPTION)
-    .setEndDate(TEST_END_DATE)
-    .setLeaseType(TEST_LEASE_TYPE)
-    .setNumBathrooms(TEST_NUM_BATHROOMS)
-    .setNumRooms(TEST_NUM_ROOMS)
-    .setNumShared(TEST_NUM_SHARED)
-    .setNumSingles(TEST_NUM_SINGLES)
-    .setSharedPrice(TEST_SHARED_PRICE)
-    .setSinglePrice(TEST_SINGLE_PRICE)
-    .setListingPrice(TEST_LISTING_PRICE)
-    .setStartDate(TEST_START_DATE)
-    .setTitle(TEST_TITLE)
-    .setLocationAndDistance(TEST_LATITUDE, TEST_LONGITUDE, BERKELEY_LOCATION)
+    .setDescription(LISTING_DESCRIPTION)
+    .setEndDate(LISTING_END_DATE)
+    .setLeaseType(LISTING_LEASE_TYPE)
+    .setNumBathrooms(LISTING_NUM_BATHROOMS)
+    .setNumRooms(LISTING_NUM_ROOMS)
+    .setNumShared(LISTING_NUM_SHARED)
+    .setNumSingles(LISTING_NUM_SINGLES)
+    .setSharedPrice(LISTING_SHARED_PRICE)
+    .setSinglePrice(LISTING_SINGLE_PRICE)
+    .setListingPrice(LISTING_LISTING_PRICE)
+    .setStartDate(LISTING_START_DATE)
+    .setTitle(LISTING_TITLE)
+    .setLocationAndDistanceToCampus(LISTING_LATITUDE, LISTING_LONGITUDE, BERKELEY_LOCATION)
     .build();
   }
 
@@ -147,31 +147,31 @@ public class ListingTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testSetLocationAndDistance_latitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistance("100", TEST_LONGITUDE, BERKELEY_LOCATION);
+  public void testSetLocationAndDistanceToCampus_latitudeIsInvalid_throwsIllegalArgumentException() {
+    Listing.builder().setLocationAndDistanceToCampus("100", LISTING_LONGITUDE, BERKELEY_LOCATION);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testSetLocationAndDistance_longitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistance(TEST_LATITUDE, "-200", BERKELEY_LOCATION);
+  public void testSetLocationAndDistanceToCampus_longitudeIsInvalid_throwsIllegalArgumentException() {
+    Listing.builder().setLocationAndDistanceToCampus(LISTING_LATITUDE, "-200", BERKELEY_LOCATION);
   }
 
   @Test
   public void testFromServletRequest_returnsListingWithAllValuesSet() throws ParseException {
-    when(request.getParameter(DESCRIPTION)).thenReturn(TEST_DESCRIPTION);
-    when(request.getParameter(END_DATE)).thenReturn(TEST_END_DATE);
-    when(request.getParameter(LATITUDE)).thenReturn(TEST_LATITUDE);
-    when(request.getParameter(LONGITUDE)).thenReturn(TEST_LONGITUDE);
-    when(request.getParameter(LEASE_TYPE)).thenReturn(TEST_LEASE_TYPE);
-    when(request.getParameter(NUM_BATHROOMS)).thenReturn(TEST_NUM_BATHROOMS);
-    when(request.getParameter(NUM_ROOMS)).thenReturn(TEST_NUM_ROOMS);
-    when(request.getParameter(NUM_SHARED)).thenReturn(TEST_NUM_SHARED);
-    when(request.getParameter(NUM_SINGLES)).thenReturn(TEST_NUM_SINGLES);
-    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(TEST_SHARED_PRICE);
-    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(TEST_SINGLE_PRICE);
-    when(request.getParameter(LISTING_PRICE)).thenReturn(TEST_LISTING_PRICE);
-    when(request.getParameter(START_DATE)).thenReturn(TEST_START_DATE);
-    when(request.getParameter(TITLE)).thenReturn(TEST_TITLE);
+    when(request.getParameter(DESCRIPTION)).thenReturn(LISTING_DESCRIPTION);
+    when(request.getParameter(END_DATE)).thenReturn(LISTING_END_DATE);
+    when(request.getParameter(LATITUDE)).thenReturn(LISTING_LATITUDE);
+    when(request.getParameter(LONGITUDE)).thenReturn(LISTING_LONGITUDE);
+    when(request.getParameter(LEASE_TYPE)).thenReturn(LISTING_LEASE_TYPE);
+    when(request.getParameter(NUM_BATHROOMS)).thenReturn(LISTING_NUM_BATHROOMS);
+    when(request.getParameter(NUM_ROOMS)).thenReturn(LISTING_NUM_ROOMS);
+    when(request.getParameter(NUM_SHARED)).thenReturn(LISTING_NUM_SHARED);
+    when(request.getParameter(NUM_SINGLES)).thenReturn(LISTING_NUM_SINGLES);
+    when(request.getParameter(SHARED_ROOM_PRICE)).thenReturn(LISTING_SHARED_PRICE);
+    when(request.getParameter(SINGLE_ROOM_PRICE)).thenReturn(LISTING_SINGLE_PRICE);
+    when(request.getParameter(LISTING_PRICE)).thenReturn(LISTING_LISTING_PRICE);
+    when(request.getParameter(START_DATE)).thenReturn(LISTING_START_DATE);
+    when(request.getParameter(TITLE)).thenReturn(LISTING_TITLE);
 
     Listing actualListing = Listing.fromServletRequest(request);
     Listing expectedListing = listing;
@@ -183,24 +183,24 @@ public class ListingTest {
   public void testToMap_returnsMapOfListingData() throws ParseException {
     Map<String, Object> actualData = listing.toMap();
     Map<String, Object> expectedData = ImmutableMap.<String, Object>builder()
-      .put(TITLE, TEST_TITLE)
-      .put(DESCRIPTION, TEST_DESCRIPTION)
-      .put(START_DATE, StringConverter.stringToDate(TEST_START_DATE))
-      .put(END_DATE, StringConverter.stringToDate(TEST_END_DATE))
-      .put(LEASE_TYPE, TEST_LEASE_TYPE)
-      .put(NUM_ROOMS, Integer.parseInt(TEST_NUM_ROOMS))
-      .put(NUM_BATHROOMS, Integer.parseInt(TEST_NUM_BATHROOMS))
-      .put(NUM_SHARED, Integer.parseInt(TEST_NUM_SHARED))
-      .put(NUM_SINGLES, Integer.parseInt(TEST_NUM_SINGLES))
+      .put(TITLE, LISTING_TITLE)
+      .put(DESCRIPTION, LISTING_DESCRIPTION)
+      .put(START_DATE, StringConverter.stringToDate(LISTING_START_DATE))
+      .put(END_DATE, StringConverter.stringToDate(LISTING_END_DATE))
+      .put(LEASE_TYPE, LISTING_LEASE_TYPE)
+      .put(NUM_ROOMS, Integer.parseInt(LISTING_NUM_ROOMS))
+      .put(NUM_BATHROOMS, Integer.parseInt(LISTING_NUM_BATHROOMS))
+      .put(NUM_SHARED, Integer.parseInt(LISTING_NUM_SHARED))
+      .put(NUM_SINGLES, Integer.parseInt(LISTING_NUM_SINGLES))
       .put(SHARED_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_SHARED_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_SHARED_PRICE).toString())
       .put(SINGLE_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_SINGLE_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_SINGLE_PRICE).toString())
       .put(LISTING_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_LISTING_PRICE).toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
-      .put(GEOPOINT, TEST_GEOPOINT)
-      .put(MILES_TO_CAMPUS, TEST_MILES_TO_CAMPUS)
+      .put(GEOPOINT, LISTING_GEOPOINT)
+      .put(MILES_TO_CAMPUS, LISTING_MILES_TO_CAMPUS)
       .build();
 
     assertEquals(actualData, expectedData);
@@ -213,24 +213,24 @@ public class ListingTest {
     String documentId = "documentId";
     Timestamp timestamp = Timestamp.parseTimestamp("2016-09-18T00:00:00Z");
     Map<String, Object> listingData = ImmutableMap.<String, Object>builder()
-      .put(TITLE, TEST_TITLE)
-      .put(DESCRIPTION, TEST_DESCRIPTION)
-      .put(START_DATE, TEST_START_DATE)
-      .put(END_DATE, TEST_END_DATE)
-      .put(LEASE_TYPE, TEST_LEASE_TYPE)
-      .put(NUM_ROOMS, Long.parseLong(TEST_NUM_ROOMS))
-      .put(NUM_BATHROOMS, Long.parseLong(TEST_NUM_BATHROOMS))
-      .put(NUM_SHARED, Long.parseLong(TEST_NUM_SHARED))
-      .put(NUM_SINGLES, Long.parseLong(TEST_NUM_SINGLES))
+      .put(TITLE, LISTING_TITLE)
+      .put(DESCRIPTION, LISTING_DESCRIPTION)
+      .put(START_DATE, LISTING_START_DATE)
+      .put(END_DATE, LISTING_END_DATE)
+      .put(LEASE_TYPE, LISTING_LEASE_TYPE)
+      .put(NUM_ROOMS, Long.parseLong(LISTING_NUM_ROOMS))
+      .put(NUM_BATHROOMS, Long.parseLong(LISTING_NUM_BATHROOMS))
+      .put(NUM_SHARED, Long.parseLong(LISTING_NUM_SHARED))
+      .put(NUM_SINGLES, Long.parseLong(LISTING_NUM_SINGLES))
       .put(SHARED_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_SHARED_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_SHARED_PRICE).toString())
       .put(SINGLE_ROOM_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_SINGLE_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_SINGLE_PRICE).toString())
       .put(LISTING_PRICE, 
-        StringConverter.stringToNonNegativeMoney(TEST_LISTING_PRICE).toString())
+        StringConverter.stringToNonNegativeMoney(LISTING_LISTING_PRICE).toString())
       .put(TIMESTAMP, timestamp)
-      .put(GEOPOINT, TEST_GEOPOINT)
-      .put(MILES_TO_CAMPUS, TEST_MILES_TO_CAMPUS)
+      .put(GEOPOINT, LISTING_GEOPOINT)
+      .put(MILES_TO_CAMPUS, LISTING_MILES_TO_CAMPUS)
       .build();
     when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);
     when(queryDocumentSnapshotMock.getId()).thenReturn(documentId);

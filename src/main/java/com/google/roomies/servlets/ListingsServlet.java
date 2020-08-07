@@ -109,18 +109,28 @@ public class ListingsServlet extends HttpServlet {
     }
   }
 
+  /**
+  * Gets all listings given filter parameters from servlet request.
+  */
   private List<Listing> getListingsGivenRequestFilters(HttpServletRequest request) 
       throws InterruptedException, ExecutionException {
     List<Listing> listings;
-    Optional<String> maximumDistanceFromCampus = 
-      Optional.ofNullable(request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS));
-    if (maximumDistanceFromCampus.isPresent() && !maximumDistanceFromCampus.equals("")) {
-      Double distance = Double.parseDouble(request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS));
-      listings = getAllListingsUnderMaximumDistanceFromCampus(distance);
+    String maximumDistanceInMilesFromCampus = 
+      request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS);
+
+    if (requestParameterHasValidInput(maximumDistanceInMilesFromCampus)) {
+      Double distanceFromCampus = Double.parseDouble(maximumDistanceInMilesFromCampus);
+      listings = getAllListingsUnderMaximumDistanceFromCampus(distanceFromCampus);
     } else {
       listings = getAllListingsFromCollection();
     }
     return listings;
+  }
+
+  private boolean requestParameterHasValidInput(String requestParameterInput) {
+    Optional<String> parameterInput = Optional.ofNullable(requestParameterInput);
+    
+    return parameterInput.isPresent() && !parameterInput.equals("");
   }
 
   private String convertToJsonUsingGson(List data) {
@@ -144,12 +154,13 @@ public class ListingsServlet extends HttpServlet {
 
   /**
   * Gets all listings under given max distance.
-  * 
-  * @return list of Listing instances
   */
-  private List<Listing> getAllListingsUnderMaximumDistanceFromCampus(Double maximumDistanceFromCampus) throws InterruptedException, ExecutionException {
+  private List<Listing> getAllListingsUnderMaximumDistanceFromCampus(Double 
+      maximumDistanceFromCampus) throws InterruptedException, ExecutionException {
     List<QueryDocumentSnapshot> documents = 
-      database.getAllListingDocumentsUnderMaximumDistanceFromCampus(maximumDistanceFromCampus).get().getDocuments();
+      database.getAllListingDocumentsUnderMaximumDistanceFromCampus(maximumDistanceFromCampus)
+      .get()
+      .getDocuments();
 
     return documentsToListings(documents);
   }

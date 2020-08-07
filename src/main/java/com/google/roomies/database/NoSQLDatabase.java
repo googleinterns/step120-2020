@@ -74,7 +74,7 @@ public interface NoSQLDatabase {
   * @param maxDistance the max distance from campus (in miles)
   */
   public ApiFuture<QuerySnapshot> getAllListingDocumentsUnderMaximumDistanceFromCampus(
-    double maximumDistanceFromCampus);
+    double maximumNumberOfMilesFromCampus);
 
   /**
   * Get all comment documents for a given listing.

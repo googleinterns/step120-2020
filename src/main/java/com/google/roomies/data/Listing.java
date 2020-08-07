@@ -5,7 +5,7 @@ import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.DEGREE_TO_RADIAN_RATIO;
-import static com.google.roomies.ListingConstants.EARTH_RADIUS;
+import static com.google.roomies.ListingConstants.EARTH_RADIUS_IN_MILES;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
@@ -266,8 +266,8 @@ public abstract class Listing implements Document, Serializable {
     * in the range [-90, 90] and longitude in the range [-180, 180] 
     * (ex. lat="32.13", lng="-102.12"). 
     */
-    public Builder setLocationAndDistance(String lat, String lng, 
-        ImmutableDoubleArray campusLocation) {
+    public Builder setLocationAndDistanceToCampus(String lat, String lng, 
+        GeoPoint campusLocation) {
       Double latitude = Double.parseDouble(lat);
       Double longitude = Double.parseDouble(lng);
       setLocation(new GeoPoint(latitude, longitude));
@@ -279,27 +279,24 @@ public abstract class Listing implements Document, Serializable {
     * Calculates the straight-line distance from given latitude and longitude to
     * the campus latitude and longitude.
     *
-    * Calculation uses the Haversine distance (angular distance between two points
+    * Uses the Haversine distance (angular distance between two points
     * on the surface of a sphere).
     *
-    * Note: straight-line distance is a way to calculate distance without an API. 
-    * Driving/walking distance was not implemented at this point in time because using
+    * Note: Driving/walking distance was not implemented at this point in time because using
     * the Google Places API requires displaying the results on a Google Map, which is 
     * out of scope for our MVP.
-    * 
-    * @param campusLocation a array of [latitude, longitude] representing campus location
     */
     private Double distanceToCampus(Double listingLatitude, Double listingLongitude, 
-        ImmutableDoubleArray campusLocation) {
-      Double campusLatitude = campusLocation.get(0);
-      Double campusLongitude = campusLocation.get(1);
+        GeoPoint campusLocation) {
       Double listingLatitudeInRadians = listingLatitude * DEGREE_TO_RADIAN_RATIO; 
-      Double campusLatitudeInRadians = campusLatitude* DEGREE_TO_RADIAN_RATIO; 
+      Double campusLatitudeInRadians = campusLocation.getLatitude() * DEGREE_TO_RADIAN_RATIO; 
       Double latitudeDifference = campusLatitudeInRadians - listingLatitudeInRadians;
-      Double longitudeDifference = (campusLongitude - listingLongitude) * DEGREE_TO_RADIAN_RATIO;
+      Double longitudeDifference = (campusLocation.getLongitude() - listingLongitude) 
+        * DEGREE_TO_RADIAN_RATIO;
 
-      return 2 * EARTH_RADIUS * asin(sqrt(sin(latitudeDifference/2) * sin(latitudeDifference/2) + 
-        cos(listingLatitudeInRadians) * cos(campusLatitudeInRadians) * sin(longitudeDifference/2) * 
+      return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2) *
+        sin(latitudeDifference/2) + cos(listingLatitudeInRadians) * 
+        cos(campusLatitudeInRadians) * sin(longitudeDifference/2) * 
         sin(longitudeDifference/2)));
     }
   }
@@ -401,7 +398,7 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
-    .setLocationAndDistance(request.getParameter(LATITUDE),
+    .setLocationAndDistanceToCampus(request.getParameter(LATITUDE),
       request.getParameter(LONGITUDE), BERKELEY_LOCATION)
     .build();
   }
