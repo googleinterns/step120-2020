@@ -29,7 +29,7 @@ public class CommentsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
-    IOException {
+      IOException {
       database = DatabaseFactory.getDatabase();
       String listingId = request.getParameter(LISTING_ID);
       Comment comment = Comment.fromServletRequest(request);
@@ -37,12 +37,12 @@ public class CommentsServlet extends HttpServlet {
       database.addCommentToListing(comment, listingId);
       response.sendRedirect(VIEW_LISTING_URL);
     } catch (InterruptedException | ExecutionException | 
-        IllegalStateException | IllegalArgumentException e) {
+          IllegalStateException | IllegalArgumentException e) {
       String errorMessage = String.format("Error posting comment to database given " +
-       "request parameters of listingId=%s and commentMessage=%s.",
-          listingId, request.getParameter(COMMENT));
-        logger.atInfo().withCause(e).log(errorMessage);
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      "request parameters of listingId=%s and commentMessage=%s.",
+        listingId, request.getParameter(COMMENT));
+      logger.atInfo().withCause(e).log(errorMessage);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
 }
