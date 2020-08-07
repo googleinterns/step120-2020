@@ -7,11 +7,14 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.common.collect.ImmutableList;
+import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A NoSQL Database interface. Specifies required fetch, update, and get methods
     for a database. */
@@ -19,39 +22,35 @@ public interface NoSQLDatabase {
 
   public void setDatabaseForTest(Firestore db);
   /**
-  * Add a document to a collection using a map.
+  * Add a listing document to a collection using a map.
   *
-  * @param collectionName name of collection in database
   * @param listing instance of Listing class
   */  
-  public void addListingAsMap(String collectionName, Listing listing);
+  public void addListingAsMap(Listing listing);
 
   /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
+  * Add a comment to a given listing.
   *
-  * @param collectionName name of collection in database
-  * @param doc document that implements the document interface
+  * @param comment a Comment instance
+  * @param listingId ID of the listing in database
   */
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception;
+  public void addCommentToListing(Comment comment, String listingId) throws 
+      InterruptedException, ExecutionException;
 
   /**
-  * Update a document with the specified input fields.
+  * Update a listing document with the specified input fields.
   *
-  * @param collectionName name of collection in database
   * @param documentID ID of document to update in database
   * @param fieldsToUpdate a map of <document key to update, new document value>. 
   */
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate);
-
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate);
+      
   /**
-  * Get a document from database in a map of <key, value>.
+  * Get a listing document from database in a map of <key, value>.
   *
-  * @param collectionName name of collection in database
   * @param documentID ID of document to get from database
   */
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception;
+  public ApiFuture<DocumentSnapshot> getListing(String documentID);
 
   /**
   * Get all documents with the input field value.
@@ -60,12 +59,20 @@ public interface NoSQLDatabase {
   * @param field document field to search
   * @param fieldValue value of field
   */
-  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue) throws Exception;
+  public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(String collectionName, String field, Object fieldValue);
   
   /**
   * Get all documents in specified collection.
   *
   * @param collectionName name of collection in database
   */
-  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception;
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
+
+  /**
+  * Get all comment documents for a given listing.
+  *
+  * Comment documents are ordered by timestamp from oldest to newest.
+  * @param listingId ID of the listing in database
+  */
+  public ApiFuture<QuerySnapshot> getAllCommentDocumentsForListing(String listingId);
 }

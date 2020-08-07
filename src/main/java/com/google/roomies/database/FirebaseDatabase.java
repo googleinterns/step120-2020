@@ -1,7 +1,10 @@
 package com.google.roomies.database;
 
+import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
+import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
+import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
+import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
-import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -11,6 +14,8 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.Query.Direction;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -18,18 +23,22 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.roomies.Comment;
 import com.google.roomies.Document;
 import com.google.roomies.Listing;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** A Firestore Database that implements the NoSQLDatabase interface. 
     Allows for fetching and posting of data to Firestore. */
 public class FirebaseDatabase implements NoSQLDatabase {
   private Firestore db;
   FirebaseDatabase() throws IOException {
-    this.db = initializeDatabase();
+    if (FirebaseApp.getApps().isEmpty()) {
+      this.db = initializeDatabase();
+    }
   }
 
   /**
@@ -41,85 +50,72 @@ public class FirebaseDatabase implements NoSQLDatabase {
     this.db = database;
   }
 
-  /**
-  * Add a listing to a collection using a map.
-  *
-  * Note: Listings include JavaMoney variables that are currently not serializable 
-  *       by Firestore. Adding listings as a custom class was explored and ultimately
-  *       not used because of this restriction with JavaMoney.
-  * 
-  * @param collectionName name of collection in Firestore
-  * @param listing an instance of Listing
-  */
   @Override
-  public void addListingAsMap(String collectionName, Listing listing) {
+  public void addListingAsMap(Listing listing) {
     Map<String, Object> data = listing.toMap();
-    this.db.collection(collectionName).add(data);
+    this.db.collection(LISTING_COLLECTION_NAME).add(data);
   }
 
-  /**
-  * Add a document to a collection as a class.
-  * All document fields must be serializable. The document class must implement
-  * Serializable and have an empty constructor.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param doc document that implements the document interface
-  */
   @Override
-  public void addDocumentAsClass(String collectionName, Document doc) throws Exception {
-    ApiFuture<DocumentReference> addedDocRef = this.db.collection(collectionName).add(doc);
-    addedDocRef.get().update(TIMESTAMP, FieldValue.serverTimestamp());
+  public void addCommentToListing(Comment comment, String listingId) throws 
+      InterruptedException, ExecutionException {
+    if (!listingExists(listingId)) {
+        String errorMessage = String.format("Listing with id %s does not exist in " +
+        "database. Comment with message %s cannot be created.", listingId,
+        comment.commentMessage());
+      throw new IllegalArgumentException(errorMessage);
+    }
+
+    Map<String, Object> commentData = comment.toMap();
+    this.db.collection(LISTING_COLLECTION_NAME)
+        .document(listingId)
+        .collection(COMMENT_COLLECTION_NAME)
+        .add(commentData);
+  }
+  
+  /**
+  * Checks if listing with given listingId exists in Firestore.
+  */
+  private boolean listingExists(String listingId) throws InterruptedException,
+      ExecutionException {
+    return getListing(listingId).get().exists();
   }
 
-  /**
-  * Update a document with the specified input fields.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param documentID ID of document to update in Firestore
-  * @param fieldsToUpdate a map of <document key to update, new document value>. 
-  */
   @Override
-  public void updateDocument(String collectionName, String documentID, Map<String, Object> fieldsToUpdate) {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public void updateListing(String documentID, Map<String, Object> fieldsToUpdate) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+        .document(documentID);
     fieldsToUpdate.forEach((fieldName, fieldValue) -> 
         docRef.update(fieldName, fieldValue));
   }
 
-  /**
-  * Get a document from Firestore in a map of <key, value>.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param documentID ID of document to get from Firestore
-  */
   @Override
-  public ApiFuture<DocumentSnapshot> getDocument(String collectionName, String documentID) throws Exception {
-    DocumentReference docRef = this.db.collection(collectionName).document(documentID);
+  public ApiFuture<DocumentSnapshot> getListing(String documentID) {
+    DocumentReference docRef = this.db.collection(LISTING_COLLECTION_NAME)
+      .document(documentID);
     return docRef.get();
   }
 
-  /**
-  * Get all documents with the input field value.
-  *
-  * @param collectionName name of collection in Firestore
-  * @param field document field to search
-  * @param fieldValue value of field
-  */
   @Override
   public ApiFuture<QuerySnapshot> getDocumentsWithFieldValue(
-      String collectionName, String field, Object fieldValue) throws Exception {
+      String collectionName, String field, Object fieldValue)  {
     ApiFuture<QuerySnapshot> future =
       db.collection(collectionName).whereEqualTo(field, fieldValue).get();
     return future;
   }
   
-  /**
-  * Get all documents in specified collection.
-  *
-  * @param collectionName name of collection in Firestore
-  */
   @Override
-  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) throws Exception { 
+  public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
+  }
+
+  @Override
+  public ApiFuture<QuerySnapshot> getAllCommentDocumentsForListing(String listingId) {
+    return db.collection(LISTING_COLLECTION_NAME)
+      .document(listingId)
+      .collection(COMMENT_COLLECTION_NAME)
+      .orderBy(TIMESTAMP, Direction.ASCENDING)
+      .get();
   }
   
   /**
