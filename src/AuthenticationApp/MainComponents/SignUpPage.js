@@ -131,7 +131,7 @@ const SignUpPage = () => {
               Click to Sign Up
             </button>
           </form>
-          <p className="">or</p>
+          <p className="signUpWithGoogle">or</p>
           <button> Sign in with Google </button>
           <p className="">
             Already have an Account? Sign In! {" "}
