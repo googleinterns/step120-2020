@@ -30,9 +30,9 @@ public class CommentsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
       IOException {
-      database = DatabaseFactory.getDatabase();
-      String listingId = request.getParameter(LISTING_ID);
-      Comment comment = Comment.fromServletRequest(request);
+    database = DatabaseFactory.getDatabase();
+    String listingId = request.getParameter(LISTING_ID);
+    Comment comment = Comment.fromServletRequest(request);
     try {
       database.addCommentToListing(comment, listingId);
       response.sendRedirect(VIEW_LISTING_URL);
