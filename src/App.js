@@ -1,42 +1,23 @@
 import React from 'react';
-import { Router, Link } from '@reach/router';
-
-import Home from './Home/components/Home';
+import { Router } from '@reach/router';
 import PostListingDisplay from './PostListingDisplay/components/PostListingDisplay';
 import ViewListingDisplay from './ViewListingDisplay/components/ViewListingDisplay';
-
 import './App.css';
+import SignInPage from "./AuthenticationApp/MainComponents/SignInPage";
+import SignUpPage from "./AuthenticationApp/MainComponents/SignUpPage";
+import UserWrappedMain from "./AuthenticationApp/MainComponents/UserWrappedMain";
 
 /** Component class to render the whole comments page */
-function App(props) {
+function App () {
     return (
-        <div>
-            <h1 className="site-header" >Roomies</h1>
-            <nav>
-                <Link to="/">
-                    <button className="nav-button" type="button">
-                        Home
-                    </button>
-                </Link>
-                <Link to="/viewListing">
-                    <button className="nav-button" type="button">
-                        View a Listing
-                    </button>
-                </Link>
-                <Link to="/postListing">
-                    <button className="nav-button" type="button">
-                        Post a Listing
-                    </button>
-                </Link>
-            </nav>
-
-            <Router>
-                <Home path="/" />
-                <ViewListingDisplay path="/viewListing" />
-                <PostListingDisplay path="/postListing" />
-            </Router>
-        </div>
-    );
+        <Router>
+            <UserWrappedMain path= "/" />
+            <SignInPage path= "signIn" />
+            <SignUpPage path= "signIn/signUp" />
+            <ViewListingDisplay path= "viewListing" />
+            <PostListingDisplay path= "postListing" />
+        </Router>
+    )
 }
 
 export default App;
