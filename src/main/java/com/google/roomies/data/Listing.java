@@ -259,8 +259,8 @@ public abstract class Listing implements Document, Serializable {
     }
 
     /**
-    * Sets the listing location (of type Geopoint) and distance to campus (of type double,
-    * in miles) given a string representation of latitude and longitude.
+    * Sets the listing location and distance to campus in miles
+    * given a string representation of latitude and longitude and campus location.
     *
     * Input should be number corresponding to a valid latitude/longitude. Latitude must be
     * in the range [-90, 90] and longitude in the range [-180, 180] 
