@@ -215,5 +215,4 @@ public class ListingTest {
 
     assertEquals(actualListing, expectedListing);
   }
-
 }
