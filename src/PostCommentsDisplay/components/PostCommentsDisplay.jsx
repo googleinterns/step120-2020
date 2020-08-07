@@ -14,9 +14,6 @@ class PostCommentsDisplay extends Component {
         this.state = {
             comments: [],
         }
-
-        const listingId = (props.comments.length !== 0) ? props.comments[0].listingId : '';
-
     }
 
     addComment(newCommentBody){

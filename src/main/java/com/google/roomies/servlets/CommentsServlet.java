@@ -24,25 +24,25 @@ import javax.servlet.ServletException;
 /** Servlet that posts comments. */
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
-    private NoSQLDatabase database;
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+  private NoSQLDatabase database;
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
-        IOException {
-        database = DatabaseFactory.getDatabase();
-        String listingId = request.getParameter(LISTING_ID);
-        Comment comment = Comment.fromServletRequest(request);
-        try {
-        database.addCommentToListing(comment, listingId);
-        response.sendRedirect(VIEW_LISTING_URL);
-        } catch (InterruptedException | ExecutionException | 
-            IllegalStateException | IllegalArgumentException e) {
-        String errorMessage = String.format("Error posting comment to database given " +
-        "request parameters of listingId=%s and commentMessage=%s.",
-            listingId, request.getParameter(COMMENT));
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws 
+    IOException {
+      database = DatabaseFactory.getDatabase();
+      String listingId = request.getParameter(LISTING_ID);
+      Comment comment = Comment.fromServletRequest(request);
+    try {
+      database.addCommentToListing(comment, listingId);
+      response.sendRedirect(VIEW_LISTING_URL);
+    } catch (InterruptedException | ExecutionException | 
+        IllegalStateException | IllegalArgumentException e) {
+      String errorMessage = String.format("Error posting comment to database given " +
+       "request parameters of listingId=%s and commentMessage=%s.",
+          listingId, request.getParameter(COMMENT));
         logger.atInfo().withCause(e).log(errorMessage);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
     }
+  }
 }
