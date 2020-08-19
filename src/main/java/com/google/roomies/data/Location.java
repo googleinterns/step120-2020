@@ -22,6 +22,9 @@ public abstract class Location {
     public abstract Location build();
   }
   
+  /**
+  * Returns a GeoPoint representation of location.
+  */
   public GeoPoint toGeoPoint() {
     return new GeoPoint(latitude(), longitude());
   }
