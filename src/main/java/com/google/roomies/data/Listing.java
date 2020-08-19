@@ -4,7 +4,7 @@ import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
-import static com.google.roomies.ListingConstants.DEGREE_TO_RADIAN_RATIO;
+import static com.google.roomies.ListingConstants.RADIANS_PER_DEGREE;
 import static com.google.roomies.ListingConstants.EARTH_RADIUS_IN_MILES;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
@@ -288,11 +288,11 @@ public abstract class Listing implements Document, Serializable {
     */
     private Double distanceToCampus(Double listingLatitude, Double listingLongitude, 
         GeoPoint campusLocation) {
-      Double listingLatitudeInRadians = listingLatitude * DEGREE_TO_RADIAN_RATIO; 
-      Double campusLatitudeInRadians = campusLocation.getLatitude() * DEGREE_TO_RADIAN_RATIO; 
+      Double listingLatitudeInRadians = listingLatitude * RADIANS_PER_DEGREE; 
+      Double campusLatitudeInRadians = campusLocation.getLatitude() * RADIANS_PER_DEGREE; 
       Double latitudeDifference = campusLatitudeInRadians - listingLatitudeInRadians;
       Double longitudeDifference = (campusLocation.getLongitude() - listingLongitude) 
-        * DEGREE_TO_RADIAN_RATIO;
+        * RADIANS_PER_DEGREE;
 
       return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2) *
         sin(latitudeDifference/2) + cos(listingLatitudeInRadians) * 
