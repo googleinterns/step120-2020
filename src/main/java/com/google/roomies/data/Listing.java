@@ -1,7 +1,7 @@
 package com.google.roomies;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
-import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
+import static com.google.roomies.ListingConstants.BERKELEY;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.RADIANS_PER_DEGREE;
@@ -94,7 +94,7 @@ public abstract class Listing implements Document, Serializable {
   abstract Money singlePrice();
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
-  abstract GeoPoint location();
+  abstract Location location();
   abstract Double milesToCampus();
 
   abstract Builder toBuilder();
@@ -126,12 +126,12 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
     abstract Builder setComments(ImmutableList<Comment> comments);
-    abstract Builder setLocation(GeoPoint location);
+    abstract Builder setLocation(Location location);
     abstract Builder setMilesToCampus(Double milesToCampus);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
-    public abstract Listing build();
+    abstract Listing build();
     
     /**
     * Sets the lease type to a Lease Type enum value given a string representation of
@@ -267,11 +267,16 @@ public abstract class Listing implements Document, Serializable {
     * (ex. lat="32.13", lng="-102.12"). 
     */
     public Builder setLocationAndDistanceToCampus(String lat, String lng, 
-        GeoPoint campusLocation) {
+        Location campusLocation) {
       Double latitude = Double.parseDouble(lat);
       Double longitude = Double.parseDouble(lng);
-      setLocation(new GeoPoint(latitude, longitude));
-      setMilesToCampus(distanceToCampus(latitude, longitude, campusLocation));
+      Location listingLocation = Location.builder()
+        .setLatitude(latitude)
+        .setLongitude(longitude)
+        .build();
+      setLocation(listingLocation);
+      setMilesToCampus(distanceBetweenTwoCoordinates(listingLocation, 
+        campusLocation));
       return this;
     }
 
@@ -286,18 +291,18 @@ public abstract class Listing implements Document, Serializable {
     * the Google Places API requires displaying the results on a Google Map, which is 
     * out of scope for our MVP.
     */
-    private Double distanceToCampus(Double listingLatitude, Double listingLongitude, 
-        GeoPoint campusLocation) {
-      Double listingLatitudeInRadians = listingLatitude * RADIANS_PER_DEGREE; 
-      Double campusLatitudeInRadians = campusLocation.getLatitude() * RADIANS_PER_DEGREE; 
-      Double latitudeDifference = campusLatitudeInRadians - listingLatitudeInRadians;
-      Double longitudeDifference = (campusLocation.getLongitude() - listingLongitude) 
+    private Double distanceBetweenTwoCoordinates(Location firstLocation, 
+        Location secondLocation) {
+      Double firstLocationLatitudeInRadians = firstLocation.latitude() * RADIANS_PER_DEGREE; 
+      Double secondLocationLatitudeInRadians = secondLocation.latitude() * RADIANS_PER_DEGREE; 
+      Double latitudeDifference = secondLocationLatitudeInRadians - firstLocationLatitudeInRadians;
+      Double longitudeDifference = (secondLocation.longitude() - firstLocation.longitude()) 
         * RADIANS_PER_DEGREE;
 
-      return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2) *
-        sin(latitudeDifference/2) + cos(listingLatitudeInRadians) * 
-        cos(campusLatitudeInRadians) * sin(longitudeDifference/2) * 
-        sin(longitudeDifference/2)));
+      return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2.0) *
+        sin(latitudeDifference/2.0) + cos(firstLocationLatitudeInRadians) * 
+        cos(secondLocationLatitudeInRadians) * sin(longitudeDifference/2.0) * 
+        sin(longitudeDifference/2.0)));
     }
   }
 
@@ -322,7 +327,7 @@ public abstract class Listing implements Document, Serializable {
       .put(SINGLE_ROOM_PRICE, singlePrice().toString())
       .put(LISTING_PRICE, listingPrice().toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
-      .put(GEOPOINT, location())
+      .put(GEOPOINT, location().toGeoPoint())
       .put(MILES_TO_CAMPUS, milesToCampus())
       .build();
 
@@ -356,12 +361,16 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
-        .setLocation((GeoPoint) listingData.get(GEOPOINT))
+        .setLocation(geoPointToLocation((GeoPoint) listingData.get(GEOPOINT)))
         .setMilesToCampus((Double) listingData.get(MILES_TO_CAMPUS))
         .setComments(getAllCommentsForListing(document.getId()))
         .build());
     }
 
+  private static Location geoPointToLocation(GeoPoint geopoint) {
+    return Location.builder().setLatitude(geopoint.getLatitude())
+      .setLongitude(geopoint.getLongitude()).build();
+  }
   /**
   * Gets all comments from a given listing.
   * 
@@ -378,7 +387,6 @@ public abstract class Listing implements Document, Serializable {
       .flatMap(Optional::stream)
       .collect(ImmutableList.toImmutableList());
   }
-
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
   * Note: Campus is set to Berkeley for the MVP.
@@ -399,7 +407,7 @@ public abstract class Listing implements Document, Serializable {
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
     .setLocationAndDistanceToCampus(request.getParameter(LATITUDE),
-      request.getParameter(LONGITUDE), BERKELEY_LOCATION)
+      request.getParameter(LONGITUDE), BERKELEY)
     .build();
   }
 }
