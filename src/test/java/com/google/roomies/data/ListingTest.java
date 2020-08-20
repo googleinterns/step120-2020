@@ -1,6 +1,6 @@
 package com.google.roomies;
 
-import static com.google.roomies.ListingConstants.BERKELEY_LOCATION;
+import static com.google.roomies.ListingConstants.BERKELEY;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
@@ -90,7 +90,7 @@ public class ListingTest {
     .setListingPrice(LISTING_LISTING_PRICE)
     .setStartDate(LISTING_START_DATE)
     .setTitle(LISTING_TITLE)
-    .setLocationAndDistanceToCampus(LISTING_LATITUDE, LISTING_LONGITUDE, BERKELEY_LOCATION)
+    .setLocationAndDistanceToCampus(LISTING_LATITUDE, LISTING_LONGITUDE, BERKELEY)
     .build();
   }
 
@@ -146,14 +146,14 @@ public class ListingTest {
     Listing.builder().setListingPrice("-300");
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = IllegalStateException.class)
   public void testSetLocationAndDistanceToCampus_latitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistanceToCampus("100", LISTING_LONGITUDE, BERKELEY_LOCATION);
+    Listing.builder().setLocationAndDistanceToCampus("100", LISTING_LONGITUDE, BERKELEY);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = IllegalStateException.class)
   public void testSetLocationAndDistanceToCampus_longitudeIsInvalid_throwsIllegalArgumentException() {
-    Listing.builder().setLocationAndDistanceToCampus(LISTING_LATITUDE, "-200", BERKELEY_LOCATION);
+    Listing.builder().setLocationAndDistanceToCampus(LISTING_LATITUDE, "-200", BERKELEY);
   }
 
   @Test
@@ -206,41 +206,41 @@ public class ListingTest {
     assertEquals(actualData, expectedData);
   }
 
-  // @Test
-  // public void testFromFirestore_returnsOptionalContainingListing() throws 
-  //     UnknownCurrencyException, MonetaryParseException, NumberFormatException, 
-  //     ParseException, IOException, InterruptedException, ExecutionException {
-  //   String documentId = "documentId";
-  //   Timestamp timestamp = Timestamp.parseTimestamp("2016-09-18T00:00:00Z");
-  //   Map<String, Object> listingData = ImmutableMap.<String, Object>builder()
-  //     .put(TITLE, LISTING_TITLE)
-  //     .put(DESCRIPTION, LISTING_DESCRIPTION)
-  //     .put(START_DATE, LISTING_START_DATE)
-  //     .put(END_DATE, LISTING_END_DATE)
-  //     .put(LEASE_TYPE, LISTING_LEASE_TYPE)
-  //     .put(NUM_ROOMS, Long.parseLong(LISTING_NUM_ROOMS))
-  //     .put(NUM_BATHROOMS, Long.parseLong(LISTING_NUM_BATHROOMS))
-  //     .put(NUM_SHARED, Long.parseLong(LISTING_NUM_SHARED))
-  //     .put(NUM_SINGLES, Long.parseLong(LISTING_NUM_SINGLES))
-  //     .put(SHARED_ROOM_PRICE, 
-  //       StringConverter.stringToNonNegativeMoney(LISTING_SHARED_PRICE).toString())
-  //     .put(SINGLE_ROOM_PRICE, 
-  //       StringConverter.stringToNonNegativeMoney(LISTING_SINGLE_PRICE).toString())
-  //     .put(LISTING_PRICE, 
-  //       StringConverter.stringToNonNegativeMoney(LISTING_LISTING_PRICE).toString())
-  //     .put(TIMESTAMP, timestamp)
-  //     .put(GEOPOINT, LISTING_GEOPOINT)
-  //     .put(MILES_TO_CAMPUS, LISTING_MILES_TO_CAMPUS)
-  //     .build();
-  //   when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);
-  //   when(queryDocumentSnapshotMock.getId()).thenReturn(documentId);
-  // 
-  //   Optional<Listing> actualListing = Listing.fromFirestore(queryDocumentSnapshotMock);
-  //   Optional<Listing> expectedListing = Optional.of(listing.toBuilder()
-  //     .setDocumentId(Optional.of(documentId))
-  //     .setTimestamp(Optional.of(timestamp))
-  //     .build());
-  // 
-  //   assertEquals(actualListing, expectedListing);
-  // }
+  @Test
+  public void testFromFirestore_returnsOptionalContainingListing() throws 
+      UnknownCurrencyException, MonetaryParseException, NumberFormatException, 
+      ParseException, IOException, InterruptedException, ExecutionException {
+    String documentId = "documentId";
+    Timestamp timestamp = Timestamp.parseTimestamp("2016-09-18T00:00:00Z");
+    Map<String, Object> listingData = ImmutableMap.<String, Object>builder()
+      .put(TITLE, LISTING_TITLE)
+      .put(DESCRIPTION, LISTING_DESCRIPTION)
+      .put(START_DATE, LISTING_START_DATE)
+      .put(END_DATE, LISTING_END_DATE)
+      .put(LEASE_TYPE, LISTING_LEASE_TYPE)
+      .put(NUM_ROOMS, Long.parseLong(LISTING_NUM_ROOMS))
+      .put(NUM_BATHROOMS, Long.parseLong(LISTING_NUM_BATHROOMS))
+      .put(NUM_SHARED, Long.parseLong(LISTING_NUM_SHARED))
+      .put(NUM_SINGLES, Long.parseLong(LISTING_NUM_SINGLES))
+      .put(SHARED_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(LISTING_SHARED_PRICE).toString())
+      .put(SINGLE_ROOM_PRICE, 
+        StringConverter.stringToNonNegativeMoney(LISTING_SINGLE_PRICE).toString())
+      .put(LISTING_PRICE, 
+        StringConverter.stringToNonNegativeMoney(LISTING_LISTING_PRICE).toString())
+      .put(TIMESTAMP, timestamp)
+      .put(GEOPOINT, LISTING_GEOPOINT)
+      .put(MILES_TO_CAMPUS, LISTING_MILES_TO_CAMPUS)
+      .build();
+    when(queryDocumentSnapshotMock.getData()).thenReturn(listingData);
+    when(queryDocumentSnapshotMock.getId()).thenReturn(documentId);
+  
+    Optional<Listing> actualListing = Listing.fromFirestore(queryDocumentSnapshotMock);
+    Optional<Listing> expectedListing = Optional.of(listing.toBuilder()
+      .setDocumentId(Optional.of(documentId))
+      .setTimestamp(Optional.of(timestamp))
+      .build());
+  
+    assertEquals(actualListing, expectedListing);
+  }
 }
