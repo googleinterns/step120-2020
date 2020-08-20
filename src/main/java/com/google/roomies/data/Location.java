@@ -2,6 +2,7 @@ package com.google.roomies;
 
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.GeoPoint;
+import com.google.common.base.Preconditions;
 import java.io.Serializable;
 
 /** A class representing a location. */
@@ -17,9 +18,23 @@ public abstract class Location {
  
   @AutoValue.Builder
   public abstract static class Builder implements Serializable {
-    public abstract Builder setLatitude(double latitude);
-    public abstract Builder setLongitude(double longitude);
-    public abstract Location build();
+    abstract Builder setLatitude(double latitude);
+    abstract Builder setLongitude(double longitude);
+    
+    abstract Location autoBuild();
+    
+    Location build() {
+      Location location = autoBuild();
+      Preconditions.checkState(location.latitude() >= -90, 
+        "Latitude is out of the range [-90, 90]");
+      Preconditions.checkState(location.latitude() <= 90, 
+        "Latitude is out of the range [-90, 90]");
+      Preconditions.checkState(location.longitude() >= -180, 
+        "Longitude is out of the range [-180, 180]"); 
+      Preconditions.checkState(location.longitude() <= 180, 
+        "Longitude is out of the range [-180, 180]");    
+      return location; 
+    }
   }
   
   /**
