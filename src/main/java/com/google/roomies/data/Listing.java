@@ -95,7 +95,7 @@ public abstract class Listing implements Document, Serializable {
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
   abstract Location location();
-  abstract Double milesToCampus();
+  abstract double milesToCampus();
 
   abstract Builder toBuilder();
 
@@ -127,7 +127,7 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setListingPrice(Money listingPrice);
     abstract Builder setComments(ImmutableList<Comment> comments);
     abstract Builder setLocation(Location location);
-    abstract Builder setMilesToCampus(Double milesToCampus);
+    abstract Builder setMilesToCampus(double milesToCampus);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
@@ -268,8 +268,8 @@ public abstract class Listing implements Document, Serializable {
     */
     public Builder setLocationAndDistanceToCampus(String lat, String lng, 
         Location campusLocation) {
-      Double latitude = Double.parseDouble(lat);
-      Double longitude = Double.parseDouble(lng);
+      double latitude = Double.parseDouble(lat);
+      double longitude = Double.parseDouble(lng);
       Location listingLocation = Location.builder()
         .setLatitude(latitude)
         .setLongitude(longitude)
@@ -291,12 +291,12 @@ public abstract class Listing implements Document, Serializable {
     * the Google Places API requires displaying the results on a Google Map, which is 
     * out of scope for our MVP.
     */
-    private Double distanceBetweenTwoCoordinates(Location firstLocation, 
+    private double distanceBetweenTwoCoordinates(Location firstLocation, 
         Location secondLocation) {
-      Double firstLocationLatitudeInRadians = firstLocation.latitude() * RADIANS_PER_DEGREE; 
-      Double secondLocationLatitudeInRadians = secondLocation.latitude() * RADIANS_PER_DEGREE; 
-      Double latitudeDifference = secondLocationLatitudeInRadians - firstLocationLatitudeInRadians;
-      Double longitudeDifference = (secondLocation.longitude() - firstLocation.longitude()) 
+      double firstLocationLatitudeInRadians = firstLocation.latitude() * RADIANS_PER_DEGREE; 
+      double secondLocationLatitudeInRadians = secondLocation.latitude() * RADIANS_PER_DEGREE; 
+      double latitudeDifference = secondLocationLatitudeInRadians - firstLocationLatitudeInRadians;
+      double longitudeDifference = (secondLocation.longitude() - firstLocation.longitude()) 
         * RADIANS_PER_DEGREE;
 
       return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2.0) *
@@ -362,7 +362,7 @@ public abstract class Listing implements Document, Serializable {
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
         .setLocation(geoPointToLocation((GeoPoint) listingData.get(GEOPOINT)))
-        .setMilesToCampus((Double) listingData.get(MILES_TO_CAMPUS))
+        .setMilesToCampus((double) listingData.get(MILES_TO_CAMPUS))
         .setComments(getAllCommentsForListing(document.getId()))
         .build());
     }
