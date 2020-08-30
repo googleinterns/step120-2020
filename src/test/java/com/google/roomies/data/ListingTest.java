@@ -54,6 +54,7 @@ public class ListingTest {
   @Mock HttpServletRequest request;
   @Mock QueryDocumentSnapshot queryDocumentSnapshotMock;
 
+  private static final double DELTA = 1e-15;
   private static final String LISTING_DESCRIPTION = "Test description";
   private static final String LISTING_END_DATE = "2020-07-10";
   private static final String LISTING_LEASE_TYPE = "YEAR_LONG";
@@ -204,6 +205,14 @@ public class ListingTest {
       .build();
 
     assertEquals(actualData, expectedData);
+  }
+  
+  @Test
+  public void testDistanceBetweenTwoCoordinates_returnsExpectedDistance() {
+    double expectedDistance = 1201.6042324995394;
+    double actualDistance = listing.milesToCampus();
+    
+    assertEquals(actualDistance, expectedDistance, DELTA);
   }
 
   @Test
