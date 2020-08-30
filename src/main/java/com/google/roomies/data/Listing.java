@@ -1,11 +1,8 @@
 package com.google.roomies;
 
 import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
-import static com.google.roomies.ListingConstants.BERKELEY;
 import static com.google.roomies.ListingConstants.CURRENCY_CODE;
 import static com.google.roomies.ListingConstants.DATE_FORMAT;
-import static com.google.roomies.ListingConstants.RADIANS_PER_DEGREE;
-import static com.google.roomies.ListingConstants.EARTH_RADIUS_IN_MILES;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
@@ -24,10 +21,7 @@ import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
-import static java.lang.Math.asin;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
+import static com.google.roomies.LocationConstants.BERKELEY;
 
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
@@ -275,34 +269,8 @@ public abstract class Listing implements Document, Serializable {
         .setLongitude(longitude)
         .build();
       setLocation(listingLocation);
-      setMilesToCampus(distanceBetweenTwoCoordinates(listingLocation, 
-        campusLocation));
+      setMilesToCampus(listingLocation.distanceTo(campusLocation));
       return this;
-    }
-
-    /**
-    * Calculates the straight-line distance from given latitude and longitude to
-    * the campus latitude and longitude.
-    *
-    * Uses the Haversine distance (angular distance between two points
-    * on the surface of a sphere).
-    *
-    * Note: Driving/walking distance was not implemented at this point in time because using
-    * the Google Places API requires displaying the results on a Google Map, which is 
-    * out of scope for our MVP.
-    */
-    private double distanceBetweenTwoCoordinates(Location firstLocation, 
-        Location secondLocation) {
-      double firstLocationLatitudeInRadians = firstLocation.latitude() * RADIANS_PER_DEGREE; 
-      double secondLocationLatitudeInRadians = secondLocation.latitude() * RADIANS_PER_DEGREE; 
-      double latitudeDifference = secondLocationLatitudeInRadians - firstLocationLatitudeInRadians;
-      double longitudeDifference = (secondLocation.longitude() - firstLocation.longitude()) 
-        * RADIANS_PER_DEGREE;
-
-      return 2 * EARTH_RADIUS_IN_MILES * asin(sqrt(sin(latitudeDifference/2.0) *
-        sin(latitudeDifference/2.0) + cos(firstLocationLatitudeInRadians) * 
-        cos(secondLocationLatitudeInRadians) * sin(longitudeDifference/2.0) * 
-        sin(longitudeDifference/2.0)));
     }
   }
 
