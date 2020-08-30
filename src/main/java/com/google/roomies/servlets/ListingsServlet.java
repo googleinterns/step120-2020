@@ -127,10 +127,8 @@ public class ListingsServlet extends HttpServlet {
     return listings;
   }
 
-  private boolean requestParameterHasValidInput(String requestParameterInput) {
-    Optional<String> parameterInput = Optional.ofNullable(requestParameterInput);
-    
-    return parameterInput.isPresent() && !parameterInput.equals("");
+  private boolean requestParameterHasValidInput(String requestParameterInput) {    
+    return requestParameterInput != null && !requestParameterInput.isEmpty();
   }
 
   private String convertToJsonUsingGson(List data) {
