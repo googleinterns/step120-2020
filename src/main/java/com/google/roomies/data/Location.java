@@ -2,6 +2,10 @@ package com.google.roomies;
 
 import static com.google.roomies.LocationConstants.RADIANS_PER_DEGREE;
 import static com.google.roomies.LocationConstants.EARTH_RADIUS_IN_MILES;
+import static com.google.roomies.LocationConstants.MAX_LATITUDE;
+import static com.google.roomies.LocationConstants.MIN_LATITUDE;
+import static com.google.roomies.LocationConstants.MAX_LONGITUDE;
+import static com.google.roomies.LocationConstants.MIN_LONGITUDE;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -32,14 +36,14 @@ public abstract class Location {
     
     Location build() {
       Location location = autoBuild();
-      Preconditions.checkState(location.latitude() >= -90, 
-        "Latitude is out of the range [-90, 90]");
-      Preconditions.checkState(location.latitude() <= 90, 
-        "Latitude is out of the range [-90, 90]");
-      Preconditions.checkState(location.longitude() >= -180, 
-        "Longitude is out of the range [-180, 180]"); 
-      Preconditions.checkState(location.longitude() <= 180, 
-        "Longitude is out of the range [-180, 180]");    
+      Preconditions.checkState(location.latitude() >= MIN_LATITUDE, 
+        String.format("Latitude cannot be less than %d", MIN_LATITUDE));
+      Preconditions.checkState(location.latitude() <= MAX_LATITUDE, 
+        String.format("Latitude cannot be greater than %d", MAX_LATITUDE));
+      Preconditions.checkState(location.longitude() >= MIN_LONGITUDE, 
+        String.format("Longitude cannot be less than %d", MIN_LONGITUDE)); 
+      Preconditions.checkState(location.longitude() <= MAX_LONGITUDE, 
+        String.format("Longitude cannot be greater than %d", MAX_LONGITUDE));    
       return location; 
     }
   }
