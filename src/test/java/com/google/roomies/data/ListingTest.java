@@ -1,6 +1,5 @@
 package com.google.roomies;
 
-import static com.google.roomies.ListingConstants.BERKELEY;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
@@ -18,6 +17,7 @@ import static com.google.roomies.ListingRequestParameterNames.SINGLE_ROOM_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
+import static com.google.roomies.LocationConstants.BERKELEY;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -205,14 +205,6 @@ public class ListingTest {
       .build();
 
     assertEquals(actualData, expectedData);
-  }
-  
-  @Test
-  public void testDistanceBetweenTwoCoordinates_returnsExpectedDistance() {
-    double expectedDistance = 1201.6042324995394;
-    double actualDistance = listing.milesToCampus();
-    
-    assertEquals(actualDistance, expectedDistance, DELTA);
   }
 
   @Test
