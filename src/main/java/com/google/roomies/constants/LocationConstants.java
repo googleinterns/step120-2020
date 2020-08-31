@@ -9,4 +9,8 @@ public final class LocationConstants {
     .build();
   public static final double EARTH_RADIUS_IN_MILES = 3958.8;
   public static final double RADIANS_PER_DEGREE = Math.PI / 180;
+  public static final int MAX_LATITUDE = 90;
+  public static final int MIN_LATITUDE = -90;
+  public static final int MAX_LONGITUDE = 180;
+  public static final int MIN_LONGITUDE = -180;
 }
