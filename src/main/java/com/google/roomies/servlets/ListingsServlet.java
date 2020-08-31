@@ -20,6 +20,7 @@ import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
 import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -96,7 +97,7 @@ public class ListingsServlet extends HttpServlet {
       throws IOException {
     database = DatabaseFactory.getDatabase();
     try {
-      List<Listing> listings = getAllListingsFromCollection();
+      List<Listing> listings = getListingsGivenRequestFilters(request);
 
       response.setContentType(RESPONSE_CONTENT_TYPE);
       response.getWriter().println(convertToJsonUsingGson(listings));
@@ -106,6 +107,28 @@ public class ListingsServlet extends HttpServlet {
       response.setContentType("text/html");
       response.getWriter().println("request failed");
     }
+  }
+
+  /**
+  * Gets all listings given filter parameters from servlet request.
+  */
+  private List<Listing> getListingsGivenRequestFilters(HttpServletRequest request) 
+      throws InterruptedException, ExecutionException {
+    List<Listing> listings;
+    String maximumDistanceInMilesFromCampus = 
+      request.getParameter(MAXIMUM_DISTANCE_IN_MILES_FROM_CAMPUS);
+
+    if (requestParameterHasValidInput(maximumDistanceInMilesFromCampus)) {
+      Double distanceFromCampus = Double.parseDouble(maximumDistanceInMilesFromCampus);
+      listings = getAllListingsUnderMaximumDistanceFromCampus(distanceFromCampus);
+    } else {
+      listings = getAllListingsFromCollection();
+    }
+    return listings;
+  }
+
+  private boolean requestParameterHasValidInput(String requestParameterInput) {    
+    return requestParameterInput != null && !requestParameterInput.isEmpty();
   }
 
   private String convertToJsonUsingGson(List data) {
@@ -124,6 +147,23 @@ public class ListingsServlet extends HttpServlet {
     List<QueryDocumentSnapshot> documents = 
       database.getAllDocumentsInCollection(LISTING_COLLECTION_NAME).get().getDocuments();
 
+    return documentsToListings(documents);
+  }
+
+  /**
+  * Gets all listings under given max distance.
+  */
+  private List<Listing> getAllListingsUnderMaximumDistanceFromCampus(Double 
+      maximumDistanceFromCampus) throws InterruptedException, ExecutionException {
+    List<QueryDocumentSnapshot> documents = 
+      database.getAllListingDocumentsUnderMaximumDistanceFromCampus(maximumDistanceFromCampus)
+      .get()
+      .getDocuments();
+
+    return documentsToListings(documents);
+  }
+
+  private List<Listing> documentsToListings(List<QueryDocumentSnapshot> documents) {
     return StreamSupport.stream(documents.spliterator(), /* parallel= */ false)
       .map(this::getListingFromDocument)
       .flatMap(Optional::stream)

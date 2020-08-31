@@ -6,7 +6,11 @@ import static com.google.roomies.ListingConstants.DATE_FORMAT;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
 import static com.google.roomies.ListingRequestParameterNames.DESCRIPTION;
 import static com.google.roomies.ListingRequestParameterNames.END_DATE;
+import static com.google.roomies.ListingRequestParameterNames.GEOPOINT;
+import static com.google.roomies.ListingRequestParameterNames.LATITUDE;
 import static com.google.roomies.ListingRequestParameterNames.LEASE_TYPE;
+import static com.google.roomies.ListingRequestParameterNames.LONGITUDE;
+import static com.google.roomies.ListingRequestParameterNames.MILES_TO_CAMPUS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_BATHROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_ROOMS;
 import static com.google.roomies.ListingRequestParameterNames.NUM_SHARED;
@@ -17,15 +21,18 @@ import static com.google.roomies.ListingRequestParameterNames.LISTING_PRICE;
 import static com.google.roomies.ListingRequestParameterNames.START_DATE;
 import static com.google.roomies.ListingRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingRequestParameterNames.TITLE;
+import static com.google.roomies.LocationConstants.BERKELEY;
 
 import com.google.auto.value.AutoValue;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.GeoPoint;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.ImmutableDoubleArray;
 import com.google.roomies.database.DatabaseFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,6 +88,8 @@ public abstract class Listing implements Document, Serializable {
   abstract Money singlePrice();
   abstract Money listingPrice();
   abstract ImmutableList<Comment> comments();
+  abstract Location location();
+  abstract double milesToCampus();
 
   abstract Builder toBuilder();
 
@@ -111,10 +120,12 @@ public abstract class Listing implements Document, Serializable {
     abstract Builder setSinglePrice(Money singlePrice);
     abstract Builder setListingPrice(Money listingPrice);
     abstract Builder setComments(ImmutableList<Comment> comments);
+    abstract Builder setLocation(Location location);
+    abstract Builder setMilesToCampus(double milesToCampus);
     abstract LeaseType leaseType();
     abstract int numRooms();
 
-    public abstract Listing build();
+    abstract Listing build();
     
     /**
     * Sets the lease type to a Lease Type enum value given a string representation of
@@ -240,7 +251,27 @@ public abstract class Listing implements Document, Serializable {
       setListingPrice(StringConverter.stringToNonNegativeMoney(listingPrice));
       return this;
     }
- 
+
+    /**
+    * Sets the listing location and distance to campus in miles
+    * given a string representation of latitude and longitude and campus location.
+    *
+    * Input should be number corresponding to a valid latitude/longitude. Latitude must be
+    * in the range [-90, 90] and longitude in the range [-180, 180] 
+    * (ex. lat="32.13", lng="-102.12"). 
+    */
+    public Builder setLocationAndDistanceToCampus(String lat, String lng, 
+        Location campusLocation) {
+      double latitude = Double.parseDouble(lat);
+      double longitude = Double.parseDouble(lng);
+      Location listingLocation = Location.builder()
+        .setLatitude(latitude)
+        .setLongitude(longitude)
+        .build();
+      setLocation(listingLocation);
+      setMilesToCampus(listingLocation.distanceTo(campusLocation));
+      return this;
+    }
   }
 
   /**
@@ -264,6 +295,8 @@ public abstract class Listing implements Document, Serializable {
       .put(SINGLE_ROOM_PRICE, singlePrice().toString())
       .put(LISTING_PRICE, listingPrice().toString())
       .put(TIMESTAMP, FieldValue.serverTimestamp())
+      .put(GEOPOINT, location().toGeoPoint())
+      .put(MILES_TO_CAMPUS, milesToCampus())
       .build();
 
     return listingData;
@@ -296,10 +329,16 @@ public abstract class Listing implements Document, Serializable {
         .setSharedPrice(listingData.get(SHARED_ROOM_PRICE).toString())
         .setSinglePrice(listingData.get(SINGLE_ROOM_PRICE).toString())
         .setListingPrice(listingData.get(LISTING_PRICE).toString())
+        .setLocation(geoPointToLocation((GeoPoint) listingData.get(GEOPOINT)))
+        .setMilesToCampus((double) listingData.get(MILES_TO_CAMPUS))
         .setComments(getAllCommentsForListing(document.getId()))
         .build());
     }
 
+  private static Location geoPointToLocation(GeoPoint geopoint) {
+    return Location.builder().setLatitude(geopoint.getLatitude())
+      .setLongitude(geopoint.getLongitude()).build();
+  }
   /**
   * Gets all comments from a given listing.
   * 
@@ -316,9 +355,9 @@ public abstract class Listing implements Document, Serializable {
       .flatMap(Optional::stream)
       .collect(ImmutableList.toImmutableList());
   }
-
   /**
   * Sets all listing values to the corresponding HTTP Servlet request parameter.
+  * Note: Campus is set to Berkeley for the MVP.
   */
   public static Listing fromServletRequest(HttpServletRequest request) throws UnknownCurrencyException,
         MonetaryParseException, NumberFormatException, ParseException {
@@ -335,6 +374,8 @@ public abstract class Listing implements Document, Serializable {
     .setSharedPrice(request.getParameter(SHARED_ROOM_PRICE))
     .setSinglePrice(request.getParameter(SINGLE_ROOM_PRICE))
     .setListingPrice(request.getParameter(LISTING_PRICE))
+    .setLocationAndDistanceToCampus(request.getParameter(LATITUDE),
+      request.getParameter(LONGITUDE), BERKELEY)
     .build();
   }
 }

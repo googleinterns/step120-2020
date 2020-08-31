@@ -1,5 +1,6 @@
 package com.google.roomies;
 
+/** Constants for a listing. */
 public final class ListingConstants {
   private ListingConstants() {}
   public static final String LISTING_COLLECTION_NAME = "listings";

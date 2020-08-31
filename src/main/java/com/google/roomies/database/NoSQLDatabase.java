@@ -69,6 +69,12 @@ public interface NoSQLDatabase {
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName);
 
   /**
+  * Get all listings under given maximum distance.
+  */
+  public ApiFuture<QuerySnapshot> getAllListingDocumentsUnderMaximumDistanceFromCampus(
+    double maximumNumberOfMilesFromCampus);
+
+  /**
   * Get all comment documents for a given listing.
   *
   * Comment documents are ordered by timestamp from oldest to newest.

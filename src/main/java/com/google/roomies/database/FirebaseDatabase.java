@@ -4,6 +4,7 @@ import static com.google.roomies.CommentConstants.COMMENT_COLLECTION_NAME;
 import static com.google.roomies.CommentRequestParameterNames.LISTING_ID;
 import static com.google.roomies.CommentRequestParameterNames.TIMESTAMP;
 import static com.google.roomies.ListingConstants.LISTING_COLLECTION_NAME;
+import static com.google.roomies.ListingRequestParameterNames.MILES_TO_CAMPUS;
 import static com.google.roomies.ProjectConstants.PROJECT_ID;
 
 import com.google.api.core.ApiFuture;
@@ -107,6 +108,14 @@ public class FirebaseDatabase implements NoSQLDatabase {
   @Override
   public ApiFuture<QuerySnapshot> getAllDocumentsInCollection(String collectionName) { 
     return db.collection(collectionName).get();
+  }
+
+  @Override
+  public ApiFuture<QuerySnapshot> getAllListingDocumentsUnderMaximumDistanceFromCampus(
+      double maximumNumberOfMilesFromCampus) { 
+    return db.collection(LISTING_COLLECTION_NAME)
+      .whereLessThanOrEqualTo(MILES_TO_CAMPUS, maximumNumberOfMilesFromCampus)
+      .get();
   }
 
   @Override
